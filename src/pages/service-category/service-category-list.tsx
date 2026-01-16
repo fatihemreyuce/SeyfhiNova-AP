@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  useHomePageAbout,
-  useDeleteHomePageAbout,
-} from "@/hooks/use-home-page-about";
+  useServiceCategory,
+  useDeleteServiceCategory,
+} from "@/hooks/use-category-service";
 import {
   Table,
   TableBody,
@@ -31,10 +31,11 @@ import {
   MoreVertical,
   ChevronLeft,
   ChevronRight,
+  Layers,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
-export default function HomePageAboutList() {
+export default function ServiceCategoryList() {
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(0);
@@ -44,8 +45,8 @@ export default function HomePageAboutList() {
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [selectedItemName, setSelectedItemName] = useState<string>("");
 
-  const { data, isLoading } = useHomePageAbout(search, page, size, sort);
-  const deleteMutation = useDeleteHomePageAbout();
+  const { data, isLoading } = useServiceCategory(search, page, size, sort);
+  const deleteMutation = useDeleteServiceCategory();
 
   const handleDelete = (id: number, itemName: string) => {
     setSelectedId(id);
@@ -80,14 +81,14 @@ export default function HomePageAboutList() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Ana Sayfa Hakkında</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Servis Kategorileri</h1>
           <p className="text-muted-foreground">
-            Ana sayfa hakkında bölümlerini yönetin
+            Servis kategorilerini yönetin ve düzenleyin
           </p>
         </div>
-        <Button onClick={() => navigate("/home-page-about/create")}>
+        <Button onClick={() => navigate("/service-category/create")}>
           <Plus className="h-4 w-4 mr-2" />
-          Yeni Ekle
+          Yeni Kategori Ekle
         </Button>
       </div>
 
@@ -97,7 +98,7 @@ export default function HomePageAboutList() {
             <div className="relative flex-1 max-w-sm">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
-                placeholder="Ara..."
+                placeholder="Kategori ara..."
                 value={search}
                 onChange={(e) => handleSearch(e.target.value)}
                 className="pl-9"
@@ -112,15 +113,16 @@ export default function HomePageAboutList() {
             </div>
           ) : !data || data.content.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12">
+              <Layers className="h-12 w-12 text-muted-foreground mb-4 opacity-50" />
               <p className="text-muted-foreground mb-4">
-                Henüz kayıt bulunmamaktadır.
+                Henüz servis kategorisi bulunmamaktadır.
               </p>
               <Button
                 variant="outline"
-                onClick={() => navigate("/home-page-about/create")}
+                onClick={() => navigate("/service-category/create")}
               >
                 <Plus className="h-4 w-4 mr-2" />
-                İlk Kaydı Oluştur
+                İlk Kategoriyi Oluştur
               </Button>
             </div>
           ) : (
@@ -130,8 +132,9 @@ export default function HomePageAboutList() {
                   <TableHeader>
                     <TableRow>
                       <TableHead>ID</TableHead>
-                      <TableHead>Sol Başlık</TableHead>
-                      <TableHead>Sağ Başlık</TableHead>
+                      <TableHead>Kategori Adı</TableHead>
+                      <TableHead>Açıklama</TableHead>
+                      <TableHead>Sıra</TableHead>
                       <TableHead className="text-right">İşlemler</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -142,9 +145,14 @@ export default function HomePageAboutList() {
                           <Badge variant="outline">{item.id}</Badge>
                         </TableCell>
                         <TableCell className="font-medium">
-                          {item.leftTitle}
+                          {item.name}
                         </TableCell>
-                        <TableCell>{item.rightTitle}</TableCell>
+                        <TableCell className="max-w-md truncate text-muted-foreground">
+                          {item.description}
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="secondary">{item.orderIndex}</Badge>
+                        </TableCell>
                         <TableCell className="text-right">
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
@@ -155,7 +163,7 @@ export default function HomePageAboutList() {
                             <DropdownMenuContent align="end">
                               <DropdownMenuItem
                                 onClick={() =>
-                                  navigate(`/home-page-about/${item.id}`)
+                                  navigate(`/service-category/${item.id}`)
                                 }
                               >
                                 <Eye className="h-4 w-4 mr-2" />
@@ -163,7 +171,7 @@ export default function HomePageAboutList() {
                               </DropdownMenuItem>
                               <DropdownMenuItem
                                 onClick={() =>
-                                  navigate(`/home-page-about/${item.id}/edit`)
+                                  navigate(`/service-category/${item.id}/edit`)
                                 }
                               >
                                 <Edit className="h-4 w-4 mr-2" />
@@ -171,10 +179,7 @@ export default function HomePageAboutList() {
                               </DropdownMenuItem>
                               <DropdownMenuItem
                                 onClick={() =>
-                                  handleDelete(
-                                    item.id,
-                                    `${item.leftTitle} / ${item.rightTitle}`
-                                  )
+                                  handleDelete(item.id, item.name)
                                 }
                                 className="text-destructive"
                               >

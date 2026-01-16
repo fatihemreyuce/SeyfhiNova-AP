@@ -10,6 +10,10 @@ import HomePageAboutList from "./pages/home-page-about/home-page-about-list";
 import HomePageAboutDetail from "./pages/home-page-about/home-page-about-detail";
 import HomePageAboutCreate from "./pages/home-page-about/home-page-about-create";
 import HomePageAboutEdit from "./pages/home-page-about/home-page-about-edit";
+import ServiceCategoryList from "./pages/service-category/service-category-list";
+import ServiceCategoryDetail from "./pages/service-category/service-category-detail";
+import ServiceCategoryCreate from "./pages/service-category/service-category-create";
+import ServiceCategoryEdit from "./pages/service-category/service-category-edit";
 
 
 function App() {
@@ -23,10 +27,14 @@ function App() {
 						<Route path="/" element={<ProtectedRoute />}>
 							<Route path="/" element={<AdminLayout />}>
 								<Route path="/" element={<DashboardPage />} />
-								<Route path="/home-page-about" element={<HomePageAboutList />} />
-								<Route path="/home-page-about/create" element={<HomePageAboutCreate />} />
-								<Route path="/home-page-about/:id" element={<HomePageAboutDetail />} />
-								<Route path="/home-page-about/:id/edit" element={<HomePageAboutEdit />} />
+							<Route path="/home-page-about" element={<HomePageAboutList />} />
+							<Route path="/home-page-about/create" element={<HomePageAboutCreate />} />
+							<Route path="/home-page-about/:id" element={<HomePageAboutDetail />} />
+							<Route path="/home-page-about/:id/edit" element={<HomePageAboutEdit />} />
+							<Route path="/service-category" element={<ServiceCategoryList />} />
+							<Route path="/service-category/create" element={<ServiceCategoryCreate />} />
+							<Route path="/service-category/:id" element={<ServiceCategoryDetail />} />
+							<Route path="/service-category/:id/edit" element={<ServiceCategoryEdit />} />
 							</Route>
 						</Route>
 					</Routes>

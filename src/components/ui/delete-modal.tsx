@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -9,9 +8,10 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { AlertTriangle, Trash2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { AlertTriangle, Trash2 } from "lucide-react";
+import { useState, useEffect } from "react";
 
 interface DeleteModalProps {
   open: boolean;
@@ -33,13 +33,20 @@ export function DeleteModal({
   loading = false,
 }: DeleteModalProps) {
   const [confirmText, setConfirmText] = useState("");
-  const isConfirmed = itemName ? confirmText.trim() === itemName.trim() : false;
+  const isConfirmValid = itemName ? confirmText.trim() === itemName.trim() : false;
 
   useEffect(() => {
     if (!open) {
       setConfirmText("");
     }
   }, [open]);
+
+  const handleConfirm = () => {
+    if (isConfirmValid) {
+      onConfirm();
+    }
+  };
+
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent className="sm:max-w-[500px]">
@@ -79,28 +86,17 @@ export function DeleteModal({
 
         {itemName && (
           <div className="mx-2 space-y-2">
-            <Label htmlFor="confirm-delete" className="text-sm font-medium">
-              Silmeyi onaylamak için öğe adını yazın:
+            <Label htmlFor="confirm-input" className="text-sm font-medium">
+              Silmeyi onaylamak için <span className="font-semibold text-foreground">"{itemName}"</span> yazın:
             </Label>
             <Input
-              id="confirm-delete"
-              type="text"
-              placeholder={itemName}
+              id="confirm-input"
               value={confirmText}
               onChange={(e) => setConfirmText(e.target.value)}
-              disabled={loading}
+              placeholder={itemName}
               className="w-full"
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && isConfirmed && !loading) {
-                  onConfirm();
-                }
-              }}
+              autoFocus
             />
-            {confirmText && !isConfirmed && (
-              <p className="text-xs text-destructive">
-                Öğe adı eşleşmiyor. Lütfen tam olarak "{itemName}" yazın.
-              </p>
-            )}
           </div>
         )}
 
@@ -117,13 +113,12 @@ export function DeleteModal({
           <AlertDialogCancel 
             disabled={loading}
             className="sm:mr-2"
-            onClick={() => setConfirmText("")}
           >
             İptal
           </AlertDialogCancel>
           <AlertDialogAction
-            onClick={onConfirm}
-            disabled={loading || (itemName ? !isConfirmed : false)}
+            onClick={handleConfirm}
+            disabled={loading || (itemName ? !isConfirmValid : false)}
             className="bg-destructive text-destructive-foreground hover:bg-destructive/90 focus:ring-destructive disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? (
