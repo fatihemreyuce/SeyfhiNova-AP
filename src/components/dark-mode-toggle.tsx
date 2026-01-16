@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Sun, Moon } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface DarkModeToggleProps {
 	className?: string;
@@ -47,25 +48,34 @@ export default function DarkModeToggle({ className }: DarkModeToggleProps) {
 	return (
 		<button
 			onClick={toggleTheme}
-			className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ${
-				isDark ? "bg-primary" : "bg-muted"
-			} ${className || ""}`}
-			aria-label="Toggle dark mode"
+			className={cn(
+				"relative inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border/40 bg-background/50 backdrop-blur-sm transition-all duration-200",
+				"hover:bg-accent hover:border-border hover:scale-105",
+				"focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+				"active:scale-95",
+				className
+			)}
+			aria-label={isDark ? "Açık temaya geç" : "Koyu temaya geç"}
+			title={isDark ? "Açık tema" : "Koyu tema"}
 		>
-			{/* Icons */}
-			<div className="absolute left-1 flex items-center justify-center">
-				<Sun className="h-3 w-3 text-muted-foreground" />
+			<div className="relative h-4 w-4">
+				<Sun
+					className={cn(
+						"absolute inset-0 h-4 w-4 transition-all duration-300",
+						isDark
+							? "rotate-90 scale-0 opacity-0 text-muted-foreground"
+							: "rotate-0 scale-100 opacity-100 text-amber-500"
+					)}
+				/>
+				<Moon
+					className={cn(
+						"absolute inset-0 h-4 w-4 transition-all duration-300",
+						isDark
+							? "rotate-0 scale-100 opacity-100 text-blue-400"
+							: "-rotate-90 scale-0 opacity-0 text-muted-foreground"
+					)}
+				/>
 			</div>
-			<div className="absolute right-1 flex items-center justify-center">
-				<Moon className="h-3 w-3 text-muted-foreground" />
-			</div>
-			
-			{/* Slider */}
-			<span
-				className={`inline-block h-4 w-4 transform rounded-full bg-background transition-transform duration-200 ease-in-out ${
-					isDark ? "translate-x-6" : "translate-x-1"
-				}`}
-			/>
 		</button>
 	);
 }

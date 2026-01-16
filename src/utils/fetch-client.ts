@@ -74,7 +74,24 @@ export const fetchClient = async <T, U>(
       return fetchClient(url, options);
     }
 
-    throw new Error("Failed to fetch data");
+    // Hata mesajını response body'den al
+    let errorMessage = "Failed to fetch data";
+    try {
+      const contentType = response.headers.get("content-type");
+      if (contentType?.includes("application/json")) {
+        const errorData = await response.json();
+        errorMessage = errorData.message || errorData.error || JSON.stringify(errorData);
+      } else {
+        errorMessage = await response.text() || errorMessage;
+      }
+    } catch {
+      // Response body okunamazsa varsayılan mesajı kullan
+    }
+
+    const error = new Error(errorMessage);
+    (error as any).status = response.status;
+    (error as any).response = response;
+    throw error;
   }
 
   const contentType = response.headers.get("content-type");
