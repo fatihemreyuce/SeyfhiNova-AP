@@ -40,7 +40,7 @@ export default function Sidebar() {
 			<div className="flex h-16 items-center justify-between px-6 border-b">
 				<div className="flex items-center gap-2">
 					
-					<span className="text-lg font-semibold italic">Your App Name</span>
+					<span className="text-lg font-semibold italic">Seyfhi Nova Yatırım</span>
 				</div>
 			</div>
 
