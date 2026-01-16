@@ -18,6 +18,10 @@ import ServiceList from "./pages/service/service-list";
 import ServiceDetail from "./pages/service/service-detail";
 import ServiceCreate from "./pages/service/service-create";
 import ServiceEdit from "./pages/service/service-edit";
+import ServiceStatsList from "./pages/service-stats/service-stats-list";
+import ServiceStatsDetail from "./pages/service-stats/service-stats-detail";
+import ServiceStatsCreate from "./pages/service-stats/service-stats-create";
+import ServiceStatsEdit from "./pages/service-stats/service-stats-edit";
 
 
 function App() {
@@ -43,6 +47,10 @@ function App() {
 							<Route path="/service/create" element={<ServiceCreate />} />
 							<Route path="/service/:id" element={<ServiceDetail />} />
 							<Route path="/service/:id/edit" element={<ServiceEdit />} />
+							<Route path="/service-stats" element={<ServiceStatsList />} />
+							<Route path="/service-stats/create" element={<ServiceStatsCreate />} />
+							<Route path="/service-stats/:id" element={<ServiceStatsDetail />} />
+							<Route path="/service-stats/:id/edit" element={<ServiceStatsEdit />} />
 							</Route>
 						</Route>
 					</Routes>
