@@ -14,6 +14,10 @@ import ServiceCategoryList from "./pages/service-category/service-category-list"
 import ServiceCategoryDetail from "./pages/service-category/service-category-detail";
 import ServiceCategoryCreate from "./pages/service-category/service-category-create";
 import ServiceCategoryEdit from "./pages/service-category/service-category-edit";
+import ServiceList from "./pages/service/service-list";
+import ServiceDetail from "./pages/service/service-detail";
+import ServiceCreate from "./pages/service/service-create";
+import ServiceEdit from "./pages/service/service-edit";
 
 
 function App() {
@@ -35,6 +39,10 @@ function App() {
 							<Route path="/service-category/create" element={<ServiceCategoryCreate />} />
 							<Route path="/service-category/:id" element={<ServiceCategoryDetail />} />
 							<Route path="/service-category/:id/edit" element={<ServiceCategoryEdit />} />
+							<Route path="/service" element={<ServiceList />} />
+							<Route path="/service/create" element={<ServiceCreate />} />
+							<Route path="/service/:id" element={<ServiceDetail />} />
+							<Route path="/service/:id/edit" element={<ServiceEdit />} />
 							</Route>
 						</Route>
 					</Routes>
