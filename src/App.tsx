@@ -30,6 +30,10 @@ import PartnerList from "./pages/partner/partner-list";
 import PartnerDetail from "./pages/partner/partner-detail";
 import PartnerCreate from "./pages/partner/partner-create";
 import PartnerEdit from "./pages/partner/partner-edit";
+import ReferanceList from "./pages/referance/referance-list";
+import ReferanceDetail from "./pages/referance/referance-detail";
+import ReferanceCreate from "./pages/referance/referance-create";
+import ReferanceEdit from "./pages/referance/referance-edit";
 
 
 function App() {
@@ -67,6 +71,10 @@ function App() {
 							<Route path="/partner/create" element={<PartnerCreate />} />
 							<Route path="/partner/:id" element={<PartnerDetail />} />
 							<Route path="/partner/:id/edit" element={<PartnerEdit />} />
+							<Route path="/referance" element={<ReferanceList />} />
+							<Route path="/referance/create" element={<ReferanceCreate />} />
+							<Route path="/referance/:id" element={<ReferanceDetail />} />
+							<Route path="/referance/:id/edit" element={<ReferanceEdit />} />
 							</Route>
 						</Route>
 					</Routes>
