@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useGetServiceStatsById, useUpdateServiceStats } from "@/hooks/use-service-stats";
+import { useGetPartnerById, useUpdatePartner } from "@/hooks/use-partners";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ArrowLeft, Save, BarChart3, Upload, X, Image as ImageIcon } from "lucide-react";
+import { ArrowLeft, Save, Handshake, Upload, X } from "lucide-react";
 import {
   Form,
   FormControl,
@@ -18,42 +18,41 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 
 const formSchema = z.object({
-  icon: z.any().optional(),
-  title: z.string().min(1, "Başlık gereklidir"),
-  numberValue: z.number().min(0, "Değer 0 veya daha büyük olmalıdır"),
+  logo: z.any().optional(),
+  name: z.string().min(1, "İsim gereklidir"),
+  orderIndex: z.number().min(0, "Sıra numarası 0 veya daha büyük olmalıdır"),
 });
 
 type FormValues = z.infer<typeof formSchema>;
 
-export default function ServiceStatsEdit() {
+export default function PartnerEdit() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { data, isLoading } = useGetServiceStatsById(Number(id));
-  const updateMutation = useUpdateServiceStats();
+  const { data, isLoading } = useGetPartnerById(Number(id));
+  const updateMutation = useUpdatePartner();
   const [preview, setPreview] = useState<string | null>(null);
-  const [iconFile, setIconFile] = useState<File | null>(null);
+  const [logoFile, setLogoFile] = useState<File | null>(null);
   const [fileName, setFileName] = useState<string>("");
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      icon: undefined,
-      title: "",
-      numberValue: 0,
+      logo: undefined,
+      name: "",
+      orderIndex: 0,
     },
   });
 
   useEffect(() => {
     if (data) {
       form.reset({
-        title: data.title,
-        numberValue: data.numberValue,
+        name: data.name,
+        orderIndex: data.orderIndex,
       });
-      // Mevcut ikon için preview oluştur (eğer iconName varsa)
-      if (data.iconName) {
-        // iconName muhtemelen bir URL path'i veya dosya adı
-        // Burada backend'in icon URL'ini kullanabilirsiniz
-        // setPreview(`/api/v1/uploads/${data.iconName}`);
+      if (data.logoUrl) {
+        const logoUrl = data.logoUrl.replace(/^https:/, 'http:');
+        setPreview(logoUrl);
+        setFileName(data.logoUrl.split('/').pop() || "");
       }
     }
   }, [data, form]);
@@ -61,7 +60,7 @@ export default function ServiceStatsEdit() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, onChange: (value: File | undefined) => void) => {
     const file = e.target.files?.[0];
     if (file) {
-      setIconFile(file);
+      setLogoFile(file);
       setFileName(file.name);
       onChange(file);
       const reader = new FileReader();
@@ -73,11 +72,10 @@ export default function ServiceStatsEdit() {
   };
 
   const handleClearFile = (onChange: (value: undefined) => void) => {
-    setIconFile(null);
+    setLogoFile(null);
     setPreview(null);
     setFileName("");
     onChange(undefined);
-    // Input'u temizle
     const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
     if (fileInput) {
       fileInput.value = "";
@@ -88,13 +86,13 @@ export default function ServiceStatsEdit() {
     if (id) {
       const requestData = {
         ...values,
-        icon: iconFile || data?.iconName || "",
+        logo: logoFile || (data?.logoUrl && !logoFile ? data.logoUrl : ""),
       };
       updateMutation.mutate(
         { id: Number(id), request: requestData },
         {
           onSuccess: () => {
-            navigate("/service-stats");
+            navigate("/partner");
           },
         }
       );
@@ -112,8 +110,8 @@ export default function ServiceStatsEdit() {
   if (!data) {
     return (
       <div className="flex flex-col items-center justify-center py-12">
-        <p className="text-muted-foreground mb-4">İstatistik bulunamadı.</p>
-        <Button variant="outline" onClick={() => navigate("/service-stats")}>
+        <p className="text-muted-foreground mb-4">Ortak bulunamadı.</p>
+        <Button variant="outline" onClick={() => navigate("/partner")}>
           <ArrowLeft className="h-4 w-4 mr-2" />
           Geri Dön
         </Button>
@@ -127,14 +125,14 @@ export default function ServiceStatsEdit() {
         <Button
           variant="ghost"
           size="icon"
-          onClick={() => navigate("/service-stats")}
+          onClick={() => navigate("/partner")}
         >
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">İstatistik Düzenle</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Ortak Düzenle</h1>
           <p className="text-muted-foreground">
-            Servis istatistiğini düzenleyin
+            Ortağı düzenleyin
           </p>
         </div>
       </div>
@@ -144,20 +142,20 @@ export default function ServiceStatsEdit() {
           <Card>
             <CardHeader>
               <div className="flex items-center gap-2">
-                <BarChart3 className="h-5 w-5 text-primary" />
-                <CardTitle>İstatistik Bilgileri</CardTitle>
+                <Handshake className="h-5 w-5 text-primary" />
+                <CardTitle>Ortak Bilgileri</CardTitle>
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
               <FormField
                 control={form.control}
-                name="icon"
+                name="logo"
                 render={({ field: { onChange, ...field } }) => (
                   <FormItem>
-                    <FormLabel>İkon</FormLabel>
+                    <FormLabel>Logo</FormLabel>
                     <FormControl>
                       <div className="space-y-4">
-                        {!preview && !data.iconName ? (
+                        {!preview && !data.logoUrl ? (
                           <div className="relative">
                             <Input
                               type="file"
@@ -166,72 +164,69 @@ export default function ServiceStatsEdit() {
                               className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                               {...field}
                             />
-                            <div className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-border rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors cursor-pointer group">
-                              <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                            <div className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-border rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors cursor-pointer group">
+                              <div className="flex flex-col items-center justify-center pt-6 pb-6">
                                 <Upload className="w-10 h-10 mb-3 text-muted-foreground group-hover:text-primary transition-colors" />
-                                <p className="mb-2 text-sm text-foreground">
-                                  <span className="font-semibold">Dosya seçmek için tıklayın</span> veya sürükleyip bırakın
+                                <p className="mb-2 text-sm font-semibold text-foreground">
+                                  Dosya seçmek için tıklayın
                                 </p>
-                                <p className="text-xs text-muted-foreground">PNG, JPG, SVG veya GIF (Max. 10MB)</p>
+                                <p className="text-xs text-muted-foreground">
+                                  PNG, JPG, SVG veya GIF (Max. 10MB)
+                                </p>
                               </div>
                             </div>
                           </div>
                         ) : (
                           <div className="space-y-3">
-                            <div className="flex items-center gap-4 p-4 rounded-lg border border-border bg-muted/30">
-                              <div className="flex items-center justify-center w-16 h-16 rounded-md border border-border bg-background overflow-hidden shrink-0">
-                                {preview ? (
-                                  <img
-                                    src={preview}
-                                    alt="Preview"
-                                    className="w-full h-full object-contain"
-                                  />
-                                ) : data.iconName ? (
-                                  <span className="text-xs font-medium text-muted-foreground text-center px-2">
-                                    {data.iconName.substring(0, 10)}
-                                  </span>
-                                ) : (
-                                  <ImageIcon className="w-8 h-8 text-muted-foreground" />
-                                )}
+                            <div className="relative group">
+                              <div className="flex items-center justify-center w-full h-48 rounded-lg border-2 border-border bg-muted/30 overflow-hidden">
+                                <img
+                                  src={preview || (data.logoUrl ? data.logoUrl.replace(/^https:/, 'http:') : '')}
+                                  alt={data.name}
+                                  className="w-full h-full object-contain p-4"
+                                />
                               </div>
-                              <div className="flex-1 min-w-0">
-                                <p className="text-sm font-medium text-foreground truncate">
-                                  {fileName || data.iconName || "Mevcut ikon"}
-                                </p>
-                                <p className="text-xs text-muted-foreground mt-1">
-                                  {preview ? "Yeni ikon seçildi" : "Mevcut ikon kullanılıyor"}
-                                </p>
-                              </div>
-                              <div className="flex items-center gap-2 shrink-0">
-                                <label className="cursor-pointer">
-                                  <Button
-                                    type="button"
-                                    variant="outline"
-                                    size="sm"
-                                    asChild
-                                  >
-                                    <span>
-                                      <Upload className="h-3 w-3 mr-1" />
-                                      Değiştir
-                                    </span>
-                                  </Button>
-                                  <Input
-                                    type="file"
-                                    accept="image/*"
-                                    onChange={(e) => handleFileChange(e, onChange)}
-                                    className="hidden"
-                                    {...field}
-                                  />
-                                </label>
+                              <div className="absolute top-4 right-4">
                                 <Button
                                   type="button"
-                                  variant="ghost"
+                                  variant="destructive"
                                   size="icon"
                                   onClick={() => handleClearFile(onChange)}
+                                  className="opacity-90 hover:opacity-100"
                                 >
                                   <X className="h-4 w-4" />
                                 </Button>
                               </div>
+                            </div>
+                            <div className="flex items-center gap-4 p-4 rounded-lg border border-border bg-muted/30">
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-medium text-foreground truncate">
+                                  {fileName || data.logoUrl?.split('/').pop() || "Mevcut logo"}
+                                </p>
+                                <p className="text-xs text-muted-foreground mt-1">
+                                  {logoFile ? "Yeni logo seçildi" : "Mevcut logo kullanılıyor"}
+                                </p>
+                              </div>
+                              <label className="cursor-pointer">
+                                <Button
+                                  type="button"
+                                  variant="outline"
+                                  size="sm"
+                                  asChild
+                                >
+                                  <span>
+                                    <Upload className="h-3 w-3 mr-1" />
+                                    Değiştir
+                                  </span>
+                                </Button>
+                                <Input
+                                  type="file"
+                                  accept="image/*"
+                                  onChange={(e) => handleFileChange(e, onChange)}
+                                  className="hidden"
+                                  {...field}
+                                />
+                              </label>
                             </div>
                           </div>
                         )}
@@ -239,7 +234,7 @@ export default function ServiceStatsEdit() {
                     </FormControl>
                     <FormMessage />
                     <p className="text-xs text-muted-foreground">
-                      Yeni ikon yüklemezseniz mevcut ikon kullanılır
+                      Yeni logo yüklemezseniz mevcut logo kullanılır
                     </p>
                   </FormItem>
                 )}
@@ -247,12 +242,12 @@ export default function ServiceStatsEdit() {
 
               <FormField
                 control={form.control}
-                name="title"
+                name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Başlık</FormLabel>
+                    <FormLabel>İsim</FormLabel>
                     <FormControl>
-                      <Input placeholder="İstatistik başlığını giriniz" {...field} />
+                      <Input placeholder="Ortak ismini giriniz" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -261,10 +256,10 @@ export default function ServiceStatsEdit() {
 
               <FormField
                 control={form.control}
-                name="numberValue"
+                name="orderIndex"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Değer</FormLabel>
+                    <FormLabel>Sıra Numarası</FormLabel>
                     <FormControl>
                       <Input
                         type="number"
@@ -276,7 +271,7 @@ export default function ServiceStatsEdit() {
                     </FormControl>
                     <FormMessage />
                     <p className="text-xs text-muted-foreground">
-                      İstatistik değerini giriniz
+                      Ortakların görüntülenme sırasını belirler
                     </p>
                   </FormItem>
                 )}
@@ -288,7 +283,7 @@ export default function ServiceStatsEdit() {
             <Button
               type="button"
               variant="outline"
-              onClick={() => navigate("/service-stats")}
+              onClick={() => navigate("/partner")}
             >
               İptal
             </Button>

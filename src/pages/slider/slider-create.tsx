@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useCreateServiceStats } from "@/hooks/use-service-stats";
+import { useCreateSlider } from "@/hooks/use-sliders";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ArrowLeft, Save, BarChart3, Upload, X } from "lucide-react";
+import { TinyMCEEditor } from "@/components/ui/tinymce-editor";
+import { ArrowLeft, Save, Images, Upload, X } from "lucide-react";
 import {
   Form,
   FormControl,
@@ -18,27 +19,29 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 
 const formSchema = z.object({
-  icon: z.any().refine((file) => file instanceof File || typeof file === "string", {
-    message: "İkon dosyası gereklidir",
+  image: z.any().refine((file) => file instanceof File || typeof file === "string", {
+    message: "Görsel dosyası gereklidir",
   }),
   title: z.string().min(1, "Başlık gereklidir"),
-  numberValue: z.number().min(0, "Değer 0 veya daha büyük olmalıdır"),
+  description: z.string().min(1, "Açıklama gereklidir"),
+  orderIndex: z.number().min(0, "Sıra numarası 0 veya daha büyük olmalıdır"),
 });
 
 type FormValues = z.infer<typeof formSchema>;
 
-export default function ServiceStatsCreate() {
+export default function SliderCreate() {
   const navigate = useNavigate();
-  const createMutation = useCreateServiceStats();
+  const createMutation = useCreateSlider();
   const [preview, setPreview] = useState<string | null>(null);
   const [fileName, setFileName] = useState<string>("");
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      icon: undefined,
+      image: undefined,
       title: "",
-      numberValue: 0,
+      description: "",
+      orderIndex: 0,
     },
   });
 
@@ -59,7 +62,6 @@ export default function ServiceStatsCreate() {
     onChange(undefined);
     setPreview(null);
     setFileName("");
-    // Input'u temizle
     const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
     if (fileInput) {
       fileInput.value = "";
@@ -69,7 +71,7 @@ export default function ServiceStatsCreate() {
   const onSubmit = (values: FormValues) => {
     createMutation.mutate(values, {
       onSuccess: () => {
-        navigate("/service-stats");
+        navigate("/slider");
       },
     });
   };
@@ -80,14 +82,14 @@ export default function ServiceStatsCreate() {
         <Button
           variant="ghost"
           size="icon"
-          onClick={() => navigate("/service-stats")}
+          onClick={() => navigate("/slider")}
         >
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Yeni Servis İstatistiği</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Yeni Slider</h1>
           <p className="text-muted-foreground">
-            Yeni bir servis istatistiği oluşturun
+            Yeni bir slider oluşturun
           </p>
         </div>
       </div>
@@ -97,17 +99,17 @@ export default function ServiceStatsCreate() {
           <Card>
             <CardHeader>
               <div className="flex items-center gap-2">
-                <BarChart3 className="h-5 w-5 text-primary" />
-                <CardTitle>İstatistik Bilgileri</CardTitle>
+                <Images className="h-5 w-5 text-primary" />
+                <CardTitle>Slider Bilgileri</CardTitle>
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
               <FormField
                 control={form.control}
-                name="icon"
+                name="image"
                 render={({ field: { onChange, value, ...field } }) => (
                   <FormItem>
-                    <FormLabel>İkon</FormLabel>
+                    <FormLabel>Görsel</FormLabel>
                     <FormControl>
                       <div className="space-y-4">
                         {!preview ? (
@@ -119,43 +121,52 @@ export default function ServiceStatsCreate() {
                               className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                               {...field}
                             />
-                            <div className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-border rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors cursor-pointer group">
-                              <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                                <Upload className="w-10 h-10 mb-3 text-muted-foreground group-hover:text-primary transition-colors" />
-                                <p className="mb-2 text-sm text-foreground">
-                                  <span className="font-semibold">Dosya seçmek için tıklayın</span> veya sürükleyip bırakın
+                            <div className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-border rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors cursor-pointer group">
+                              <div className="flex flex-col items-center justify-center pt-8 pb-8">
+                                <Upload className="w-12 h-12 mb-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                                <p className="mb-2 text-sm font-semibold text-foreground">
+                                  Dosya seçmek için tıklayın
                                 </p>
-                                <p className="text-xs text-muted-foreground">PNG, JPG, SVG veya GIF (Max. 10MB)</p>
+                                <p className="text-xs text-muted-foreground">
+                                  PNG, JPG, SVG veya GIF (Max. 10MB)
+                                </p>
+                                <p className="text-xs text-muted-foreground mt-1">
+                                  Slider görseli için önerilen boyut: 1920x1080
+                                </p>
                               </div>
                             </div>
                           </div>
                         ) : (
                           <div className="space-y-3">
-                            <div className="flex items-center gap-4 p-4 rounded-lg border border-border bg-muted/30">
-                              <div className="flex items-center justify-center w-16 h-16 rounded-md border border-border bg-background overflow-hidden shrink-0">
+                            <div className="relative group">
+                              <div className="flex items-center justify-center w-full h-64 rounded-lg border-2 border-border bg-muted/30 overflow-hidden">
                                 <img
                                   src={preview}
                                   alt="Preview"
                                   className="w-full h-full object-contain"
                                 />
                               </div>
+                              <div className="absolute top-4 right-4">
+                                <Button
+                                  type="button"
+                                  variant="destructive"
+                                  size="icon"
+                                  onClick={() => handleClearFile(onChange)}
+                                  className="opacity-90 hover:opacity-100"
+                                >
+                                  <X className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-4 p-4 rounded-lg border border-border bg-muted/30">
                               <div className="flex-1 min-w-0">
                                 <p className="text-sm font-medium text-foreground truncate">
                                   {fileName || "Seçilen dosya"}
                                 </p>
                                 <p className="text-xs text-muted-foreground mt-1">
-                                  İkon başarıyla seçildi
+                                  Görsel başarıyla seçildi
                                 </p>
                               </div>
-                              <Button
-                                type="button"
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => handleClearFile(onChange)}
-                                className="shrink-0"
-                              >
-                                <X className="h-4 w-4" />
-                              </Button>
                             </div>
                           </div>
                         )}
@@ -173,7 +184,7 @@ export default function ServiceStatsCreate() {
                   <FormItem>
                     <FormLabel>Başlık</FormLabel>
                     <FormControl>
-                      <Input placeholder="İstatistik başlığını giriniz" {...field} />
+                      <Input placeholder="Slider başlığını giriniz" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -182,10 +193,27 @@ export default function ServiceStatsCreate() {
 
               <FormField
                 control={form.control}
-                name="numberValue"
+                name="description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Değer</FormLabel>
+                    <FormLabel>Açıklama</FormLabel>
+                    <FormControl>
+                      <TinyMCEEditor
+                        value={field.value}
+                        onChange={field.onChange}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="orderIndex"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Sıra Numarası</FormLabel>
                     <FormControl>
                       <Input
                         type="number"
@@ -196,7 +224,7 @@ export default function ServiceStatsCreate() {
                     </FormControl>
                     <FormMessage />
                     <p className="text-xs text-muted-foreground">
-                      İstatistik değerini giriniz
+                      Slider'ların görüntülenme sırasını belirler
                     </p>
                   </FormItem>
                 )}
@@ -208,7 +236,7 @@ export default function ServiceStatsCreate() {
             <Button
               type="button"
               variant="outline"
-              onClick={() => navigate("/service-stats")}
+              onClick={() => navigate("/slider")}
             >
               İptal
             </Button>

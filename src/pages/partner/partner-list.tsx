@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  useServiceCategory,
-  useDeleteServiceCategory,
-} from "@/hooks/use-category-service";
+  usePartner,
+  useDeletePartner,
+} from "@/hooks/use-partners";
 import {
   Table,
   TableBody,
@@ -31,11 +31,11 @@ import {
   MoreVertical,
   ChevronLeft,
   ChevronRight,
-  Layers,
+  Handshake,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
-export default function ServiceCategoryList() {
+export default function PartnerList() {
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(0);
@@ -45,8 +45,8 @@ export default function ServiceCategoryList() {
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [selectedItemName, setSelectedItemName] = useState<string>("");
 
-  const { data, isLoading } = useServiceCategory(search, page, size, sort);
-  const deleteMutation = useDeleteServiceCategory();
+  const { data, isLoading } = usePartner(search, page, size, sort);
+  const deleteMutation = useDeletePartner();
 
   const handleDelete = (id: number, itemName: string) => {
     setSelectedId(id);
@@ -81,14 +81,14 @@ export default function ServiceCategoryList() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Servis Kategorileri</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Ortaklar</h1>
           <p className="text-muted-foreground">
-            Servis kategorilerini yönetin ve düzenleyin
+            Ortakları yönetin ve düzenleyin
           </p>
         </div>
-        <Button onClick={() => navigate("/service-category/create")}>
+        <Button onClick={() => navigate("/partner/create")}>
           <Plus className="h-4 w-4 mr-2" />
-          Yeni Kategori Ekle
+          Yeni Ortak Ekle
         </Button>
       </div>
 
@@ -98,7 +98,7 @@ export default function ServiceCategoryList() {
             <div className="relative flex-1 max-w-sm">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
-                placeholder="Kategori ara..."
+                placeholder="Ortak ara..."
                 value={search}
                 onChange={(e) => handleSearch(e.target.value)}
                 className="pl-9"
@@ -113,16 +113,16 @@ export default function ServiceCategoryList() {
             </div>
           ) : !data || data.content.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12">
-              <Layers className="h-12 w-12 text-muted-foreground mb-4 opacity-50" />
+              <Handshake className="h-12 w-12 text-muted-foreground mb-4 opacity-50" />
               <p className="text-muted-foreground mb-4">
-                Henüz servis kategorisi bulunmamaktadır.
+                Henüz ortak bulunmamaktadır.
               </p>
               <Button
                 variant="outline"
-                onClick={() => navigate("/service-category/create")}
+                onClick={() => navigate("/partner/create")}
               >
                 <Plus className="h-4 w-4 mr-2" />
-                İlk Kategoriyi Oluştur
+                İlk Ortağı Oluştur
               </Button>
             </div>
           ) : (
@@ -132,8 +132,8 @@ export default function ServiceCategoryList() {
                   <TableHeader>
                     <TableRow>
                       <TableHead>ID</TableHead>
-                      <TableHead>Kategori Adı</TableHead>
-                      <TableHead>Açıklama</TableHead>
+                      <TableHead>Logo</TableHead>
+                      <TableHead>İsim</TableHead>
                       <TableHead>Sıra</TableHead>
                       <TableHead className="text-right">İşlemler</TableHead>
                     </TableRow>
@@ -144,11 +144,27 @@ export default function ServiceCategoryList() {
                         <TableCell>
                           <Badge variant="outline">{item.id}</Badge>
                         </TableCell>
+                        <TableCell>
+                          {item.logoUrl ? (
+                            <div className="flex items-center justify-center w-16 h-16 rounded-md overflow-hidden bg-muted border border-border">
+                              <img
+                                src={item.logoUrl.replace(/^https:/, 'http:')}
+                                alt={item.name}
+                                className="w-full h-full object-contain p-2"
+                                onError={(e) => {
+                                  const target = e.target as HTMLImageElement;
+                                  target.style.display = 'none';
+                                }}
+                              />
+                            </div>
+                          ) : (
+                            <div className="w-16 h-16 rounded-md bg-muted/50 border border-border flex items-center justify-center">
+                              <Handshake className="h-4 w-4 text-muted-foreground opacity-50" />
+                            </div>
+                          )}
+                        </TableCell>
                         <TableCell className="font-medium">
                           {item.name}
-                        </TableCell>
-                        <TableCell className="max-w-md truncate text-muted-foreground">
-                          {item.description}
                         </TableCell>
                         <TableCell>
                           <Badge variant="secondary">{item.orderIndex}</Badge>
@@ -163,7 +179,7 @@ export default function ServiceCategoryList() {
                             <DropdownMenuContent align="end">
                               <DropdownMenuItem
                                 onClick={() =>
-                                  navigate(`/service-category/${item.id}`)
+                                  navigate(`/partner/${item.id}`)
                                 }
                               >
                                 <Eye className="h-4 w-4 mr-2" />
@@ -171,7 +187,7 @@ export default function ServiceCategoryList() {
                               </DropdownMenuItem>
                               <DropdownMenuItem
                                 onClick={() =>
-                                  navigate(`/service-category/${item.id}/edit`)
+                                  navigate(`/partner/${item.id}/edit`)
                                 }
                               >
                                 <Edit className="h-4 w-4 mr-2" />

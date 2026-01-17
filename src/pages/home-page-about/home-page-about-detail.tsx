@@ -4,7 +4,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Edit } from "lucide-react";
-import { TinyMCEEditor } from "@/components/ui/tinymce-editor";
 
 export default function HomePageAboutDetail() {
   const { id } = useParams<{ id: string }>();

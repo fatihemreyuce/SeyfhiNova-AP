@@ -26,10 +26,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 
 const formSchema = z.object({
-  categoryId: z.coerce.number().min(1, "Kategori seçimi gereklidir"),
+  categoryId: z.number().min(1, "Kategori seçimi gereklidir"),
   title: z.string().min(1, "Başlık gereklidir"),
   description: z.string().min(1, "Açıklama gereklidir"),
-  orderIndex: z.coerce.number().min(0, "Sıra numarası 0 veya daha büyük olmalıdır"),
+  orderIndex: z.number().min(0, "Sıra numarası 0 veya daha büyük olmalıdır"),
 });
 
 type FormValues = z.infer<typeof formSchema>;

@@ -2,7 +2,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import DarkModeToggle from "@/components/dark-mode-toggle";
 import { useLoginState } from "@/hooks/use-login-state";
-import { LayoutDashboard, LogOut, Sparkles, FileText, Layers, Briefcase, BarChart3 } from "lucide-react";
+import { LayoutDashboard, LogOut, Sparkles, FileText, Layers, Briefcase, BarChart3, Images, Handshake } from "lucide-react";
 
 interface NavItem {
 	to: string;
@@ -40,6 +40,18 @@ const navigationItems: NavItem[] = [
 		to: "/service-stats",
 		label: "Servis İstatistikleri",
 		icon: BarChart3,
+		end: false,
+	},
+	{
+		to: "/slider",
+		label: "Sliderlar",
+		icon: Images,
+		end: false,
+	},
+	{
+		to: "/partner",
+		label: "Ortaklar",
+		icon: Handshake,
 		end: false,
 	},
 ];

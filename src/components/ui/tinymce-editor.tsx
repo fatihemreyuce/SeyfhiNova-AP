@@ -23,7 +23,7 @@ export function TinyMCEEditor({
   return (
     <Editor
       tinymceScriptSrc="/tinymce/tinymce.min.js"
-      onInit={(evt, editor) => (editorRef.current = editor)}
+      onInit={(_evt, editor) => (editorRef.current = editor)}
       value={value}
       onEditorChange={(content) => onChange(content)}
       disabled={disabled}

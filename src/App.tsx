@@ -22,6 +22,14 @@ import ServiceStatsList from "./pages/service-stats/service-stats-list";
 import ServiceStatsDetail from "./pages/service-stats/service-stats-detail";
 import ServiceStatsCreate from "./pages/service-stats/service-stats-create";
 import ServiceStatsEdit from "./pages/service-stats/service-stats-edit";
+import SliderList from "./pages/slider/slider-list";
+import SliderDetail from "./pages/slider/slider-detail";
+import SliderCreate from "./pages/slider/slider-create";
+import SliderEdit from "./pages/slider/slider-edit";
+import PartnerList from "./pages/partner/partner-list";
+import PartnerDetail from "./pages/partner/partner-detail";
+import PartnerCreate from "./pages/partner/partner-create";
+import PartnerEdit from "./pages/partner/partner-edit";
 
 
 function App() {
@@ -51,6 +59,14 @@ function App() {
 							<Route path="/service-stats/create" element={<ServiceStatsCreate />} />
 							<Route path="/service-stats/:id" element={<ServiceStatsDetail />} />
 							<Route path="/service-stats/:id/edit" element={<ServiceStatsEdit />} />
+							<Route path="/slider" element={<SliderList />} />
+							<Route path="/slider/create" element={<SliderCreate />} />
+							<Route path="/slider/:id" element={<SliderDetail />} />
+							<Route path="/slider/:id/edit" element={<SliderEdit />} />
+							<Route path="/partner" element={<PartnerList />} />
+							<Route path="/partner/create" element={<PartnerCreate />} />
+							<Route path="/partner/:id" element={<PartnerDetail />} />
+							<Route path="/partner/:id/edit" element={<PartnerEdit />} />
 							</Route>
 						</Route>
 					</Routes>

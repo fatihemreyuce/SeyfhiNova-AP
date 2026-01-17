@@ -20,7 +20,7 @@ import * as z from "zod";
 const formSchema = z.object({
   name: z.string().min(1, "Kategori adı gereklidir"),
   description: z.string().min(1, "Açıklama gereklidir"),
-  orderIndex: z.coerce.number().min(0, "Sıra numarası 0 veya daha büyük olmalıdır"),
+  orderIndex: z.number().min(0, "Sıra numarası 0 veya daha büyük olmalıdır"),
 });
 
 type FormValues = z.infer<typeof formSchema>;
