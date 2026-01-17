@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Mail, Lock, Eye, EyeOff, LogIn } from "lucide-react";
+import { Eye, EyeOff, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useLoginState } from "@/hooks/use-login-state";
@@ -48,44 +47,57 @@ export default function LoginPage() {
 	const isFormDisabled = isLoading || isSubmitting;
 
 	return (
-		<div className="min-h-screen w-full bg-gradient-to-b from-background to-muted/30 flex items-center justify-center px-4 py-10">
-			<Card className="w-full max-w-md border border-border/60 shadow-lg">
-				<CardHeader className="space-y-2 text-center">
-					<CardTitle className="text-3xl font-bold">Hoş Geldiniz</CardTitle>
-					<CardDescription className="text-base">
-						Hesabınıza giriş yapmak için devam edin
-					</CardDescription>
-				</CardHeader>
-				<form onSubmit={handleSubmit}>
-					<CardContent className="space-y-5">
+		<div className="min-h-screen w-full bg-muted/30 flex items-center justify-center">
+			{/* Login Form */}
+			<div className="w-full max-w-md px-6 py-12">
+				<div className="w-full max-w-md">
+					{/* Logo and Brand */}
+					<div className="flex items-center gap-3 mb-8">
+						<div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-primary/60 shadow-lg shadow-primary/20">
+							<Sparkles className="h-5 w-5 text-primary-foreground" />
+						</div>
+						<div className="flex flex-col">
+							<span className="text-xl font-bold tracking-tight text-foreground">Seyfhi</span>
+							<span className="text-xs text-muted-foreground font-medium">Yatırım</span>
+						</div>
+					</div>
+
+					{/* Welcome Section */}
+					<div className="mb-8">
+						<h1 className="text-3xl font-bold tracking-tight text-foreground mb-2">
+							Hoş geldiniz
+						</h1>
+						<p className="text-sm text-muted-foreground">
+							Seyfhi Yatırım hesabınıza giriş yapın
+						</p>
+					</div>
+
+					{/* Login Form */}
+					<form onSubmit={handleSubmit} className="space-y-6">
+						{/* Email Field */}
 						<div className="space-y-2">
-							<Label htmlFor="email" className="text-sm font-medium flex items-center gap-2">
-								<Mail className="h-4 w-4" />
+							<Label htmlFor="email" className="text-sm font-medium text-foreground">
 								E-posta
 							</Label>
-							<div className="relative">
-								<Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-								<Input
-									id="email"
-									type="email"
-									placeholder="ornek@email.com"
-									autoComplete="email"
-									value={email}
-									onChange={(e) => setEmail(e.target.value)}
-									required
-									disabled={isFormDisabled}
-									className="pl-10"
-								/>
-							</div>
+							<Input
+								id="email"
+								type="email"
+								placeholder="ornek@email.com"
+								autoComplete="email"
+								value={email}
+								onChange={(e) => setEmail(e.target.value)}
+								required
+								disabled={isFormDisabled}
+								className="h-11 border-border/60"
+							/>
 						</div>
 
+						{/* Password Field */}
 						<div className="space-y-2">
-							<Label htmlFor="password" className="text-sm font-medium flex items-center gap-2">
-								<Lock className="h-4 w-4" />
+							<Label htmlFor="password" className="text-sm font-medium text-foreground">
 								Şifre
 							</Label>
 							<div className="relative">
-								<Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
 								<Input
 									id="password"
 									type={showPassword ? "text" : "password"}
@@ -95,7 +107,7 @@ export default function LoginPage() {
 									onChange={(e) => setPassword(e.target.value)}
 									required
 									disabled={isFormDisabled}
-									className="pl-10 pr-10"
+									className="pl-10 pr-10 h-11 border-border/60"
 								/>
 								<button
 									type="button"
@@ -116,15 +128,30 @@ export default function LoginPage() {
 						{error && (
 							<p className="text-sm text-destructive mt-1">{error}</p>
 						)}
-					</CardContent>
-					<CardFooter className="flex flex-col gap-3">
-						<Button type="submit" className="w-full" disabled={isFormDisabled} aria-busy={isFormDisabled}>
-							<LogIn className="h-4 w-4" />
+
+						{/* Login Button */}
+						<Button 
+							type="submit" 
+							className="w-full h-11 text-base font-semibold" 
+							disabled={isFormDisabled} 
+							aria-busy={isFormDisabled}
+						>
 							{isFormDisabled ? "Giriş yapılıyor..." : "Giriş Yap"}
 						</Button>
-					</CardFooter>
-				</form>
-			</Card>
+					</form>
+
+					{/* Footer */}
+					<div className="mt-8 pt-6 border-t border-border/60">
+						<p className="text-xs text-center text-muted-foreground">
+							Devam ederek,{" "}
+							<a href="#" className="text-primary hover:underline">Kullanım Koşulları</a>
+							{" "}ve{" "}
+							<a href="#" className="text-primary hover:underline">Gizlilik Politikası</a>
+							{" "}mızı kabul etmiş olursunuz.
+						</p>
+					</div>
+				</div>
+			</div>
 		</div>
 	);
 }

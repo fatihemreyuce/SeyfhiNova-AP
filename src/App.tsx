@@ -34,6 +34,14 @@ import ReferanceList from "./pages/referance/referance-list";
 import ReferanceDetail from "./pages/referance/referance-detail";
 import ReferanceCreate from "./pages/referance/referance-create";
 import ReferanceEdit from "./pages/referance/referance-edit";
+import CircularList from "./pages/circular/circular-list";
+import CircularDetail from "./pages/circular/circular-detail";
+import CircularCreate from "./pages/circular/circular-create";
+import CircularEdit from "./pages/circular/circular-edit";
+import FaqList from "./pages/faq/faq-list";
+import FaqDetail from "./pages/faq/faq-detail";
+import FaqCreate from "./pages/faq/faq-create";
+import FaqEdit from "./pages/faq/faq-edit";
 
 
 function App() {
@@ -75,6 +83,14 @@ function App() {
 							<Route path="/referance/create" element={<ReferanceCreate />} />
 							<Route path="/referance/:id" element={<ReferanceDetail />} />
 							<Route path="/referance/:id/edit" element={<ReferanceEdit />} />
+							<Route path="/circular" element={<CircularList />} />
+							<Route path="/circular/create" element={<CircularCreate />} />
+							<Route path="/circular/:id" element={<CircularDetail />} />
+							<Route path="/circular/:id/edit" element={<CircularEdit />} />
+							<Route path="/faq" element={<FaqList />} />
+							<Route path="/faq/create" element={<FaqCreate />} />
+							<Route path="/faq/:id" element={<FaqDetail />} />
+							<Route path="/faq/:id/edit" element={<FaqEdit />} />
 							</Route>
 						</Route>
 					</Routes>
