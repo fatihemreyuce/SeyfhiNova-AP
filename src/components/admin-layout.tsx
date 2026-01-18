@@ -5,7 +5,7 @@ export default function AdminLayout() {
   return (
     <div className="min-h-screen bg-background text-foreground transition-colors duration-300">
       <Sidebar />
-      <div className="pl-64 min-h-screen">
+      <div className="pl-64 min-h-screen gradient-bg">
         <main className="min-h-screen p-6">
           <Outlet />
         </main>

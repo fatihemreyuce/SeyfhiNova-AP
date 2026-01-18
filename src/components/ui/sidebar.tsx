@@ -2,7 +2,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import DarkModeToggle from "@/components/dark-mode-toggle";
 import { useLoginState } from "@/hooks/use-login-state";
-import { LayoutDashboard, LogOut, Sparkles, FileText, Layers, Briefcase, BarChart3, Images, Handshake, Award, ScrollText, HelpCircle, Bell, UserPlus } from "lucide-react";
+import { LayoutDashboard, LogOut, Sparkles, FileText, Layers, Briefcase, BarChart3, Images, Handshake, Award, ScrollText, HelpCircle, Bell, UserPlus, Building2 } from "lucide-react";
 
 interface NavItem {
 	to: string;
@@ -84,6 +84,12 @@ const navigationItems: NavItem[] = [
 		icon: UserPlus,
 		end: false,
 	},
+	{
+		to: "/official-page",
+		label: "Resmi Sayfalar",
+		icon: Building2,
+		end: false,
+	},
 ];
 
 export default function Sidebar() {
@@ -100,7 +106,7 @@ export default function Sidebar() {
 	};
 
 	return (
-		<aside className="fixed left-0 top-0 z-40 h-screen w-64 border-r border-seyfhi-accent bg-seyfhi-primary">
+		<aside className="fixed left-0 top-0 z-40 h-screen w-64 border-r border-seyfhi-accent bg-seyfhi-primary gradient-sidebar">
 			{/* Header */}
 			<div className="flex h-20 items-center justify-between px-6 border-b border-seyfhi-accent/20">
 				<div className="flex items-center gap-3">
@@ -108,7 +114,7 @@ export default function Sidebar() {
 						<Sparkles className="h-5 w-5 text-white" />
 					</div>
 					<div className="flex flex-col">
-						<span className="text-base font-bold tracking-tight text-white">Seyfhi Nova</span>
+						<span className="text-base font-bold tracking-tight text-white">Seyfhi</span>
 						<span className="text-xs text-white/70 font-medium">Yatırım</span>
 					</div>
 				</div>

@@ -13,7 +13,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { DeleteModal } from "@/components/ui/delete-modal";
 import {
   DropdownMenu,
@@ -86,9 +85,8 @@ export default function NotificationSubList() {
         </Button>
       </div>
 
-      <Card>
-        <CardContent className="pt-6">
-          {isLoading ? (
+      <div>
+        {isLoading ? (
             <div className="flex items-center justify-center py-12">
               <p className="text-muted-foreground">Yükleniyor...</p>
             </div>
@@ -113,7 +111,8 @@ export default function NotificationSubList() {
                   <TableHeader>
                     <TableRow>
                       <TableHead>ID</TableHead>
-                      <TableHead>Ad Soyad</TableHead>
+                      <TableHead>Ad</TableHead>
+                      <TableHead>Soyad</TableHead>
                       <TableHead>E-posta</TableHead>
                       <TableHead className="text-right">İşlemler</TableHead>
                     </TableRow>
@@ -125,7 +124,10 @@ export default function NotificationSubList() {
                           <Badge variant="outline">{item.id}</Badge>
                         </TableCell>
                         <TableCell className="font-medium">
-                          {item.name} {item.surname}
+                          {item.name}
+                        </TableCell>
+                        <TableCell className="font-medium">
+                          {item.surname}
                         </TableCell>
                         <TableCell>
                           <div className="flex items-center gap-2">
@@ -195,8 +197,7 @@ export default function NotificationSubList() {
               )}
             </>
           )}
-        </CardContent>
-      </Card>
+      </div>
 
       <DeleteModal
         open={deleteModalOpen}

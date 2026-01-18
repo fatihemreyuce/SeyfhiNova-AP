@@ -15,7 +15,6 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { DeleteModal } from "@/components/ui/delete-modal";
 import {
   DropdownMenu,
@@ -103,9 +102,8 @@ export default function NotificationList() {
         </Button>
       </div>
 
-      <Card>
-        <CardContent className="pt-6">
-          {isLoading ? (
+      <div>
+        {isLoading ? (
             <div className="flex items-center justify-center py-12">
               <p className="text-muted-foreground">Yükleniyor...</p>
             </div>
@@ -226,8 +224,7 @@ export default function NotificationList() {
               )}
             </>
           )}
-        </CardContent>
-      </Card>
+      </div>
 
       <DeleteModal
         open={deleteModalOpen}

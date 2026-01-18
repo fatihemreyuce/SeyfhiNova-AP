@@ -14,7 +14,6 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { DeleteModal } from "@/components/ui/delete-modal";
 import {
   DropdownMenu,
@@ -91,22 +90,20 @@ export default function HomePageAboutList() {
         </Button>
       </div>
 
-      <Card>
-        <CardHeader>
-          <div className="flex items-center gap-4">
-            <div className="relative flex-1 max-w-sm">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                placeholder="Ara..."
-                value={search}
-                onChange={(e) => handleSearch(e.target.value)}
-                className="pl-9"
-              />
-            </div>
+      <div className="space-y-4">
+        <div className="flex items-center gap-4">
+          <div className="relative flex-1 max-w-sm">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              placeholder="Ara..."
+              value={search}
+              onChange={(e) => handleSearch(e.target.value)}
+              className="pl-9"
+            />
           </div>
-        </CardHeader>
-        <CardContent>
-          {isLoading ? (
+        </div>
+
+        {isLoading ? (
             <div className="flex items-center justify-center py-12">
               <p className="text-muted-foreground">Yükleniyor...</p>
             </div>
@@ -131,7 +128,9 @@ export default function HomePageAboutList() {
                     <TableRow>
                       <TableHead>ID</TableHead>
                       <TableHead>Sol Başlık</TableHead>
+                      <TableHead>Sol Açıklama</TableHead>
                       <TableHead>Sağ Başlık</TableHead>
+                      <TableHead>Sağ Açıklama</TableHead>
                       <TableHead className="text-right">İşlemler</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -144,7 +143,19 @@ export default function HomePageAboutList() {
                         <TableCell className="font-medium">
                           {item.leftTitle}
                         </TableCell>
-                        <TableCell>{item.rightTitle}</TableCell>
+                        <TableCell className="max-w-md">
+                          <p className="text-sm text-muted-foreground truncate">
+                            {item.leftDescription ? item.leftDescription.replace(/<[^>]*>/g, "").substring(0, 80) + "..." : "-"}
+                          </p>
+                        </TableCell>
+                        <TableCell className="font-medium">
+                          {item.rightTitle}
+                        </TableCell>
+                        <TableCell className="max-w-md">
+                          <p className="text-sm text-muted-foreground truncate">
+                            {item.rightDescription ? item.rightDescription.replace(/<[^>]*>/g, "").substring(0, 80) + "..." : "-"}
+                          </p>
+                        </TableCell>
                         <TableCell className="text-right">
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
@@ -218,8 +229,7 @@ export default function HomePageAboutList() {
               )}
             </>
           )}
-        </CardContent>
-      </Card>
+      </div>
 
       <DeleteModal
         open={deleteModalOpen}

@@ -100,6 +100,15 @@
   }
   body {
     @apply bg-seyfhi-background text-seyfhi-text-dark;
+    /* Light mode gradient background - daha belirgin */
+    background-image: linear-gradient(135deg, hsl(200 55% 96%) 0%, hsl(205 50% 90%) 25%, hsl(200 52% 94%) 50%, hsl(208 48% 92%) 75%, hsl(200 55% 96%) 100%);
+    background-attachment: fixed;
+  }
+  
+  .dark body {
+    /* Dark mode gradient background */
+    background-image: linear-gradient(135deg, hsl(var(--seyfhi-background)) 0%, hsl(208 60% 10%) 50%, hsl(208 55% 9%) 100%);
+    background-attachment: fixed;
   }
   
   /* Seyfhi specific utilities */
@@ -117,5 +126,91 @@
   
   .seyfhi-text-secondary {
     @apply text-seyfhi-text-gray;
+  }
+  
+  /* Gradient backgrounds */
+  .gradient-bg {
+    background: linear-gradient(135deg, hsl(200 55% 96%) 0%, hsl(205 50% 90%) 25%, hsl(200 52% 94%) 50%, hsl(208 48% 92%) 75%, hsl(200 55% 96%) 100%);
+    background-attachment: fixed;
+  }
+  
+  .dark .gradient-bg {
+    background: linear-gradient(135deg, hsl(var(--seyfhi-background)) 0%, hsl(208 60% 10%) 50%, hsl(208 55% 9%) 100%);
+    background-attachment: fixed;
+  }
+  
+  .gradient-sidebar {
+    background: linear-gradient(180deg, hsl(var(--seyfhi-primary)) 0%, hsl(208 60% 11%) 50%, hsl(208 60% 12%) 100%);
+  }
+  
+  .dark .gradient-sidebar {
+    background: linear-gradient(180deg, hsl(var(--seyfhi-primary)) 0%, hsl(208 60% 11%) 50%, hsl(208 60% 12%) 100%);
+  }
+  
+  .gradient-login {
+    background: linear-gradient(135deg, hsl(200 55% 98%) 0%, hsl(205 50% 92%) 25%, hsl(200 52% 95%) 50%, hsl(208 48% 93%) 75%, hsl(200 55% 98%) 100%);
+    background-attachment: fixed;
+  }
+  
+  .dark .gradient-login {
+    background: linear-gradient(135deg, hsl(208 60% 8%) 0%, hsl(208 60% 10%) 50%, hsl(208 55% 12%) 100%);
+    background-attachment: fixed;
+  }
+  
+  /* Dark mode card enhancements */
+  .dark .rounded-xl {
+    @apply border-seyfhi-accent/50;
+    background: linear-gradient(145deg, hsl(var(--seyfhi-surface)) 0%, hsl(0 0% 12%) 100%);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2),
+      0 0 0 1px rgba(255, 255, 255, 0.05);
+  }
+  
+  .dark .rounded-xl:hover {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.3),
+      0 0 0 1px rgba(255, 255, 255, 0.1);
+    transition: box-shadow 0.3s ease;
+  }
+  
+  /* Dark mode table enhancements */
+  .dark table {
+    @apply border-seyfhi-accent/30;
+  }
+  
+  .dark thead {
+    background: linear-gradient(180deg, hsl(0 0% 15%) 0%, hsl(0 0% 12%) 100%);
+  }
+  
+  .dark tbody tr {
+    @apply border-seyfhi-accent/20;
+    transition: all 0.2s ease;
+  }
+  
+  .dark tbody tr:hover {
+    background: linear-gradient(90deg, hsl(0 0% 13%) 0%, hsl(0 0% 16%) 50%, hsl(0 0% 13%) 100%);
+    transform: translateX(2px);
+  }
+  
+  .dark tbody tr:nth-child(even) {
+    background: hsl(0 0% 11%);
+  }
+  
+  .dark tbody tr:nth-child(even):hover {
+    background: linear-gradient(90deg, hsl(0 0% 14%) 0%, hsl(0 0% 17%) 50%, hsl(0 0% 14%) 100%);
+  }
+  
+  /* Dark mode muted backgrounds for better contrast */
+  .dark .bg-muted\/30 {
+    background-color: hsl(0 0% 13% / 0.5);
+    @apply border-seyfhi-accent/30;
+  }
+  
+  /* Hide scrollbar but keep scrolling functionality */
+  .scrollbar-hide {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;  /* Chrome, Safari and Opera */
   }
 }

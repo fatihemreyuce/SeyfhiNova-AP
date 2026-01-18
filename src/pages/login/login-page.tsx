@@ -47,7 +47,7 @@ export default function LoginPage() {
 	const isFormDisabled = isLoading || isSubmitting;
 
 	return (
-		<div className="min-h-screen w-full bg-muted/30 flex items-center justify-center">
+		<div className="min-h-screen w-full gradient-login flex items-center justify-center">
 			{/* Login Form */}
 			<div className="w-full max-w-md px-6 py-12">
 				<div className="w-full max-w-md">

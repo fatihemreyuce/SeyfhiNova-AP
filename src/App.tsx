@@ -49,6 +49,8 @@ import NotificationEdit from "./pages/notification/notification-edit";
 import NotificationSubList from "./pages/notification-sub/notification-sub-list";
 import NotificationSubDetail from "./pages/notification-sub/notification-sub-detail";
 import NotificationSubCreate from "./pages/notification-sub/notification-sub-create";
+import OfficialPageDetail from "./pages/official-page/official-page-detail";
+import OfficialPageEdit from "./pages/official-page/official-page-edit";
 
 
 function App() {
@@ -105,6 +107,8 @@ function App() {
 							<Route path="/notification-sub" element={<NotificationSubList />} />
 							<Route path="/notification-sub/create" element={<NotificationSubCreate />} />
 							<Route path="/notification-sub/:id" element={<NotificationSubDetail />} />
+							<Route path="/official-page" element={<OfficialPageDetail />} />
+							<Route path="/official-page/edit" element={<OfficialPageEdit />} />
 							</Route>
 						</Route>
 					</Routes>

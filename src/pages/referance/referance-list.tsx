@@ -14,7 +14,6 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { DeleteModal } from "@/components/ui/delete-modal";
 import {
   DropdownMenu,
@@ -93,22 +92,20 @@ export default function ReferanceList() {
         </Button>
       </div>
 
-      <Card>
-        <CardHeader>
-          <div className="flex items-center gap-4">
-            <div className="relative flex-1 max-w-sm">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                placeholder="Referans ara..."
-                value={search}
-                onChange={(e) => handleSearch(e.target.value)}
-                className="pl-9"
-              />
-            </div>
+      <div className="space-y-4">
+        <div className="flex items-center gap-4">
+          <div className="relative flex-1 max-w-sm">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              placeholder="Referans ara..."
+              value={search}
+              onChange={(e) => handleSearch(e.target.value)}
+              className="pl-9"
+            />
           </div>
-        </CardHeader>
-        <CardContent>
-          {isLoading ? (
+        </div>
+
+        {isLoading ? (
             <div className="flex items-center justify-center py-12">
               <p className="text-muted-foreground">Yükleniyor...</p>
             </div>
@@ -135,6 +132,7 @@ export default function ReferanceList() {
                       <TableHead>ID</TableHead>
                       <TableHead>Logo</TableHead>
                       <TableHead>İsim</TableHead>
+                      <TableHead>Açıklama</TableHead>
                       <TableHead>Web Sitesi</TableHead>
                       <TableHead>Sıra</TableHead>
                       <TableHead className="text-right">İşlemler</TableHead>
@@ -167,6 +165,11 @@ export default function ReferanceList() {
                         </TableCell>
                         <TableCell className="font-medium">
                           {item.name}
+                        </TableCell>
+                        <TableCell className="max-w-md">
+                          <p className="text-sm text-muted-foreground truncate">
+                            {item.description ? item.description.replace(/<[^>]*>/g, "").substring(0, 80) + "..." : "-"}
+                          </p>
                         </TableCell>
                         <TableCell>
                           {item.websiteUrl ? (
@@ -258,8 +261,7 @@ export default function ReferanceList() {
               )}
             </>
           )}
-        </CardContent>
-      </Card>
+      </div>
 
       <DeleteModal
         open={deleteModalOpen}

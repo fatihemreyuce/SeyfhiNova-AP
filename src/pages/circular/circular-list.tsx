@@ -14,7 +14,6 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { DeleteModal } from "@/components/ui/delete-modal";
 import {
   DropdownMenu,
@@ -105,22 +104,20 @@ export default function CircularList() {
         </Button>
       </div>
 
-      <Card>
-        <CardHeader>
-          <div className="flex items-center gap-4">
-            <div className="relative flex-1 max-w-sm">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                placeholder="Genelge ara..."
-                value={search}
-                onChange={(e) => handleSearch(e.target.value)}
-                className="pl-9"
-              />
-            </div>
+      <div className="space-y-4">
+        <div className="flex items-center gap-4">
+          <div className="relative flex-1 max-w-sm">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              placeholder="Genelge ara..."
+              value={search}
+              onChange={(e) => handleSearch(e.target.value)}
+              className="pl-9"
+            />
           </div>
-        </CardHeader>
-        <CardContent>
-          {isLoading ? (
+        </div>
+
+        {isLoading ? (
             <div className="flex items-center justify-center py-12">
               <p className="text-muted-foreground">Yükleniyor...</p>
             </div>
@@ -251,8 +248,7 @@ export default function CircularList() {
               )}
             </>
           )}
-        </CardContent>
-      </Card>
+      </div>
 
       <DeleteModal
         open={deleteModalOpen}
