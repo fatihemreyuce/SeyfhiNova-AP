@@ -51,6 +51,13 @@ import NotificationSubDetail from "./pages/notification-sub/notification-sub-det
 import NotificationSubCreate from "./pages/notification-sub/notification-sub-create";
 import OfficialPageDetail from "./pages/official-page/official-page-detail";
 import OfficialPageEdit from "./pages/official-page/official-page-edit";
+import UsefulInformationList from "./pages/useful-information/useful-information-list";
+import UsefulInformationDetail from "./pages/useful-information/useful-information-detail";
+import UsefulInformationCreate from "./pages/useful-information/useful-information-create";
+import UsefulInformationEdit from "./pages/useful-information/useful-information-edit";
+import ContactList from "./pages/contact/contact-list";
+import ContactDetail from "./pages/contact/contact-detail";
+import ContactCreate from "./pages/contact/contact-create";
 
 
 function App() {
@@ -109,6 +116,13 @@ function App() {
 							<Route path="/notification-sub/:id" element={<NotificationSubDetail />} />
 							<Route path="/official-page" element={<OfficialPageDetail />} />
 							<Route path="/official-page/edit" element={<OfficialPageEdit />} />
+							<Route path="/useful-information" element={<UsefulInformationList />} />
+							<Route path="/useful-information/create" element={<UsefulInformationCreate />} />
+							<Route path="/useful-information/:id" element={<UsefulInformationDetail />} />
+							<Route path="/useful-information/:id/edit" element={<UsefulInformationEdit />} />
+							<Route path="/contact" element={<ContactList />} />
+							<Route path="/contact/create" element={<ContactCreate />} />
+							<Route path="/contact/:id" element={<ContactDetail />} />
 							</Route>
 						</Route>
 					</Routes>
