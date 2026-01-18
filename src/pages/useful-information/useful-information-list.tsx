@@ -31,6 +31,9 @@ import {
   ChevronLeft,
   ChevronRight,
   FileText,
+  Filter,
+  RefreshCw,
+  ExternalLink,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
@@ -44,7 +47,7 @@ export default function UsefulInformationList() {
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [selectedItemName, setSelectedItemName] = useState<string>("");
 
-  const { data, isLoading } = useUsefulInformation(search, page, size, sort);
+  const { data, isLoading, refetch } = useUsefulInformation(search, page, size, sort);
   const deleteMutation = useDeleteUsefulInformation();
 
   const handleDelete = (id: number, itemName: string) => {
@@ -82,178 +85,270 @@ export default function UsefulInformationList() {
     return tmp.textContent || tmp.innerText || "";
   };
 
-  const truncateText = (text: string, maxLength: number = 100) => {
+  const truncateText = (text: string, maxLength: number = 80) => {
     if (text.length <= maxLength) return text;
     return text.substring(0, maxLength) + "...";
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-6">
+      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight dark:text-foreground">Kullanışlı Bilgiler</h1>
-          <p className="text-muted-foreground dark:text-foreground/70">
-            Kullanışlı bilgileri yönetin ve düzenleyin
+          <h1 className="text-3xl font-bold tracking-tight dark:text-foreground">
+            Kullanışlı Bilgiler
+          </h1>
+          <p className="text-muted-foreground dark:text-foreground/70 mt-1">
+            Kullanışlı bilgileri görüntüleyin ve yönetin
           </p>
         </div>
-        <Button onClick={() => navigate("/useful-information/create")}>
-          <Plus className="h-4 w-4 mr-2" />
-          Yeni Bilgi Ekle
-        </Button>
+        <div className="flex items-center gap-3">
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => refetch()}
+            className="shrink-0"
+          >
+            <RefreshCw className="h-4 w-4" />
+          </Button>
+          <Button onClick={() => navigate("/useful-information/create")}>
+            <Plus className="h-4 w-4 mr-2" />
+            Yeni Bilgi
+          </Button>
+        </div>
       </div>
 
-      <div className="space-y-4">
-        <div className="flex items-center gap-4">
-          <div className="relative flex-1 max-w-sm">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              placeholder="Bilgi ara..."
-              value={search}
-              onChange={(e) => handleSearch(e.target.value)}
-              className="pl-9"
-            />
+      {/* Search and Filters */}
+      <div className="flex items-center gap-4">
+        <div className="relative flex-1 max-w-md">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            placeholder="Bilgi ara..."
+            value={search}
+            onChange={(e) => handleSearch(e.target.value)}
+            className="pl-9"
+          />
+        </div>
+        {search && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => handleSearch("")}
+            className="shrink-0"
+          >
+            Temizle
+          </Button>
+        )}
+      </div>
+
+      {/* Content */}
+      {isLoading ? (
+        <div className="flex items-center justify-center py-16">
+          <div className="text-center space-y-3">
+            <div className="animate-spin rounded-full h-8 w-8 border-2 border-primary border-t-transparent mx-auto"></div>
+            <p className="text-sm text-muted-foreground dark:text-foreground/70">
+              Yükleniyor...
+            </p>
           </div>
         </div>
-
-        {isLoading ? (
-          <div className="flex items-center justify-center py-12">
-            <p className="text-muted-foreground">Yükleniyor...</p>
+      ) : !data || data.content.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-16 rounded-lg border border-dashed">
+          <div className="w-16 h-16 rounded-full bg-muted/50 flex items-center justify-center mb-4">
+            <FileText className="h-8 w-8 text-muted-foreground opacity-50" />
           </div>
-        ) : !data || data.content.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-12">
-            <FileText className="h-12 w-12 text-muted-foreground mb-4 opacity-50" />
-            <p className="text-muted-foreground mb-4">
-              Henüz kullanışlı bilgi bulunmamaktadır.
-            </p>
-            <Button
-              variant="outline"
-              onClick={() => navigate("/useful-information/create")}
-            >
+          <h3 className="text-lg font-semibold dark:text-foreground mb-2">
+            {search ? "Sonuç bulunamadı" : "Henüz bilgi yok"}
+          </h3>
+          <p className="text-sm text-muted-foreground dark:text-foreground/70 mb-4 text-center max-w-md">
+            {search
+              ? "Arama kriterlerinize uygun bilgi bulunamadı. Farklı bir arama terimi deneyin."
+              : "Kullanışlı bilgileri yönetmeye başlamak için ilk bilgiyi oluşturun."}
+          </p>
+          {!search && (
+            <Button onClick={() => navigate("/useful-information/create")}>
               <Plus className="h-4 w-4 mr-2" />
               İlk Bilgiyi Oluştur
             </Button>
-          </div>
-        ) : (
-          <>
-            <div className="rounded-md border">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>ID</TableHead>
-                    <TableHead>Dosya</TableHead>
-                    <TableHead>Başlık</TableHead>
-                    <TableHead>Özet</TableHead>
-                    <TableHead>Açıklama</TableHead>
-                    <TableHead className="text-right">İşlemler</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {data.content.map((item) => (
-                    <TableRow key={item.id}>
-                      <TableCell>
-                        <Badge variant="outline">{item.id}</Badge>
-                      </TableCell>
-                      <TableCell>
-                        {item.fileUrl ? (
-                          <div className="flex items-center gap-2">
-                            <FileText className="h-4 w-4 text-primary dark:text-blue-400" />
-                            <a
-                              href={item.fileUrl.replace(/^https:/, "http:")}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-primary dark:text-blue-400 hover:underline text-sm font-medium truncate max-w-[150px] transition-colors"
-                            >
-                              Dosyayı Görüntüle
-                            </a>
-                          </div>
-                        ) : (
-                          <span className="text-muted-foreground dark:text-foreground/50 text-sm">-</span>
-                        )}
-                      </TableCell>
-                      <TableCell className="font-medium dark:text-foreground">
-                        {item.title}
-                      </TableCell>
-                      <TableCell className="max-w-md">
-                        <p className="text-sm text-muted-foreground dark:text-foreground/70 truncate">
-                          {item.excerpt || "-"}
-                        </p>
-                      </TableCell>
-                      <TableCell className="max-w-md">
-                        <p className="text-sm text-muted-foreground dark:text-foreground/70 truncate">
-                          {truncateText(stripHtml(item.description), 80)}
-                        </p>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon">
-                              <MoreVertical className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem
-                              onClick={() =>
-                                navigate(`/useful-information/${item.id}`)
-                              }
-                            >
-                              <Eye className="h-4 w-4 mr-2" />
-                              Detay
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              onClick={() =>
-                                navigate(`/useful-information/${item.id}/edit`)
-                              }
-                            >
-                              <Edit className="h-4 w-4 mr-2" />
-                              Düzenle
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              onClick={() =>
-                                handleDelete(item.id, item.title)
-                              }
-                              className="text-destructive"
-                            >
-                              <Trash2 className="h-4 w-4 mr-2" />
-                              Sil
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+          )}
+        </div>
+      ) : (
+        <>
+          {/* Stats Bar */}
+          <div className="flex items-center justify-between text-sm">
+            <div className="flex items-center gap-4">
+              <span className="text-muted-foreground dark:text-foreground/70">
+                Toplam <span className="font-semibold text-foreground">{data.totalElements}</span> bilgi
+              </span>
+              {search && (
+                <Badge variant="secondary" className="gap-1">
+                  <Filter className="h-3 w-3" />
+                  Arama: "{search}"
+                </Badge>
+              )}
             </div>
+            <span className="text-muted-foreground dark:text-foreground/70">
+              Sayfa {page + 1} / {data.totalPages}
+            </span>
+          </div>
 
-            {data.totalPages > 1 && (
-              <div className="flex items-center justify-between mt-4">
-                <div className="text-sm text-muted-foreground dark:text-foreground/70">
-                  Toplam {data.totalElements} kayıt, Sayfa {page + 1} /{" "}
-                  {data.totalPages}
-                </div>
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handlePageChange(page - 1)}
-                    disabled={page === 0}
-                  >
-                    <ChevronLeft className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handlePageChange(page + 1)}
-                    disabled={page >= data.totalPages - 1}
-                  >
-                    <ChevronRight className="h-4 w-4" />
-                  </Button>
-                </div>
+          {/* Table */}
+          <div className="rounded-lg border bg-card">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-[80px]">ID</TableHead>
+                  <TableHead className="w-[180px]">Dosya</TableHead>
+                  <TableHead>Başlık</TableHead>
+                  <TableHead className="max-w-md">Özet</TableHead>
+                  <TableHead className="max-w-md">Açıklama</TableHead>
+                  <TableHead className="w-[120px] text-right">İşlemler</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {data.content.map((item) => (
+                  <TableRow key={item.id} className="hover:bg-muted/50 transition-colors">
+                    <TableCell>
+                      <Badge variant="outline" className="font-mono">
+                        #{item.id}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      {item.fileUrl ? (
+                        <a
+                          href={item.fileUrl.replace(/^https:/, "http:")}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-primary dark:text-blue-400 hover:underline flex items-center gap-1.5 text-sm font-medium group"
+                        >
+                          <FileText className="h-4 w-4 group-hover:text-primary/80" />
+                          <span>Dosyayı Görüntüle</span>
+                          <ExternalLink className="h-3.5 w-3.5 opacity-70" />
+                        </a>
+                      ) : (
+                        <span className="text-sm text-muted-foreground dark:text-foreground/50">-</span>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-md bg-primary/10 flex items-center justify-center shrink-0">
+                          <FileText className="h-4 w-4 text-primary" />
+                        </div>
+                        <span className="font-medium dark:text-foreground">
+                          {item.title}
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="max-w-md">
+                      <p className="text-sm text-muted-foreground dark:text-foreground/70 truncate">
+                        {item.excerpt || "-"}
+                      </p>
+                    </TableCell>
+                    <TableCell className="max-w-md">
+                      <p className="text-sm text-muted-foreground dark:text-foreground/70 truncate">
+                        {truncateText(stripHtml(item.description))}
+                      </p>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon" className="h-8 w-8">
+                            <MoreVertical className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-48">
+                          <DropdownMenuItem
+                            onClick={() =>
+                              navigate(`/useful-information/${item.id}`)
+                            }
+                          >
+                            <Eye className="h-4 w-4 mr-2" />
+                            Detay Görüntüle
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() =>
+                              navigate(`/useful-information/${item.id}/edit`)
+                            }
+                          >
+                            <Edit className="h-4 w-4 mr-2" />
+                            Düzenle
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() =>
+                              handleDelete(item.id, item.title)
+                            }
+                            className="text-destructive focus:text-destructive"
+                          >
+                            <Trash2 className="h-4 w-4 mr-2" />
+                            Sil
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+
+          {/* Pagination */}
+          {data.totalPages > 1 && (
+            <div className="flex items-center justify-between">
+              <div className="text-sm text-muted-foreground dark:text-foreground/70">
+                {data.totalElements > 0 && (
+                  <>
+                    {(page * size) + 1} - {Math.min((page + 1) * size, data.totalElements)} / {data.totalElements} kayıt gösteriliyor
+                  </>
+                )}
               </div>
-            )}
-          </>
-        )}
-      </div>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handlePageChange(page - 1)}
+                  disabled={page === 0}
+                >
+                  <ChevronLeft className="h-4 w-4 mr-1" />
+                  Önceki
+                </Button>
+                <div className="flex items-center gap-1">
+                  {Array.from({ length: Math.min(5, data.totalPages) }, (_, i) => {
+                    let pageNum;
+                    if (data.totalPages <= 5) {
+                      pageNum = i;
+                    } else if (page < 3) {
+                      pageNum = i;
+                    } else if (page > data.totalPages - 4) {
+                      pageNum = data.totalPages - 5 + i;
+                    } else {
+                      pageNum = page - 2 + i;
+                    }
+                    return (
+                      <Button
+                        key={pageNum}
+                        variant={page === pageNum ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => handlePageChange(pageNum)}
+                        className="w-9 h-9 p-0"
+                      >
+                        {pageNum + 1}
+                      </Button>
+                    );
+                  })}
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handlePageChange(page + 1)}
+                  disabled={page >= data.totalPages - 1}
+                >
+                  Sonraki
+                  <ChevronRight className="h-4 w-4 ml-1" />
+                </Button>
+              </div>
+            </div>
+          )}
+        </>
+      )}
 
       <DeleteModal
         open={deleteModalOpen}
