@@ -3,6 +3,18 @@ export interface Active{
     timestamp:string;
 }
 
+export interface trackRequest{
+    pagePath:string;
+    pageTitle:string;
+    referrer:string;
+}
+
+export interface trackResponse{
+    visitId:string;
+    sessionId:string;
+    tracked:boolean;
+}
+
 export interface TopPage{
     pagePath:string;
     viewCount:number;
