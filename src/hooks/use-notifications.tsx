@@ -1,5 +1,5 @@
 import { useAuthQuery } from "@/hooks/use-auth-query";
-import { getNotifications, createNotification, updateNotification, deleteNotification, getNotificationById, sendNotification } from "@/services/notifications-ervice";
+import { getNotifications, createNotification, updateNotification, deleteNotification, getNotificationById, sendNotification } from "@/services/notifications-service";
 import type { NotificationRequest } from "@/types/notifications.types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
