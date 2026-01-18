@@ -13,6 +13,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { DeleteModal } from "@/components/ui/delete-modal";
 import {
   DropdownMenu,
@@ -30,7 +37,7 @@ import {
   Mail,
   Phone,
   User,
-  RefreshCw,
+  ArrowUpDown,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
@@ -38,12 +45,12 @@ export default function ContactList() {
   const navigate = useNavigate();
   const [page, setPage] = useState(0);
   const [size] = useState(10);
-  const [sort] = useState("id,desc");
+  const [sort, setSort] = useState("id,desc");
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [selectedItemName, setSelectedItemName] = useState<string>("");
 
-  const { data, isLoading, refetch } = useContact(page, size, sort);
+  const { data, isLoading } = useContact(page, size, sort);
   const deleteMutation = useDeleteContact();
 
   const handleDelete = (id: number, itemName: string) => {
@@ -70,6 +77,11 @@ export default function ContactList() {
     }
   };
 
+  const handleSortChange = (value: string) => {
+    setSort(value);
+    setPage(0);
+  };
+
   const stripHtml = (html: string) => {
     const tmp = document.createElement("DIV");
     tmp.innerHTML = html;
@@ -93,20 +105,30 @@ export default function ContactList() {
             İletişim kayıtlarını görüntüleyin ve yönetin
           </p>
         </div>
-        <div className="flex items-center gap-3">
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => refetch()}
-            className="shrink-0"
-          >
-            <RefreshCw className="h-4 w-4" />
-          </Button>
-          <Button onClick={() => navigate("/contact/create")}>
-            <Plus className="h-4 w-4 mr-2" />
-            Yeni İletişim
-          </Button>
-        </div>
+        <Button onClick={() => navigate("/contact/create")}>
+          <Plus className="h-4 w-4 mr-2" />
+          Yeni İletişim
+        </Button>
+      </div>
+
+      {/* Sort Filter */}
+      <div className="flex items-center gap-4">
+        <Select value={sort} onValueChange={handleSortChange}>
+          <SelectTrigger className="w-[180px]">
+            <ArrowUpDown className="h-4 w-4 mr-2 opacity-50" />
+            <SelectValue placeholder="Sırala" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="id,desc">ID (Yeni → Eski)</SelectItem>
+            <SelectItem value="id,asc">ID (Eski → Yeni)</SelectItem>
+            <SelectItem value="name,asc">Ad (A → Z)</SelectItem>
+            <SelectItem value="name,desc">Ad (Z → A)</SelectItem>
+            <SelectItem value="surname,asc">Soyad (A → Z)</SelectItem>
+            <SelectItem value="surname,desc">Soyad (Z → A)</SelectItem>
+            <SelectItem value="email,asc">E-posta (A → Z)</SelectItem>
+            <SelectItem value="email,desc">E-posta (Z → A)</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       {/* Content */}
@@ -122,7 +144,7 @@ export default function ContactList() {
       ) : !data || data.content.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16 rounded-lg border border-dashed">
           <div className="w-16 h-16 rounded-full bg-muted/50 flex items-center justify-center mb-4">
-            <Mail className="h-8 w-8 text-muted-foreground opacity-50" />
+            <Mail className="h-8 w-8 text-muted-foreground dark:text-foreground/60 opacity-50" />
           </div>
           <h3 className="text-lg font-semibold dark:text-foreground mb-2">
             Henüz iletişim kaydı yok
@@ -172,7 +194,7 @@ export default function ContactList() {
                     <TableCell>
                       <div className="flex items-center gap-2">
                         <div className="w-8 h-8 rounded-md bg-primary/10 flex items-center justify-center shrink-0">
-                          <User className="h-4 w-4 text-primary" />
+                          <User className="h-4 w-4 text-primary dark:text-primary" />
                         </div>
                         <span className="font-medium dark:text-foreground">
                           {item.name}
@@ -204,14 +226,14 @@ export default function ContactList() {
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button variant="ghost" size="icon" className="h-8 w-8">
-                            <MoreVertical className="h-4 w-4" />
+                            <MoreVertical className="h-4 w-4 dark:text-foreground/80" />
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="w-48">
                           <DropdownMenuItem
                             onClick={() => navigate(`/contact/${item.id}`)}
                           >
-                            <Eye className="h-4 w-4 mr-2" />
+                            <Eye className="h-4 w-4 mr-2 dark:text-foreground/80" />
                             Detay Görüntüle
                           </DropdownMenuItem>
                           <DropdownMenuItem
@@ -247,7 +269,7 @@ export default function ContactList() {
                   onClick={() => handlePageChange(page - 1)}
                   disabled={page === 0}
                 >
-                  <ChevronLeft className="h-4 w-4 mr-1" />
+                  <ChevronLeft className="h-4 w-4 mr-1 dark:text-foreground/80" />
                   Önceki
                 </Button>
                 <div className="flex items-center gap-1">
@@ -282,7 +304,7 @@ export default function ContactList() {
                   disabled={page >= data.totalPages - 1}
                 >
                   Sonraki
-                  <ChevronRight className="h-4 w-4 ml-1" />
+                  <ChevronRight className="h-4 w-4 ml-1 dark:text-foreground/80" />
                 </Button>
               </div>
             </div>

@@ -14,6 +14,13 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { DeleteModal } from "@/components/ui/delete-modal";
 import {
   DropdownMenu,
@@ -32,8 +39,8 @@ import {
   ChevronRight,
   FileText,
   Filter,
-  RefreshCw,
   ExternalLink,
+  ArrowUpDown,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
@@ -42,12 +49,12 @@ export default function UsefulInformationList() {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(0);
   const [size] = useState(10);
-  const [sort] = useState("id,desc");
+  const [sort, setSort] = useState("id,desc");
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [selectedItemName, setSelectedItemName] = useState<string>("");
 
-  const { data, isLoading, refetch } = useUsefulInformation(search, page, size, sort);
+  const { data, isLoading } = useUsefulInformation(search, page, size, sort);
   const deleteMutation = useDeleteUsefulInformation();
 
   const handleDelete = (id: number, itemName: string) => {
@@ -79,6 +86,11 @@ export default function UsefulInformationList() {
     }
   };
 
+  const handleSortChange = (value: string) => {
+    setSort(value);
+    setPage(0);
+  };
+
   const stripHtml = (html: string) => {
     const tmp = document.createElement("DIV");
     tmp.innerHTML = html;
@@ -102,26 +114,16 @@ export default function UsefulInformationList() {
             Kullanışlı bilgileri görüntüleyin ve yönetin
           </p>
         </div>
-        <div className="flex items-center gap-3">
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => refetch()}
-            className="shrink-0"
-          >
-            <RefreshCw className="h-4 w-4" />
-          </Button>
-          <Button onClick={() => navigate("/useful-information/create")}>
-            <Plus className="h-4 w-4 mr-2" />
-            Yeni Bilgi
-          </Button>
-        </div>
+        <Button onClick={() => navigate("/useful-information/create")}>
+          <Plus className="h-4 w-4 mr-2" />
+          Yeni Bilgi
+        </Button>
       </div>
 
       {/* Search and Filters */}
       <div className="flex items-center gap-4">
         <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground dark:text-foreground/60" />
           <Input
             placeholder="Bilgi ara..."
             value={search}
@@ -129,6 +131,18 @@ export default function UsefulInformationList() {
             className="pl-9"
           />
         </div>
+        <Select value={sort} onValueChange={handleSortChange}>
+          <SelectTrigger className="w-[180px]">
+            <ArrowUpDown className="h-4 w-4 mr-2 opacity-50" />
+            <SelectValue placeholder="Sırala" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="id,desc">ID (Yeni → Eski)</SelectItem>
+            <SelectItem value="id,asc">ID (Eski → Yeni)</SelectItem>
+            <SelectItem value="title,asc">Başlık (A → Z)</SelectItem>
+            <SelectItem value="title,desc">Başlık (Z → A)</SelectItem>
+          </SelectContent>
+        </Select>
         {search && (
           <Button
             variant="ghost"
@@ -154,7 +168,7 @@ export default function UsefulInformationList() {
       ) : !data || data.content.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16 rounded-lg border border-dashed">
           <div className="w-16 h-16 rounded-full bg-muted/50 flex items-center justify-center mb-4">
-            <FileText className="h-8 w-8 text-muted-foreground opacity-50" />
+            <FileText className="h-8 w-8 text-muted-foreground dark:text-foreground/60 opacity-50" />
           </div>
           <h3 className="text-lg font-semibold dark:text-foreground mb-2">
             {search ? "Sonuç bulunamadı" : "Henüz bilgi yok"}
@@ -181,7 +195,7 @@ export default function UsefulInformationList() {
               </span>
               {search && (
                 <Badge variant="secondary" className="gap-1">
-                  <Filter className="h-3 w-3" />
+                  <Filter className="h-3 w-3 dark:text-foreground/80" />
                   Arama: "{search}"
                 </Badge>
               )}
@@ -222,7 +236,7 @@ export default function UsefulInformationList() {
                         >
                           <FileText className="h-4 w-4 group-hover:text-primary/80" />
                           <span>Dosyayı Görüntüle</span>
-                          <ExternalLink className="h-3.5 w-3.5 opacity-70" />
+                          <ExternalLink className="h-3.5 w-3.5 opacity-70 dark:text-foreground/80" />
                         </a>
                       ) : (
                         <span className="text-sm text-muted-foreground dark:text-foreground/50">-</span>
@@ -231,7 +245,7 @@ export default function UsefulInformationList() {
                     <TableCell>
                       <div className="flex items-center gap-2">
                         <div className="w-8 h-8 rounded-md bg-primary/10 flex items-center justify-center shrink-0">
-                          <FileText className="h-4 w-4 text-primary" />
+                          <FileText className="h-4 w-4 text-primary dark:text-primary" />
                         </div>
                         <span className="font-medium dark:text-foreground">
                           {item.title}
@@ -252,7 +266,7 @@ export default function UsefulInformationList() {
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button variant="ghost" size="icon" className="h-8 w-8">
-                            <MoreVertical className="h-4 w-4" />
+                            <MoreVertical className="h-4 w-4 dark:text-foreground/80" />
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="w-48">
@@ -261,7 +275,7 @@ export default function UsefulInformationList() {
                               navigate(`/useful-information/${item.id}`)
                             }
                           >
-                            <Eye className="h-4 w-4 mr-2" />
+                            <Eye className="h-4 w-4 mr-2 dark:text-foreground/80" />
                             Detay Görüntüle
                           </DropdownMenuItem>
                           <DropdownMenuItem
@@ -269,7 +283,7 @@ export default function UsefulInformationList() {
                               navigate(`/useful-information/${item.id}/edit`)
                             }
                           >
-                            <Edit className="h-4 w-4 mr-2" />
+                            <Edit className="h-4 w-4 mr-2 dark:text-foreground/80" />
                             Düzenle
                           </DropdownMenuItem>
                           <DropdownMenuItem
@@ -307,7 +321,7 @@ export default function UsefulInformationList() {
                   onClick={() => handlePageChange(page - 1)}
                   disabled={page === 0}
                 >
-                  <ChevronLeft className="h-4 w-4 mr-1" />
+                  <ChevronLeft className="h-4 w-4 mr-1 dark:text-foreground/80" />
                   Önceki
                 </Button>
                 <div className="flex items-center gap-1">
@@ -342,7 +356,7 @@ export default function UsefulInformationList() {
                   disabled={page >= data.totalPages - 1}
                 >
                   Sonraki
-                  <ChevronRight className="h-4 w-4 ml-1" />
+                  <ChevronRight className="h-4 w-4 ml-1 dark:text-foreground/80" />
                 </Button>
               </div>
             </div>
