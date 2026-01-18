@@ -69,6 +69,16 @@ export default {
             95: 'hsl(var(--grey-95))',
             97: 'hsl(var(--grey-97))',
             99: 'hsl(var(--grey-99))',
+          },
+          // Seyfhi Color Palette
+          seyfhi: {
+            primary: 'hsl(var(--seyfhi-primary))',
+            background: 'hsl(var(--seyfhi-background))',
+            surface: 'hsl(var(--seyfhi-surface))',
+            accent: 'hsl(var(--seyfhi-accent))',
+            active: 'hsl(var(--seyfhi-active))',
+            'text-dark': 'hsl(var(--seyfhi-text-dark))',
+            'text-gray': 'hsl(var(--seyfhi-text-gray))',
           }
     		}
     	}

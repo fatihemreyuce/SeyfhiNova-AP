@@ -42,6 +42,10 @@ import FaqList from "./pages/faq/faq-list";
 import FaqDetail from "./pages/faq/faq-detail";
 import FaqCreate from "./pages/faq/faq-create";
 import FaqEdit from "./pages/faq/faq-edit";
+import NotificationList from "./pages/notification/notification-list";
+import NotificationDetail from "./pages/notification/notification-detail";
+import NotificationCreate from "./pages/notification/notification-create";
+import NotificationEdit from "./pages/notification/notification-edit";
 
 
 function App() {
@@ -91,6 +95,10 @@ function App() {
 							<Route path="/faq/create" element={<FaqCreate />} />
 							<Route path="/faq/:id" element={<FaqDetail />} />
 							<Route path="/faq/:id/edit" element={<FaqEdit />} />
+							<Route path="/notification" element={<NotificationList />} />
+							<Route path="/notification/create" element={<NotificationCreate />} />
+							<Route path="/notification/:id" element={<NotificationDetail />} />
+							<Route path="/notification/:id/edit" element={<NotificationEdit />} />
 							</Route>
 						</Route>
 					</Routes>

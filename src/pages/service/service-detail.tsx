@@ -4,7 +4,7 @@ import { useServiceCategory } from "@/hooks/use-category-service";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Edit, Briefcase } from "lucide-react";
+import { ArrowLeft, Edit, Briefcase, Hash, Tag } from "lucide-react";
 
 export default function ServiceDetail() {
   const { id } = useParams<{ id: string }>();
@@ -39,6 +39,7 @@ export default function ServiceDetail() {
 
   return (
     <div className="space-y-6">
+      {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <Button
@@ -49,9 +50,11 @@ export default function ServiceDetail() {
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Servis Detayı</h1>
+            <h1 className="text-3xl font-bold tracking-tight">
+              Servis Detayı: {data.title}
+            </h1>
             <p className="text-muted-foreground">
-              Servis detay bilgileri
+              #{data.id} - Servis detay bilgileri
             </p>
           </div>
         </div>
@@ -61,63 +64,85 @@ export default function ServiceDetail() {
         </Button>
       </div>
 
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Briefcase className="h-5 w-5 text-primary" />
-              <CardTitle>Servis Bilgileri</CardTitle>
-            </div>
-            <Badge variant="outline" className="text-base px-3 py-1">
-              ID: {data.id}
-            </Badge>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="grid gap-6 md:grid-cols-2">
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-muted-foreground">
-                Başlık
-              </label>
-              <p className="text-lg font-semibold">{data.title}</p>
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-muted-foreground">
-                Kategori
-              </label>
-              <div>
-                <Badge variant="secondary" className="text-base px-3 py-1">
-                  {getCategoryName(data.categoryId)}
-                </Badge>
+      {/* Two Column Layout */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        {/* Left Column - Temel Bilgiler */}
+        <div className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg font-semibold">
+                Temel Bilgiler
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-muted-foreground">
+                  Başlık
+                </label>
+                <p className="text-xl font-bold">{data.title}</p>
               </div>
-            </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-muted-foreground">
-                Sıra Numarası
-              </label>
-              <div>
-                <Badge variant="secondary" className="text-base px-3 py-1">
-                  {data.orderIndex}
-                </Badge>
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-muted-foreground">
+                    Kategori
+                  </label>
+                  <div className="flex items-center gap-2">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg border-2 border-primary/20 bg-primary/5">
+                      <Tag className="h-4 w-4 text-primary" />
+                    </div>
+                    <Badge variant="secondary" className="text-base px-3 py-1">
+                      {getCategoryName(data.categoryId)}
+                    </Badge>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-muted-foreground">
+                    Sıra Numarası
+                  </label>
+                  <div className="flex items-center gap-2">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg border-2 border-primary/20 bg-primary/5">
+                      <Hash className="h-4 w-4 text-primary" />
+                    </div>
+                    <div className="text-xl font-bold">{data.orderIndex}</div>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
+        </div>
 
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-muted-foreground">
-              Açıklama
-            </label>
-            <div className="rounded-md border p-4">
-              <div
-                dangerouslySetInnerHTML={{ __html: data.description }}
-                className="prose prose-sm max-w-none"
-              />
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+        {/* Right Column - Açıklama */}
+        <div className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg font-semibold">
+                Açıklama
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-muted-foreground">
+                  Detaylı Açıklama
+                </label>
+                <div className="rounded-md border p-4 bg-muted/30 min-h-[200px]">
+                  {data.description ? (
+                    <div
+                      dangerouslySetInnerHTML={{ __html: data.description }}
+                      className="prose prose-sm max-w-none dark:prose-invert"
+                    />
+                  ) : (
+                    <p className="text-sm text-muted-foreground italic">
+                      Açıklama bulunmamaktadır
+                    </p>
+                  )}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     </div>
   );
 }

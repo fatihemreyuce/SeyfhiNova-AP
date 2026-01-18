@@ -1,14 +1,41 @@
+import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useGetCircularById } from "@/hooks/use-circulars";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Edit, FileText, Download, ExternalLink, File } from "lucide-react";
+import {
+  ArrowLeft,
+  Edit,
+  FileText,
+  Download,
+  ExternalLink,
+  File,
+  Copy,
+  X,
+} from "lucide-react";
+import { toast } from "sonner";
 
 export default function CircularDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { data, isLoading } = useGetCircularById(Number(id));
+
+  // URL'deki https'i http'ye çevir
+  const fileUrl = data?.fileUrl?.replace(/^https:/, "http:") || data?.fileUrl;
+  const fileName = fileUrl?.split("/").pop() || "Dosya";
+
+  const handleCopyUrl = async () => {
+    if (fileUrl) {
+      try {
+        await navigator.clipboard.writeText(fileUrl);
+        toast.success("Dosya URL panoya kopyalandı");
+      } catch (err) {
+        toast.error("URL kopyalanamadı");
+      }
+    }
+  };
 
   if (isLoading) {
     return (
@@ -30,12 +57,9 @@ export default function CircularDetail() {
     );
   }
 
-  // URL'deki https'i http'ye çevir
-  const fileUrl = data.fileUrl?.replace(/^https:/, 'http:') || data.fileUrl;
-  const fileName = fileUrl?.split('/').pop() || "Dosya";
-
   return (
     <div className="space-y-6">
+      {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <Button
@@ -46,9 +70,11 @@ export default function CircularDetail() {
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Genelge Detayı</h1>
+            <h1 className="text-3xl font-bold tracking-tight">
+              Genelge Detayı: {data.title}
+            </h1>
             <p className="text-muted-foreground">
-              Genelge detay bilgileri
+              #{data.id} - Genelge detay bilgileri
             </p>
           </div>
         </div>
@@ -58,117 +84,150 @@ export default function CircularDetail() {
         </Button>
       </div>
 
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <FileText className="h-5 w-5 text-primary" />
-              <CardTitle>Genelge Bilgileri</CardTitle>
-            </div>
-            <Badge variant="outline" className="text-base px-3 py-1">
-              ID: {data.id}
-            </Badge>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-muted-foreground">
-              Başlık
-            </label>
-            <p className="text-lg font-semibold">{data.title}</p>
-          </div>
+      {/* Two Column Layout */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        {/* Left Column - Temel Bilgiler */}
+        <div className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg font-semibold">
+                Temel Bilgiler
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-muted-foreground">
+                  Başlık
+                </label>
+                <p className="text-xl font-bold">{data.title}</p>
+              </div>
 
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-muted-foreground">
-              Açıklama
-            </label>
-            <div className="mt-2 rounded-md border p-4 bg-muted/30">
-              <div
-                dangerouslySetInnerHTML={{ __html: data.description }}
-                className="prose prose-sm max-w-none"
-              />
-            </div>
-          </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-muted-foreground">
+                  Açıklama
+                </label>
+                <div className="rounded-md border p-4 bg-muted/30 min-h-[100px]">
+                  {data.description ? (
+                    <div
+                      dangerouslySetInnerHTML={{ __html: data.description }}
+                      className="prose prose-sm max-w-none dark:prose-invert"
+                    />
+                  ) : (
+                    <p className="text-sm text-muted-foreground italic">
+                      Açıklama bulunmamaktadır
+                    </p>
+                  )}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
-          <div className="space-y-3">
-            <label className="text-sm font-medium text-muted-foreground">
-              Dosya
-            </label>
-            {data.fileUrl ? (
-              <Card className="border-2 border-dashed border-border hover:border-primary/50 transition-colors">
-                <CardContent className="p-6">
-                  <div className="flex flex-col gap-6">
-                    {/* File Preview */}
-                    <div className="flex-shrink-0">
-                      <div className="relative group">
-                        <div className="flex items-center justify-center w-full h-48 rounded-lg border-2 border-border bg-muted/30 overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-                          <div className="flex flex-col items-center justify-center gap-4">
-                            <div className="w-24 h-24 rounded-lg bg-primary/10 flex items-center justify-center">
-                              <File className="w-12 h-12 text-primary" />
-                            </div>
-                            <div className="text-center">
-                              <p className="text-sm font-medium text-foreground">
-                                {fileName}
-                              </p>
-                              <p className="text-xs text-muted-foreground mt-1">
-                                Genelge dosyası
-                              </p>
-                            </div>
-                          </div>
-                        </div>
+        {/* Right Column - Dosya ve İşlemler */}
+        <div className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg font-semibold">
+                Dosya ve İşlemler
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* File Preview */}
+              <div className="space-y-3">
+                <label className="text-sm font-medium text-muted-foreground">
+                  Dosya Önizleme
+                </label>
+                {fileUrl ? (
+                  <div className="flex items-center justify-center w-full h-64 rounded-lg border-2 border-border bg-muted/30 overflow-hidden shadow-sm">
+                    <div className="flex flex-col items-center justify-center gap-4">
+                      <div className="w-24 h-24 rounded-lg bg-primary/10 flex items-center justify-center">
+                        <File className="w-12 h-12 text-primary" />
                       </div>
-                    </div>
-
-                    {/* File Info */}
-                    <div className="flex-1 min-w-0 space-y-2">
-                      <div className="flex items-center gap-2">
-                        <FileText className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                        <p className="text-sm font-medium text-foreground">Dosya Bilgileri</p>
-                      </div>
-                      <div className="space-y-1">
-                        <p className="text-xs text-muted-foreground">Dosya URL:</p>
-                        <div className="flex items-center gap-2 group/url">
-                          <a
-                            href={fileUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-sm text-primary hover:text-primary/80 underline underline-offset-2 truncate flex-1 min-w-0"
-                          >
-                            {fileUrl}
-                          </a>
-                          <ExternalLink className="h-3 w-3 text-muted-foreground group-hover/url:text-primary transition-colors flex-shrink-0" />
-                        </div>
-                      </div>
-                      <div className="pt-2">
-                        <a
-                          href={fileUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors text-sm font-medium"
-                        >
-                          <Download className="h-4 w-4" />
-                          Dosyayı İndir
-                        </a>
+                      <div className="text-center">
+                        <p className="text-sm font-medium text-foreground truncate max-w-[200px]">
+                          {fileName}
+                        </p>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Genelge dosyası
+                        </p>
                       </div>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
-            ) : (
-              <Card className="border-2 border-dashed border-border bg-muted/30">
-                <CardContent className="p-8">
-                  <div className="flex flex-col items-center justify-center text-center space-y-2">
-                    <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center">
-                      <FileText className="h-8 w-8 text-muted-foreground" />
+                ) : (
+                  <div className="w-full h-64 rounded-lg border-2 border-dashed border-border bg-muted/30 flex items-center justify-center">
+                    <div className="flex flex-col items-center text-center space-y-2">
+                      <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center">
+                        <FileText className="h-8 w-8 text-muted-foreground" />
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        Dosya bulunmamaktadır
+                      </p>
                     </div>
-                    <p className="text-sm text-muted-foreground">Dosya bulunmamaktadır</p>
                   </div>
-                </CardContent>
-              </Card>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+                )}
+              </div>
+
+              {/* File URL */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-muted-foreground">
+                  Dosya Yolu
+                </label>
+                <div className="flex items-center gap-2">
+                  <Input
+                    value={fileUrl || ""}
+                    readOnly
+                    className="font-mono text-sm truncate pr-10"
+                  />
+                  <Button
+                    size="icon"
+                    variant="outline"
+                    onClick={handleCopyUrl}
+                    className="flex-shrink-0"
+                  >
+                    <Copy className="h-4 w-4" />
+                  </Button>
+                  {fileUrl && (
+                    <Button
+                      size="icon"
+                      variant="outline"
+                      asChild
+                      className="flex-shrink-0"
+                    >
+                      <a
+                        href={fileUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <ExternalLink className="h-4 w-4" />
+                      </a>
+                    </Button>
+                  )}
+                </div>
+              </div>
+
+              {/* Download Button */}
+              {fileUrl && (
+                <div className="pt-2">
+                  <Button
+                    className="w-full"
+                    asChild
+                  >
+                    <a
+                      href={fileUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      download
+                    >
+                      <Download className="h-4 w-4 mr-2" />
+                      Dosyayı İndir
+                    </a>
+                  </Button>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     </div>
   );
 }

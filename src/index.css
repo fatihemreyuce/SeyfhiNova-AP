@@ -5,25 +5,34 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 3.9%;
-    --primary: 0 0% 9%;
+    /* Seyfhi Color Palette - Light Mode */
+    --seyfhi-primary: 208 60% 13%; /* #0D2535 - Koyu Petrol/Mavi */
+    --seyfhi-background: 200 52% 95%; /* #EBF3F8 - Buz Mavisi/Gri */
+    --seyfhi-surface: 0 0% 100%; /* #FFFFFF - Saf Beyaz */
+    --seyfhi-accent: 205 38% 88%; /* #D6E4EC - Açık Mavi/Gri */
+    --seyfhi-active: 210 100% 94%; /* #E0EFFF - Açık Tinta */
+    --seyfhi-text-dark: 208 61% 16%; /* #102A43 - Gece Mavisi */
+    --seyfhi-text-gray: 208 22% 48%; /* #5F7D95 - Soğuk Gri */
+
+    --background: var(--seyfhi-background);
+    --foreground: var(--seyfhi-text-dark);
+    --card: var(--seyfhi-surface);
+    --card-foreground: var(--seyfhi-text-dark);
+    --popover: var(--seyfhi-surface);
+    --popover-foreground: var(--seyfhi-text-dark);
+    --primary: var(--seyfhi-primary);
     --primary-foreground: 0 0% 98%;
-    --secondary: 0 0% 96.1%;
-    --secondary-foreground: 0 0% 9%;
-    --muted: 0 0% 96.1%;
-    --muted-foreground: 0 0% 45.1%;
-    --accent: 0 0% 96.1%;
-    --accent-foreground: 0 0% 9%;
+    --secondary: var(--seyfhi-accent);
+    --secondary-foreground: var(--seyfhi-text-dark);
+    --muted: var(--seyfhi-accent);
+    --muted-foreground: var(--seyfhi-text-gray);
+    --accent: var(--seyfhi-accent);
+    --accent-foreground: var(--seyfhi-text-dark);
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 89.8%;
-    --input: 0 0% 89.8%;
-    --ring: 0 0% 3.9%;
+    --border: var(--seyfhi-accent);
+    --input: var(--seyfhi-accent);
+    --ring: var(--seyfhi-primary);
     --chart-1: 12 76% 61%;
     --chart-2: 173 58% 39%;
     --chart-3: 197 37% 24%;
@@ -31,6 +40,15 @@
     --chart-5: 27 87% 67%;
     --radius: 0.5rem}
   .dark {
+    /* Seyfhi Color Palette - Dark Mode */
+    --seyfhi-primary: 208 60% 13%; /* #0D2535 - Sidebar için aynı kalıyor */
+    --seyfhi-background: 0 0% 8%; /* #141414 - Koyu arka plan */
+    --seyfhi-surface: 0 0% 10%; /* #1A1A1A - Kart arka planı */
+    --seyfhi-accent: 0 0% 20%; /* #333333 - Border ve ayırıcılar */
+    --seyfhi-active: 210 80% 50%; /* #4A9EFF - Aktif öğe (sidebar için - daha belirgin açık mavi) */
+    --seyfhi-text-dark: 240 3% 99%; /* #FCFCFD - Ana metin rengi */
+    --seyfhi-text-gray: 240 2% 60%; /* #98989A - İkincil metin rengi */
+
     --dark-08: 0 0% 8%; /* #141414 */
     --dark-10: 0 0% 10%; /* #1A1A1A */
     --dark-15: 0 0% 15%; /* #262626 */
@@ -50,37 +68,54 @@
     --grey-97: 240 3% 97%; /* #F7F7F8 */
     --grey-99: 240 3% 99%; /* #FCFCFD */
 
-    --background: 0 0% 8%; /* #141414 - Dark background */
-    --foreground: 240 3% 99%; /* #FCFCFD - Light text */
-    --card: 0 0% 10%; /* #1A1A1A - Card background */
-    --card-foreground: 240 3% 97%; /* #F7F7F8 - Card text */
-    --popover: 0 0% 10%; /* #1A1A1A - Popover background */
-    --popover-foreground: 240 3% 97%; /* #F7F7F8 - Popover text */
-    --primary: 0 0% 98%; /* Light primary */
-    --primary-foreground: 0 0% 8%; /* Dark primary text */
-    --secondary: 0 0% 15%; /* #262626 - Secondary background */
-    --secondary-foreground: 240 3% 95%; /* #F1F1F3 - Secondary text */
-    --muted: 0 0% 15%; /* #262626 - Muted background */
-    --muted-foreground: 240 2% 60%; /* #98989A - Muted text */
-    --accent: 0 0% 20%; /* #333333 - Accent background */
-    --accent-foreground: 240 3% 95%; /* #F1F1F3 - Accent text */
-    --destructive: 0 60% 33%; /* #000000 - Destructive background */
-    --destructive-foreground: 0 0% 98%; /* #FCFCFD - Destructive text */
-    --border: 0 0% 20%; /* #333333 - Border color */
-    --input: 0 0% 15%; /* #262626 - Input background */
-    --ring: 240 3% 95%; /* #F1F1F3 - Ring color */
+    --background: var(--seyfhi-background);
+    --foreground: var(--seyfhi-text-dark);
+    --card: var(--seyfhi-surface);
+    --card-foreground: var(--seyfhi-text-dark);
+    --popover: var(--seyfhi-surface);
+    --popover-foreground: var(--seyfhi-text-dark);
+    --primary: var(--seyfhi-primary);
+    --primary-foreground: 0 0% 98%;
+    --secondary: var(--seyfhi-accent);
+    --secondary-foreground: var(--seyfhi-text-dark);
+    --muted: var(--seyfhi-accent);
+    --muted-foreground: var(--seyfhi-text-gray);
+    --accent: var(--seyfhi-accent);
+    --accent-foreground: var(--seyfhi-text-dark);
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: var(--seyfhi-accent);
+    --input: var(--seyfhi-accent);
+    --ring: var(--seyfhi-primary);
     --chart-1: 220 70% 50%;
     --chart-2: 160 60% 45%;
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%  }
-}
+  }
 
 @layer base {
   * {
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-seyfhi-background text-seyfhi-text-dark;
+  }
+  
+  /* Seyfhi specific utilities */
+  .seyfhi-card {
+    @apply bg-seyfhi-surface border-seyfhi-accent;
+  }
+  
+  .seyfhi-input {
+    @apply border-seyfhi-accent bg-seyfhi-surface;
+  }
+  
+  .seyfhi-text-primary {
+    @apply text-seyfhi-text-dark;
+  }
+  
+  .seyfhi-text-secondary {
+    @apply text-seyfhi-text-gray;
   }
 }
