@@ -1,11 +1,11 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useOfficialPages, useUpdateOfficialPage } from "@/hooks/use-offical-page";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { TinyMCEEditor } from "@/components/ui/tinymce-editor";
-import { ArrowLeft, Save, FileText, Upload, X, Plus, Trash2 } from "lucide-react";
+import { ArrowLeft, Save, FileText, X, Plus, Trash2 } from "lucide-react";
 import {
   Form,
   FormControl,
@@ -17,7 +17,6 @@ import {
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import type { Documents, qualityPolicy } from "@/types/offical.page.types";
 
 const formSchema = z.object({
   description: z.string().min(1, "Açıklama gereklidir"),
@@ -262,7 +261,7 @@ export default function OfficialPageEdit() {
                     <FormField
                       control={form.control}
                       name={`documents.${index}.asset`}
-                      render={({ field }) => (
+                      render={() => (
                         <FormItem>
                           <FormLabel>Dosya</FormLabel>
                           <FormControl>
@@ -342,7 +341,7 @@ export default function OfficialPageEdit() {
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
-              {form.watch("qualityPolicy").map((policy, index) => (
+              {form.watch("qualityPolicy").map((_policy, index) => (
                 <div
                   key={index}
                   className="flex gap-4 p-4 border rounded-lg bg-muted/30"

@@ -1,10 +1,8 @@
-import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useGetCircularById } from "@/hooks/use-circulars";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import {
   ArrowLeft,
   Edit,
@@ -13,7 +11,6 @@ import {
   ExternalLink,
   File,
   Copy,
-  X,
 } from "lucide-react";
 import { toast } from "sonner";
 

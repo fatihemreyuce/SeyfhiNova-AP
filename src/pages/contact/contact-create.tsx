@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, Save, Mail, User, Phone, FileText } from "lucide-react";
+import { ArrowLeft, Save, Mail, User, Phone } from "lucide-react";
 import {
   Form,
   FormControl,

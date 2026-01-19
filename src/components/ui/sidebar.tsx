@@ -1,8 +1,9 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import DarkModeToggle from "@/components/dark-mode-toggle";
 import { useLoginState } from "@/hooks/use-login-state";
-import { LayoutDashboard, LogOut, Sparkles, FileText, Layers, Briefcase, BarChart3, Images, Handshake, Award, ScrollText, HelpCircle, Bell, UserPlus, Building2, BookOpen, Phone, X } from "lucide-react";
+import { LayoutDashboard, LogOut, Sparkles, FileText, Layers, Briefcase, BarChart3, Images, Handshake, Award, ScrollText, HelpCircle, Bell, UserPlus, Building2, BookOpen, Phone, Info } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface NavItem {
@@ -12,96 +13,120 @@ interface NavItem {
 	end?: boolean;
 }
 
-const navigationItems: NavItem[] = [
+interface NavCategory {
+	title: string;
+	items: NavItem[];
+}
+
+const navigationCategories: NavCategory[] = [
 	{
-		to: "/",
-		label: "Dashboard",
-		icon: LayoutDashboard,
-		end: true,
+		title: "GENEL BAKIŞ",
+		items: [
+			{
+				to: "/",
+				label: "Dashboard",
+				icon: LayoutDashboard,
+				end: true,
+			},
+		],
 	},
 	{
-		to: "/home-page-about",
-		label: "Ana Sayfa Hakkında",
-		icon: FileText,
-		end: false,
+		title: "İÇERİK YÖNETİMİ",
+		items: [
+			{
+				to: "/notification",
+				label: "Bildirimler",
+				icon: Bell,
+				end: false,
+			},
+			{
+				to: "/notification-sub",
+				label: "Bildirim Aboneleri",
+				icon: UserPlus,
+				end: false,
+			},
+			{
+				to: "/contact",
+				label: "İletişim Mesajları",
+				icon: Phone,
+				end: false,
+			},
+			{
+				to: "/useful-information",
+				label: "Faydalı Bilgi",
+				icon: BookOpen,
+				end: false,
+			},
+			{
+				to: "/faq",
+				label: "SSS",
+				icon: HelpCircle,
+				end: false,
+			},
+		],
 	},
 	{
-		to: "/service-category",
-		label: "Servis Kategorileri",
-		icon: Layers,
-		end: false,
+		title: "GÖRSEL İÇERİK",
+		items: [
+			{
+				to: "/home-page-about",
+				label: "Ana Sayfa Hakkında",
+				icon: Info,
+				end: false,
+			},
+			{
+				to: "/partner",
+				label: "Partner",
+				icon: Handshake,
+				end: false,
+			},
+			{
+				to: "/slider",
+				label: "Slider",
+				icon: Images,
+				end: false,
+			},
+			{
+				to: "/referance",
+				label: "Referanslar",
+				icon: Award,
+				end: false,
+			},
+		],
 	},
 	{
-		to: "/service",
-		label: "Servisler",
-		icon: Briefcase,
-		end: false,
+		title: "HİZMET YÖNETİMİ",
+		items: [
+			{
+				to: "/service-category",
+				label: "Hizmet Kategorisi",
+				icon: Layers,
+				end: false,
+			},
+			{
+				to: "/service",
+				label: "Hizmetler",
+				icon: Briefcase,
+				end: false,
+			},
+			{
+				to: "/service-stats",
+				label: "Hizmet İstatistikleri",
+				icon: BarChart3,
+				end: false,
+			},
+		],
 	},
 	{
-		to: "/service-stats",
-		label: "Servis İstatistikleri",
-		icon: BarChart3,
-		end: false,
-	},
-	{
-		to: "/slider",
-		label: "Sliderlar",
-		icon: Images,
-		end: false,
-	},
-	{
-		to: "/partner",
-		label: "Ortaklar",
-		icon: Handshake,
-		end: false,
-	},
-	{
-		to: "/referance",
-		label: "Referanslar",
-		icon: Award,
-		end: false,
-	},
-	{
-		to: "/circular",
-		label: "Genelgeler",
-		icon: ScrollText,
-		end: false,
-	},
-	{
-		to: "/faq",
-		label: "Sıkça Sorulan Sorular",
-		icon: HelpCircle,
-		end: false,
-	},
-	{
-		to: "/notification",
-		label: "Bildirimler",
-		icon: Bell,
-		end: false,
-	},
-	{
-		to: "/notification-sub",
-		label: "Bildirim Abonelikleri",
-		icon: UserPlus,
-		end: false,
-	},
-	{
-		to: "/official-page",
-		label: "Resmi Sayfalar",
-		icon: Building2,
-		end: false,
-	},
-	{
-		to: "/useful-information",
-		label: "Kullanışlı Bilgiler",
-		icon: BookOpen,
-		end: false,
-	},
-	{
-		to: "/contact",
-		label: "İletişimler",
-		icon: Phone,
-		end: false,
+		title: "SİSTEM",
+		items: [
+			{
+				to: "/official-page",
+				label: "Resmi Sayfa",
+				icon: FileText,
+				end: false,
+			},
+		],
 	},
 ];
 
@@ -156,38 +181,66 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
 
 			{/* Navigation */}
 			<nav className={cn(
-				"flex flex-col gap-1.5 mt-2 transition-all duration-300",
+				"flex flex-col gap-4 mt-2 transition-all duration-300 overflow-y-auto",
 				isOpen ? "p-4" : "p-2 lg:p-2"
 			)}>
-				{navigationItems.map((item) => {
-					const Icon = item.icon;
-					return (
-						<NavLink
-							key={item.to}
-							to={item.to}
-							end={item.end}
-							onClick={() => {
-								// Close sidebar on mobile when navigating
-								if (window.innerWidth < 1024) {
-									onToggle();
+				<TooltipProvider delayDuration={200}>
+					{navigationCategories.map((category) => (
+						<div key={category.title} className="space-y-1.5">
+							{isOpen && (
+								<h3 className="px-3.5 text-xs font-semibold text-white/50 uppercase tracking-wider mb-2">
+									{category.title}
+								</h3>
+							)}
+							{category.items.map((item) => {
+								const Icon = item.icon;
+								const navLink = (
+									<NavLink
+										to={item.to}
+										end={item.end}
+										onClick={() => {
+											// Close sidebar on mobile when navigating
+											if (window.innerWidth < 1024) {
+												onToggle();
+											}
+										}}
+										className={({ isActive }) =>
+											cn(
+												"group flex items-center gap-3 rounded-lg text-sm font-medium transition-all duration-200",
+												isOpen ? "px-3.5 py-2.5" : "px-2 py-2.5 justify-center lg:justify-center",
+												isActive
+													? "bg-white/15 text-white shadow-lg shadow-primary/20 scale-[1.02] border-l-4 border-white/40"
+													: "text-white/70 hover:bg-white/10 hover:text-white hover:translate-x-1"
+											)
+										}
+									>
+										<Icon className="h-4 w-4 transition-transform duration-200 group-hover:scale-110 shrink-0" />
+										{isOpen && <span>{item.label}</span>}
+									</NavLink>
+								);
+
+								if (!isOpen) {
+									return (
+										<Tooltip key={item.to}>
+											<TooltipTrigger asChild>
+												{navLink}
+											</TooltipTrigger>
+											<TooltipContent 
+												side="right" 
+												sideOffset={12}
+												className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700 shadow-xl backdrop-blur-sm px-3 py-2 text-sm font-medium rounded-md"
+											>
+												{item.label}
+											</TooltipContent>
+										</Tooltip>
+									);
 								}
-							}}
-							title={!isOpen ? item.label : undefined}
-							className={({ isActive }) =>
-								cn(
-									"group flex items-center gap-3 rounded-lg text-sm font-medium transition-all duration-200",
-									isOpen ? "px-3.5 py-2.5" : "px-2 py-2.5 justify-center lg:justify-center",
-									isActive
-										? "bg-white/15 text-white shadow-lg shadow-primary/20 scale-[1.02] border-l-4 border-white/40"
-										: "text-white/70 hover:bg-white/10 hover:text-white hover:translate-x-1"
-								)
-							}
-						>
-							<Icon className="h-4 w-4 transition-transform duration-200 group-hover:scale-110 shrink-0" />
-							{isOpen && <span>{item.label}</span>}
-						</NavLink>
-					);
-				})}
+
+								return <div key={item.to}>{navLink}</div>;
+							})}
+						</div>
+					))}
+				</TooltipProvider>
 			</nav>
 
 			{/* Spacer */}

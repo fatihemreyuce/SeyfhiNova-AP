@@ -4,16 +4,13 @@ import { useGetServiceStatsById } from "@/hooks/use-service-stats";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import {
   ArrowLeft,
   Edit,
-  BarChart3,
   Image as ImageIcon,
   ExternalLink,
   Copy,
   Maximize2,
-  Hash,
   X,
   TrendingUp,
 } from "lucide-react";

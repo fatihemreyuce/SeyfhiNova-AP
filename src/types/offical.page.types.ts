@@ -19,5 +19,5 @@ export interface OfficialPageResponse{
     id:number;
     description:string;
     documents:Documents[];
-    qualityPolitics:qualityPolicy[]; // Backend'den qualityPolitics olarak geliyor
+    qualityPolitics:qualityPolicy[]; 
 }

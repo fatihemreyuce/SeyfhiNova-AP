@@ -63,7 +63,7 @@ export function TinyMCEEditor({
         branding: false,
         base_url: "/tinymce",
         suffix: ".min",
-      }}
+      } as any}
     />
   );
 }

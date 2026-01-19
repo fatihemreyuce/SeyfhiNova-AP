@@ -4,7 +4,6 @@ import { useGetReferanceById } from "@/hooks/use-referance";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import {
   ArrowLeft,
   Edit,
@@ -136,7 +135,7 @@ export default function ReferanceDetail() {
                     <Button
                       size="icon"
                       variant="outline"
-                      onClick={() => handleCopyUrl(websiteUrl, "Web sitesi URL")}
+                      onClick={() => websiteUrl && handleCopyUrl(websiteUrl, "Web sitesi URL")}
                       className="flex-shrink-0"
                     >
                       <Copy className="h-4 w-4" />

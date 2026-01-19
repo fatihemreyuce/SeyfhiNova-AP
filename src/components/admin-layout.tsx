@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Outlet } from "react-router-dom";
 import Sidebar from "./ui/sidebar";
 import { Button } from "./ui/button";
-import { Menu, X } from "lucide-react";
+import { Menu } from "lucide-react";
 
 export default function AdminLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -38,11 +38,7 @@ export default function AdminLayout() {
             onClick={toggleSidebar}
             className="lg:hidden"
           >
-            {sidebarOpen ? (
-              <X className="h-5 w-5 dark:text-foreground/80" />
-            ) : (
-              <Menu className="h-5 w-5 dark:text-foreground/80" />
-            )}
+            <Menu className="h-5 w-5 dark:text-foreground/80" />
           </Button>
           <Button
             variant="ghost"
@@ -50,11 +46,7 @@ export default function AdminLayout() {
             onClick={toggleSidebar}
             className="hidden lg:flex"
           >
-            {sidebarOpen ? (
-              <X className="h-5 w-5 dark:text-foreground/80" />
-            ) : (
-              <Menu className="h-5 w-5 dark:text-foreground/80" />
-            )}
+            <Menu className="h-5 w-5 dark:text-foreground/80" />
           </Button>
         </div>
 

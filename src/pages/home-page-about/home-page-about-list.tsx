@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   useHomePageAbout,
@@ -14,37 +14,152 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { DeleteModal } from "@/components/ui/delete-modal";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import {
   Plus,
   Search,
   Eye,
   Edit,
   Trash2,
-  MoreVertical,
   ChevronLeft,
   ChevronRight,
   FileText,
   Filter,
+  X,
+  ArrowUp,
+  ArrowDown,
   ArrowUpDown,
+  GripVertical,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+  useSortable,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import type { HomePageResponse } from "@/types/home.page.about.types";
+
+// Sortable Row Component
+interface SortableRowProps {
+  item: HomePageResponse;
+  onView: (id: number) => void;
+  onEdit: (id: number) => void;
+  onDelete: (id: number, name: string) => void;
+  stripHtml: (html: string) => string;
+}
+
+function SortableRow({ item, onView, onEdit, onDelete, stripHtml }: SortableRowProps) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: item.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <TableRow
+      ref={setNodeRef}
+      style={style}
+      className={`bg-white dark:bg-card border-b border-gray-100 dark:border-seyfhi-accent/20 hover:bg-gray-50 dark:hover:bg-muted/30 transition-colors ${
+        isDragging ? "shadow-lg z-10 opacity-50" : ""
+      }`}
+    >
+      <TableCell className="w-[50px]">
+        <div
+          {...attributes}
+          {...listeners}
+          className="cursor-grab active:cursor-grabbing p-2 -ml-2 hover:bg-muted/50 rounded transition-colors"
+        >
+          <GripVertical className="h-4 w-4 text-muted-foreground" />
+        </div>
+      </TableCell>
+      <TableCell className="whitespace-nowrap">
+        <Badge variant="outline" className="font-mono bg-blue-50 text-blue-600 dark:bg-blue-950/30 dark:text-blue-400">
+          #{item.id}
+        </Badge>
+      </TableCell>
+      <TableCell className="min-w-[150px]">
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 rounded-md bg-primary/10 flex items-center justify-center shrink-0">
+            <FileText className="h-4 w-4 text-primary dark:text-primary" />
+          </div>
+          <span className="font-medium dark:text-foreground break-words">
+            {item.leftTitle}
+          </span>
+        </div>
+      </TableCell>
+      <TableCell className="min-w-[200px] max-w-[300px]">
+        <p className="text-sm text-muted-foreground dark:text-foreground/70 break-words line-clamp-2">
+          {item.leftDescription ? stripHtml(item.leftDescription) : "-"}
+        </p>
+      </TableCell>
+      <TableCell className="min-w-[150px]">
+        <span className="font-medium dark:text-foreground break-words">
+          {item.rightTitle}
+        </span>
+      </TableCell>
+      <TableCell className="min-w-[200px] max-w-[300px]">
+        <p className="text-sm text-muted-foreground dark:text-foreground/70 break-words line-clamp-2">
+          {item.rightDescription ? stripHtml(item.rightDescription) : "-"}
+        </p>
+      </TableCell>
+      <TableCell className="text-right whitespace-nowrap">
+        <div className="flex items-center justify-end gap-1">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => onView(item.id)}
+            className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:text-blue-400 dark:hover:text-blue-300 dark:hover:bg-blue-950/30"
+            title="Detay Görüntüle"
+          >
+            <Eye className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => onEdit(item.id)}
+            className="h-8 w-8 text-green-600 hover:text-green-700 hover:bg-green-50 dark:text-green-400 dark:hover:text-green-300 dark:hover:bg-green-950/30"
+            title="Düzenle"
+          >
+            <Edit className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => onDelete(item.id, `${item.leftTitle} / ${item.rightTitle}`)}
+            className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:text-red-300 dark:hover:bg-red-950/30"
+            title="Sil"
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        </div>
+      </TableCell>
+    </TableRow>
+  );
+}
 
 export default function HomePageAboutList() {
   const navigate = useNavigate();
+  const [searchInput, setSearchInput] = useState("");
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(0);
   const [size] = useState(10);
@@ -53,8 +168,54 @@ export default function HomePageAboutList() {
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [selectedItemName, setSelectedItemName] = useState<string>("");
 
+  // Debounce search - 500ms delay
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setSearch(searchInput);
+      setPage(0);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [searchInput]);
+
   const { data, isLoading } = useHomePageAbout(search, page, size, sort);
   const deleteMutation = useDeleteHomePageAbout();
+
+  // Local state for drag & drop reordering
+  const [items, setItems] = useState<HomePageResponse[]>([]);
+
+  // Update items when data changes
+  useEffect(() => {
+    if (data?.content) {
+      setItems(data.content);
+    }
+  }, [data]);
+
+  // Sensors for drag and drop
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  // Handle drag end
+  const handleDragEnd = (event: { active: { id: number }; over: { id: number } | null }) => {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+      setItems((items) => {
+        const oldIndex = items.findIndex((item) => item.id === active.id);
+        const newIndex = items.findIndex((item) => item.id === over.id);
+
+        return arrayMove(items, oldIndex, newIndex);
+      });
+    }
+  };
 
   const handleDelete = (id: number, itemName: string) => {
     setSelectedId(id);
@@ -74,9 +235,13 @@ export default function HomePageAboutList() {
     }
   };
 
-  const handleSearch = (value: string) => {
-    setSearch(value);
-    setPage(0);
+  const handleSearchInput = (value: string) => {
+    setSearchInput(value);
+  };
+
+  const clearSearch = () => {
+    setSearchInput("");
+    setSearch("");
   };
 
   const handlePageChange = (newPage: number) => {
@@ -85,9 +250,36 @@ export default function HomePageAboutList() {
     }
   };
 
-  const handleSortChange = (value: string) => {
-    setSort(value);
+  const handleSortChange = (field: string) => {
+    const [currentField, currentDir] = sort.split(",");
+    if (currentField === field) {
+      // Aynı alana tıklandıysa yönü değiştir
+      setSort(`${field},${currentDir === "asc" ? "desc" : "asc"}`);
+    } else {
+      // Yeni alana tıklandıysa varsayılan olarak desc yap
+      setSort(`${field},desc`);
+    }
     setPage(0);
+  };
+
+  const getSortIcon = (field: string) => {
+    const [currentField, currentDir] = sort.split(",");
+    if (currentField !== field) {
+      return <ArrowUpDown className="h-3.5 w-3.5 opacity-30" />;
+    }
+    return currentDir === "asc" ? (
+      <ArrowUp className="h-3.5 w-3.5 text-primary" />
+    ) : (
+      <ArrowDown className="h-3.5 w-3.5 text-primary" />
+    );
+  };
+
+  const getSortLabel = (field: string, label: string) => {
+    const [currentField, currentDir] = sort.split(",");
+    if (currentField === field) {
+      return `${label} ${currentDir === "asc" ? "(A → Z)" : "(Z → A)"}`;
+    }
+    return label;
   };
 
   const stripHtml = (html: string) => {
@@ -121,35 +313,31 @@ export default function HomePageAboutList() {
 
       {/* Search and Filters */}
       <div className="flex items-center gap-4">
-        <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground dark:text-foreground/60" />
+        <div className="relative flex-1 max-w-lg">
+          <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-primary/70 dark:text-primary/80 z-10" />
           <Input
             placeholder="Ara..."
-            value={search}
-            onChange={(e) => handleSearch(e.target.value)}
-            className="pl-9"
+            value={searchInput}
+            onChange={(e) => handleSearchInput(e.target.value)}
+            className="pl-12 pr-12 h-12 text-base border-2 border-primary/20 focus:border-primary/50 focus:ring-2 focus:ring-primary/20 shadow-md hover:shadow-lg transition-all duration-200 bg-background dark:bg-card"
           />
+          {searchInput && (
+            <button
+              onClick={clearSearch}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors rounded-full p-1 hover:bg-muted"
+              type="button"
+              title="Temizle"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          )}
         </div>
-        <Select value={sort} onValueChange={handleSortChange}>
-          <SelectTrigger className="w-[180px]">
-            <ArrowUpDown className="h-4 w-4 mr-2 opacity-50" />
-            <SelectValue placeholder="Sırala" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="id,desc">ID (Yeni → Eski)</SelectItem>
-            <SelectItem value="id,asc">ID (Eski → Yeni)</SelectItem>
-            <SelectItem value="leftTitle,asc">Sol Başlık (A → Z)</SelectItem>
-            <SelectItem value="leftTitle,desc">Sol Başlık (Z → A)</SelectItem>
-            <SelectItem value="rightTitle,asc">Sağ Başlık (A → Z)</SelectItem>
-            <SelectItem value="rightTitle,desc">Sağ Başlık (Z → A)</SelectItem>
-          </SelectContent>
-        </Select>
-        {search && (
+        {searchInput && (
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => handleSearch("")}
-            className="shrink-0"
+            onClick={clearSearch}
+            className="shrink-0 h-10"
           >
             Temizle
           </Button>
@@ -194,10 +382,10 @@ export default function HomePageAboutList() {
               <span className="text-muted-foreground dark:text-foreground/70">
                 Toplam <span className="font-semibold text-foreground">{data.totalElements}</span> kayıt
               </span>
-              {search && (
+              {searchInput && (
                 <Badge variant="secondary" className="gap-1">
                   <Filter className="h-3 w-3 dark:text-foreground/80" />
-                  Arama: "{search}"
+                  Arama: "{searchInput}"
                 </Badge>
               )}
             </div>
@@ -207,146 +395,116 @@ export default function HomePageAboutList() {
           </div>
 
           {/* Table */}
-          <div className="rounded-lg border bg-card">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-[80px]">ID</TableHead>
-                  <TableHead>Sol Başlık</TableHead>
-                  <TableHead className="max-w-md">Sol Açıklama</TableHead>
-                  <TableHead>Sağ Başlık</TableHead>
-                  <TableHead className="max-w-md">Sağ Açıklama</TableHead>
-                  <TableHead className="w-[120px] text-right">İşlemler</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {data.content.map((item) => (
-                  <TableRow key={item.id} className="hover:bg-muted/50 transition-colors">
-                    <TableCell>
-                      <Badge variant="outline" className="font-mono">
-                        #{item.id}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-md bg-primary/10 flex items-center justify-center shrink-0">
-                          <FileText className="h-4 w-4 text-primary dark:text-primary" />
-                        </div>
-                        <span className="font-medium dark:text-foreground">
-                          {item.leftTitle}
-                        </span>
-                      </div>
-                    </TableCell>
-                    <TableCell className="max-w-md">
-                      <p className="text-sm text-muted-foreground dark:text-foreground/70 truncate">
-                        {item.leftDescription ? truncateText(stripHtml(item.leftDescription)) : "-"}
-                      </p>
-                    </TableCell>
-                    <TableCell>
-                      <span className="font-medium dark:text-foreground">
-                        {item.rightTitle}
-                      </span>
-                    </TableCell>
-                    <TableCell className="max-w-md">
-                      <p className="text-sm text-muted-foreground dark:text-foreground/70 truncate">
-                        {item.rightDescription ? truncateText(stripHtml(item.rightDescription)) : "-"}
-                      </p>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon" className="h-8 w-8">
-                            <MoreVertical className="h-4 w-4 dark:text-foreground/80" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-48">
-                          <DropdownMenuItem
-                            onClick={() => navigate(`/home-page-about/${item.id}`)}
-                          >
-                            <Eye className="h-4 w-4 mr-2 dark:text-foreground/80" />
-                            Detay Görüntüle
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            onClick={() => navigate(`/home-page-about/${item.id}/edit`)}
-                          >
-                            <Edit className="h-4 w-4 mr-2 dark:text-foreground/80" />
-                            Düzenle
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            onClick={() =>
-                              handleDelete(
-                                item.id,
-                                `${item.leftTitle} / ${item.rightTitle}`
-                              )
-                            }
-                            className="text-destructive focus:text-destructive"
-                          >
-                            <Trash2 className="h-4 w-4 mr-2" />
-                            Sil
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+          <div className="rounded-lg border bg-card overflow-hidden">
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
+            >
+              <div className="overflow-x-auto scrollbar-hide">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="bg-[#F8F9FA] dark:bg-muted/30 border-b border-gray-200 dark:border-seyfhi-accent/30">
+                      <TableHead className="w-[50px]"></TableHead>
+                      <TableHead className="w-[80px]">
+                        <button
+                          onClick={() => handleSortChange("id")}
+                          className="flex items-center gap-2 hover:bg-muted/50 px-2 py-1 rounded transition-colors"
+                        >
+                          <span>ID</span>
+                          {getSortIcon("id")}
+                        </button>
+                      </TableHead>
+                      <TableHead className="min-w-[150px]">
+                        <button
+                          onClick={() => handleSortChange("leftTitle")}
+                          className="flex items-center gap-2 hover:bg-muted/50 px-2 py-1 rounded transition-colors"
+                        >
+                          <span>Sol Başlık</span>
+                          {getSortIcon("leftTitle")}
+                        </button>
+                      </TableHead>
+                      <TableHead className="min-w-[200px] max-w-[300px]">
+                        Sol Açıklama
+                      </TableHead>
+                      <TableHead className="min-w-[150px]">
+                        <button
+                          onClick={() => handleSortChange("rightTitle")}
+                          className="flex items-center gap-2 hover:bg-muted/50 px-2 py-1 rounded transition-colors"
+                        >
+                          <span>Sağ Başlık</span>
+                          {getSortIcon("rightTitle")}
+                        </button>
+                      </TableHead>
+                      <TableHead className="min-w-[200px] max-w-[300px]">
+                        Sağ Açıklama
+                      </TableHead>
+                      <TableHead className="w-[200px] text-right">İşlemler</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    <SortableContext
+                      items={items.map((item) => item.id)}
+                      strategy={verticalListSortingStrategy}
+                    >
+                      {items.map((item) => (
+                        <SortableRow
+                          key={item.id}
+                          item={item}
+                          onView={(id) => navigate(`/home-page-about/${id}`)}
+                          onEdit={(id) => navigate(`/home-page-about/${id}/edit`)}
+                          onDelete={handleDelete}
+                          stripHtml={stripHtml}
+                        />
+                      ))}
+                    </SortableContext>
+                  </TableBody>
+                </Table>
+              </div>
+            </DndContext>
           </div>
 
           {/* Pagination */}
-          {data.totalPages > 1 && (
-            <div className="flex items-center justify-between">
+          {data && (
+            <div className="flex items-center justify-between px-6 py-4 bg-background border rounded-lg shadow-sm mt-4">
               <div className="text-sm text-muted-foreground dark:text-foreground/70">
                 {data.totalElements > 0 && (
                   <>
-                    {(page * size) + 1} - {Math.min((page + 1) * size, data.totalElements)} / {data.totalElements} kayıt gösteriliyor
+                    <span className="font-medium text-foreground">{(page * size) + 1}</span> - <span className="font-medium text-foreground">{Math.min((page + 1) * size, data.totalElements)}</span> / <span className="font-medium text-foreground">{data.totalElements}</span> kayıt gösteriliyor
                   </>
                 )}
               </div>
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handlePageChange(page - 1)}
-                  disabled={page === 0}
-                >
-                  <ChevronLeft className="h-4 w-4 mr-1 dark:text-foreground/80" />
-                  Önceki
-                </Button>
-                <div className="flex items-center gap-1">
-                  {Array.from({ length: Math.min(5, data.totalPages) }, (_, i) => {
-                    let pageNum;
-                    if (data.totalPages <= 5) {
-                      pageNum = i;
-                    } else if (page < 3) {
-                      pageNum = i;
-                    } else if (page > data.totalPages - 4) {
-                      pageNum = data.totalPages - 5 + i;
-                    } else {
-                      pageNum = page - 2 + i;
-                    }
-                    return (
-                      <Button
-                        key={pageNum}
-                        variant={page === pageNum ? "default" : "outline"}
-                        size="sm"
-                        onClick={() => handlePageChange(pageNum)}
-                        className="w-9 h-9 p-0"
-                      >
-                        {pageNum + 1}
-                      </Button>
-                    );
-                  })}
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3">
+                  <span className="text-sm font-medium text-muted-foreground dark:text-foreground/70">Sayfa</span>
+                  <div className="px-4 py-2 bg-muted/50 border-2 border-border rounded-lg">
+                    <span className="text-sm font-bold text-foreground">
+                      {page + 1} / {data.totalPages || 1}
+                    </span>
+                  </div>
                 </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handlePageChange(page + 1)}
-                  disabled={page >= data.totalPages - 1}
-                >
-                  Sonraki
-                  <ChevronRight className="h-4 w-4 ml-1 dark:text-foreground/80" />
-                </Button>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handlePageChange(page - 1)}
+                    disabled={page === 0}
+                    className="h-9 px-4 font-medium bg-background hover:bg-muted border-2 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-background"
+                  >
+                    <ChevronLeft className="h-4 w-4 mr-1" />
+                    Önceki
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handlePageChange(page + 1)}
+                    disabled={page >= (data.totalPages || 1) - 1}
+                    className="h-9 px-4 font-medium bg-background hover:bg-muted border-2 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-background"
+                  >
+                    Sonraki
+                    <ChevronRight className="h-4 w-4 ml-1" />
+                  </Button>
+                </div>
               </div>
             </div>
           )}

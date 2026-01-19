@@ -3,7 +3,7 @@ import { useNotificationSubs } from "@/hooks/use-notifications-subs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, UserPlus, Mail, User } from "lucide-react";
+import { ArrowLeft, Mail, User } from "lucide-react";
 import { useMemo } from "react";
 
 export default function NotificationSubDetail() {

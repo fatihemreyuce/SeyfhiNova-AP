@@ -2,7 +2,7 @@ export interface ReferanceRequest{
     logo:string|File;
     name:string;
     description:string;
-    websiteUrl:string;
+    websiteUrl?:string;
     orderIndex:number;
 }
 

@@ -57,7 +57,7 @@ export default function LoginPage() {
 							<Sparkles className="h-5 w-5 text-primary-foreground" />
 						</div>
 						<div className="flex flex-col">
-							<span className="text-xl font-bold tracking-tight text-foreground">Seyfhi</span>
+							<span className="text-xl font-bold tracking-tight text-foreground">Seyfh</span>
 							<span className="text-xs text-muted-foreground font-medium">Yatırım</span>
 						</div>
 					</div>
@@ -68,7 +68,7 @@ export default function LoginPage() {
 							Hoş geldiniz
 						</h1>
 						<p className="text-sm text-muted-foreground">
-							Seyfhi Yatırım hesabınıza giriş yapın
+							Seyfh Yatırım hesabınıza giriş yapın
 						</p>
 					</div>
 

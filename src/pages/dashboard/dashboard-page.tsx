@@ -28,14 +28,9 @@ import {
 import {
   AreaChart,
   Area,
-  BarChart,
-  Bar,
-  LineChart,
-  Line,
   XAxis,
   YAxis,
   CartesianGrid,
-  ResponsiveContainer,
 } from "recharts";
 import {
   Table,
@@ -107,20 +102,6 @@ export default function DashboardPage() {
       label: "Benzersiz Ziyaretçiler",
       color: "hsl(var(--chart-1))",
     },
-    görüntülenme: {
-      label: "Sayfa Görüntülemeleri",
-      color: "hsl(var(--chart-2))",
-    },
-  };
-
-  const lineChartConfig = {
-    ortalama: {
-      label: "Ortalama Sayfa/Ziyaretçi",
-      color: "hsl(var(--chart-3))",
-    },
-  };
-
-  const barChartConfig = {
     görüntülenme: {
       label: "Sayfa Görüntülemeleri",
       color: "hsl(var(--chart-2))",
@@ -326,7 +307,7 @@ export default function DashboardPage() {
                       className="text-xs"
                     />
                     <ChartTooltip content={<ChartTooltipContent />} />
-                    <ChartLegend content={<ChartLegendContent />} />
+                    <ChartLegend content={(props: any) => <ChartLegendContent payload={props.payload} verticalAlign={props.verticalAlign} />} />
                     <Area
                       type="monotone"
                       dataKey="ziyaretçiler"

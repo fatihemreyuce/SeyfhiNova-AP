@@ -2,27 +2,17 @@ import { useNavigate } from "react-router-dom";
 import { useOfficialPages } from "@/hooks/use-offical-page";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import {
   ArrowLeft,
   Edit,
   FileText,
   Copy,
-  Maximize2,
   Hash,
-  X,
-  Download,
   ExternalLink,
   List,
 } from "lucide-react";
 import { toast } from "sonner";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 
 export default function OfficialPageDetail() {
   const navigate = useNavigate();
@@ -57,12 +47,6 @@ export default function OfficialPageDetail() {
     } catch (err) {
       toast.error(`${label} kopyalanamadı`);
     }
-  };
-
-  const stripHtml = (html: string) => {
-    const tmp = document.createElement("DIV");
-    tmp.innerHTML = html;
-    return tmp.textContent || tmp.innerText || "";
   };
 
   return (

@@ -2,8 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useGetNotificationById, useSendNotification } from "@/hooks/use-notifications";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Edit, Bell, Send } from "lucide-react";
+import { ArrowLeft, Edit, Send } from "lucide-react";
 
 export default function NotificationDetail() {
   const { id } = useParams<{ id: string }>();

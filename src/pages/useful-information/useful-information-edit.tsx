@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { TinyMCEEditor } from "@/components/ui/tinymce-editor";
-import { ArrowLeft, Save, FileText, Upload, X, File, Download, ExternalLink } from "lucide-react";
+import { ArrowLeft, Save, FileText, Upload, X, File, ExternalLink } from "lucide-react";
 import {
   Form,
   FormControl,
@@ -285,7 +285,7 @@ export default function UsefulInformationEdit() {
                     <FormControl>
                       <TinyMCEEditor
                         value={field.value}
-                        onEditorChange={field.onChange}
+                        onChange={field.onChange}
                       />
                     </FormControl>
                     <FormMessage />

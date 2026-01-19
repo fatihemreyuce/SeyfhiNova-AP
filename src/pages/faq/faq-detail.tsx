@@ -2,8 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useGetFaqById } from "@/hooks/use-faqs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Edit, HelpCircle, Hash } from "lucide-react";
+import { ArrowLeft, Edit, Hash } from "lucide-react";
 
 export default function FaqDetail() {
   const { id } = useParams<{ id: string }>();

@@ -3,7 +3,7 @@ import { useGetHomePageAboutById } from "@/hooks/use-home-page-about";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Edit, FileText } from "lucide-react";
+import { ArrowLeft, Edit } from "lucide-react";
 
 export default function HomePageAboutDetail() {
   const { id } = useParams<{ id: string }>();

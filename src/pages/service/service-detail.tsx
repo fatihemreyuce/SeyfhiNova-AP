@@ -4,7 +4,7 @@ import { useServiceCategory } from "@/hooks/use-category-service";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Edit, Briefcase, Hash, Tag } from "lucide-react";
+import { ArrowLeft, Edit, Hash, Tag } from "lucide-react";
 
 export default function ServiceDetail() {
   const { id } = useParams<{ id: string }>();
