@@ -1,5 +1,4 @@
 export interface Documents{
-    id:number;
     asset:string;
     name:string;
 }

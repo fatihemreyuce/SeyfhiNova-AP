@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   useService,
@@ -42,8 +42,131 @@ import {
   Filter,
   ArrowUpDown,
   Layers,
+  GripVertical,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+  useSortable,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import type { ServiceResponse } from "@/types/services.types";
+
+// Sortable Row Component
+interface SortableRowProps {
+  item: ServiceResponse;
+  onView: (id: number) => void;
+  onEdit: (id: number) => void;
+  onDelete: (id: number, name: string) => void;
+  getCategoryName: (categoryId: number) => string;
+  truncateText: (text: string, maxLength?: number) => string;
+  stripHtml: (html: string) => string;
+}
+
+function SortableRow({ item, onView, onEdit, onDelete, getCategoryName, truncateText, stripHtml }: SortableRowProps) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: item.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <TableRow
+      ref={setNodeRef}
+      style={style}
+      className={`hover:bg-muted/50 transition-colors ${
+        isDragging ? "shadow-lg z-10 opacity-50" : ""
+      }`}
+    >
+      <TableCell className="w-[50px]">
+        <div
+          {...attributes}
+          {...listeners}
+          className="cursor-grab active:cursor-grabbing p-2 -ml-2 hover:bg-muted/50 rounded transition-colors"
+        >
+          <GripVertical className="h-4 w-4 text-muted-foreground" />
+        </div>
+      </TableCell>
+      <TableCell>
+        <Badge variant="outline" className="font-mono">
+          #{item.id}
+        </Badge>
+      </TableCell>
+      <TableCell>
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 rounded-md bg-primary/10 flex items-center justify-center shrink-0">
+            <Briefcase className="h-4 w-4 text-primary dark:text-primary" />
+          </div>
+          <span className="font-medium dark:text-foreground">
+            {item.title}
+          </span>
+        </div>
+      </TableCell>
+      <TableCell>
+        <Badge variant="secondary" className="gap-1">
+          <Layers className="h-3 w-3 dark:text-foreground/80" />
+          {getCategoryName(item.categoryId)}
+        </Badge>
+      </TableCell>
+      <TableCell className="max-w-md">
+        <p className="text-sm text-muted-foreground dark:text-foreground/70 truncate">
+          {truncateText(stripHtml(item.description))}
+        </p>
+      </TableCell>
+      <TableCell className="text-center">
+        <Badge variant="secondary" className="font-semibold">
+          {item.orderIndex}
+        </Badge>
+      </TableCell>
+      <TableCell className="text-right">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon" className="h-8 w-8">
+              <MoreVertical className="h-4 w-4 dark:text-foreground/80" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-48">
+            <DropdownMenuItem onClick={() => onView(item.id)}>
+              <Eye className="h-4 w-4 mr-2 dark:text-foreground/80" />
+              Detay Görüntüle
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => onEdit(item.id)}>
+              <Edit className="h-4 w-4 mr-2 dark:text-foreground/80" />
+              Düzenle
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => onDelete(item.id, item.title)}
+              className="text-destructive focus:text-destructive"
+            >
+              <Trash2 className="h-4 w-4 mr-2" />
+              Sil
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </TableCell>
+    </TableRow>
+  );
+}
 
 export default function ServiceList() {
   const navigate = useNavigate();
@@ -58,6 +181,42 @@ export default function ServiceList() {
   const { data, isLoading } = useService(search, page, size, sort);
   const { data: categoriesData } = useServiceCategory("", 0, 100, "id,asc");
   const deleteMutation = useDeleteService();
+
+  // Local state for drag & drop reordering
+  const [items, setItems] = useState<ServiceResponse[]>([]);
+
+  // Update items when data changes
+  useEffect(() => {
+    if (data?.content) {
+      setItems(data.content);
+    }
+  }, [data]);
+
+  // Sensors for drag and drop
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  // Handle drag end
+  const handleDragEnd = (event: { active: { id: number }; over: { id: number } | null }) => {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+      setItems((items) => {
+        const oldIndex = items.findIndex((item) => item.id === active.id);
+        const newIndex = items.findIndex((item) => item.id === over.id);
+
+        return arrayMove(items, oldIndex, newIndex);
+      });
+    }
+  };
 
   const getCategoryName = (categoryId: number) => {
     const category = categoriesData?.content.find((cat) => cat.id === categoryId);
@@ -216,85 +375,46 @@ export default function ServiceList() {
 
           {/* Table */}
           <div className="rounded-lg border bg-card">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-[80px]">ID</TableHead>
-                  <TableHead>Başlık</TableHead>
-                  <TableHead>Kategori</TableHead>
-                  <TableHead className="max-w-md">Açıklama</TableHead>
-                  <TableHead className="w-[100px] text-center">Sıra</TableHead>
-                  <TableHead className="w-[120px] text-right">İşlemler</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {data.content.map((item) => (
-                  <TableRow key={item.id} className="hover:bg-muted/50 transition-colors">
-                    <TableCell>
-                      <Badge variant="outline" className="font-mono">
-                        #{item.id}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-md bg-primary/10 flex items-center justify-center shrink-0">
-                          <Briefcase className="h-4 w-4 text-primary dark:text-primary" />
-                        </div>
-                        <span className="font-medium dark:text-foreground">
-                          {item.title}
-                        </span>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="secondary" className="gap-1">
-                        <Layers className="h-3 w-3 dark:text-foreground/80" />
-                        {getCategoryName(item.categoryId)}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="max-w-md">
-                      <p className="text-sm text-muted-foreground dark:text-foreground/70 truncate">
-                        {truncateText(stripHtml(item.description))}
-                      </p>
-                    </TableCell>
-                    <TableCell className="text-center">
-                      <Badge variant="secondary" className="font-semibold">
-                        {item.orderIndex}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon" className="h-8 w-8">
-                            <MoreVertical className="h-4 w-4 dark:text-foreground/80" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-48">
-                          <DropdownMenuItem
-                            onClick={() => navigate(`/service/${item.id}`)}
-                          >
-                            <Eye className="h-4 w-4 mr-2 dark:text-foreground/80" />
-                            Detay Görüntüle
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            onClick={() => navigate(`/service/${item.id}/edit`)}
-                          >
-                            <Edit className="h-4 w-4 mr-2 dark:text-foreground/80" />
-                            Düzenle
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            onClick={() => handleDelete(item.id, item.title)}
-                            className="text-destructive focus:text-destructive"
-                          >
-                            <Trash2 className="h-4 w-4 mr-2" />
-                            Sil
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
+            >
+              <div className="overflow-x-auto scrollbar-hide">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="w-[50px]"></TableHead>
+                      <TableHead className="w-[80px]">ID</TableHead>
+                      <TableHead>Başlık</TableHead>
+                      <TableHead>Kategori</TableHead>
+                      <TableHead className="max-w-md">Açıklama</TableHead>
+                      <TableHead className="w-[100px] text-center">Sıra</TableHead>
+                      <TableHead className="w-[120px] text-right">İşlemler</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    <SortableContext
+                      items={items.map((item) => item.id)}
+                      strategy={verticalListSortingStrategy}
+                    >
+                      {items.map((item) => (
+                        <SortableRow
+                          key={item.id}
+                          item={item}
+                          onView={(id) => navigate(`/service/${id}`)}
+                          onEdit={(id) => navigate(`/service/${id}/edit`)}
+                          onDelete={handleDelete}
+                          getCategoryName={getCategoryName}
+                          truncateText={truncateText}
+                          stripHtml={stripHtml}
+                        />
+                      ))}
+                    </SortableContext>
+                  </TableBody>
+                </Table>
+              </div>
+            </DndContext>
           </div>
 
           {/* Pagination */}

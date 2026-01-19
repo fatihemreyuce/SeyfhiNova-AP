@@ -58,6 +58,10 @@ import UsefulInformationEdit from "./pages/useful-information/useful-information
 import ContactList from "./pages/contact/contact-list";
 import ContactDetail from "./pages/contact/contact-detail";
 import ContactCreate from "./pages/contact/contact-create";
+import UserList from "./pages/user/user-list";
+import UserDetail from "./pages/user/user-detail";
+import UserCreate from "./pages/user/user-create";
+import UserEdit from "./pages/user/user-edit";
 
 
 function App() {
@@ -123,6 +127,10 @@ function App() {
 							<Route path="/contact" element={<ContactList />} />
 							<Route path="/contact/create" element={<ContactCreate />} />
 							<Route path="/contact/:id" element={<ContactDetail />} />
+							<Route path="/user" element={<UserList />} />
+							<Route path="/user/create" element={<UserCreate />} />
+							<Route path="/user/:id" element={<UserDetail />} />
+							<Route path="/user/:id/edit" element={<UserEdit />} />
 							</Route>
 						</Route>
 					</Routes>

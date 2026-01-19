@@ -1,9 +1,17 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuSeparator,
+	DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import DarkModeToggle from "@/components/dark-mode-toggle";
 import { useLoginState } from "@/hooks/use-login-state";
-import { LayoutDashboard, LogOut, Sparkles, FileText, Layers, Briefcase, BarChart3, Images, Handshake, Award, ScrollText, HelpCircle, Bell, UserPlus, Building2, BookOpen, Phone, Info } from "lucide-react";
+import { useGetUserMe } from "@/hooks/use-user";
+import { LayoutDashboard, LogOut, Sparkles, FileText, Layers, Briefcase, BarChart3, Images, Handshake, Award, ScrollText, HelpCircle, Bell, UserPlus, Building2, BookOpen, Phone, Info, Users, User, ChevronsUpDown, Mail } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface NavItem {
@@ -121,6 +129,12 @@ const navigationCategories: NavCategory[] = [
 		title: "SİSTEM",
 		items: [
 			{
+				to: "/user",
+				label: "Kullanıcılar",
+				icon: Users,
+				end: false,
+			},
+			{
 				to: "/official-page",
 				label: "Resmi Sayfa",
 				icon: FileText,
@@ -138,6 +152,7 @@ interface SidebarProps {
 export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
 	const { logout, isActionable, isLoading } = useLoginState();
 	const navigate = useNavigate();
+	const { data: userMe, isLoading: userMeLoading } = useGetUserMe();
 
 	const handleLogout = async () => {
 		try {
@@ -181,7 +196,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
 
 			{/* Navigation */}
 			<nav className={cn(
-				"flex flex-col gap-4 mt-2 transition-all duration-300 overflow-y-auto",
+				"flex flex-col gap-4 mt-2 transition-all duration-300 overflow-y-auto ",
 				isOpen ? "p-4" : "p-2 lg:p-2"
 			)}>
 				<TooltipProvider delayDuration={200}>
@@ -246,34 +261,163 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
 			{/* Spacer */}
 			<div className="flex-1" />
 
-			{/* Footer with logout */}
+			{/* Footer with user profile and logout */}
 			<div className={cn(
-				"absolute bottom-0 left-0 right-0 border-t border-seyfhi-accent/20 transition-all duration-300",
+				"absolute bottom-0 left-0 right-0 border-t border-seyfhi-accent/20 transition-all duration-300 bg-seyfhi-primary",
 				isOpen ? "p-4" : "p-2 lg:p-2"
 			)}>
 				{isOpen ? (
-					<Button
-						variant="outline"
-						onClick={handleLogout}
-						disabled={!isActionable || isLoading}
-						className="w-full justify-start gap-3 h-10 border-white/20 bg-white/5 hover:bg-white/10 text-white hover:text-white transition-all duration-200"
-						aria-busy={isLoading}
-					>
-						<LogOut className="h-4 w-4 shrink-0" />
-						{isLoading ? "Çıkış yapılıyor..." : "Çıkış Yap"}
-					</Button>
+					<div className="space-y-2">
+						{/* User Profile */}
+						{userMe && (
+							<DropdownMenu>
+								<DropdownMenuTrigger asChild>
+									<button
+										className={cn(
+											"w-full flex items-center gap-3 rounded-xl px-3.5 py-3 text-sm font-medium transition-all duration-200 group",
+											"bg-white/5 hover:bg-white/10 text-white/90 hover:text-white",
+											"border border-white/10 hover:border-white/25 hover:shadow-lg hover:shadow-white/5",
+											"backdrop-blur-sm"
+										)}
+									>
+										<div className="relative w-11 h-11 rounded-full bg-gradient-to-br from-white/25 via-white/15 to-white/5 flex items-center justify-center shrink-0 border border-white/25 shadow-md group-hover:shadow-lg group-hover:scale-105 transition-all duration-200">
+											<User className="h-5 w-5 text-white drop-shadow-sm" />
+											<div className="absolute inset-0 rounded-full bg-white/0 group-hover:bg-white/10 transition-colors duration-200" />
+										</div>
+										<div className="flex-1 text-left min-w-0">
+											<div className="text-sm font-semibold text-white truncate leading-tight mb-0.5">
+												{userMe.firstName} {userMe.lastName}
+											</div>
+											<div className="text-xs text-white/70 truncate flex items-center gap-1.5 font-normal">
+												<Mail className="h-3 w-3 opacity-75" />
+												<span className="truncate">{userMe.email}</span>
+											</div>
+										</div>
+										<ChevronsUpDown className="h-4 w-4 text-white/50 shrink-0 group-hover:text-white/70 transition-colors" />
+									</button>
+								</DropdownMenuTrigger>
+								<DropdownMenuContent 
+									align="end" 
+									side="top"
+									sideOffset={8}
+									className="w-72 bg-white dark:bg-[#1f2937] border border-gray-200/80 dark:border-gray-700/80 shadow-2xl rounded-xl overflow-hidden backdrop-blur-sm"
+								>
+									<div className="px-4 py-3.5 bg-gradient-to-r from-gray-50 to-gray-100/50 dark:from-gray-900/80 dark:to-gray-800/80 border-b border-gray-200/80 dark:border-gray-700/80">
+										<div className="flex items-center gap-2">
+											<Mail className="h-3.5 w-3.5 text-gray-400 dark:text-gray-500 shrink-0" />
+											<div className="text-sm text-gray-900 dark:text-gray-100 font-medium truncate">
+												{userMe.email}
+											</div>
+										</div>
+									</div>
+									<div className="p-1.5">
+										<DropdownMenuItem
+											onClick={() => {
+												if (userMe) {
+													navigate(`/user/${userMe.id}`);
+												}
+												if (window.innerWidth < 1024) {
+													onToggle();
+												}
+											}}
+											className="cursor-pointer rounded-lg px-3 py-2.5 text-sm font-medium focus:bg-gray-100 dark:focus:bg-gray-800/50 transition-colors duration-150"
+										>
+											<User className="h-4 w-4 mr-3 text-gray-600 dark:text-gray-400 shrink-0" />
+											<span className="text-gray-900 dark:text-gray-100">Profil Görüntüle</span>
+										</DropdownMenuItem>
+										<DropdownMenuSeparator className="my-1.5 bg-gray-200 dark:bg-gray-700" />
+										<DropdownMenuItem
+											onClick={handleLogout}
+											disabled={!isActionable || isLoading}
+											className="cursor-pointer rounded-lg px-3 py-2.5 text-sm font-medium focus:bg-red-50 dark:focus:bg-red-950/30 text-red-600 dark:text-red-400 focus:text-red-600 dark:focus:text-red-400 transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
+										>
+											<LogOut className="h-4 w-4 mr-3 shrink-0" />
+											<span>{isLoading ? "Çıkış yapılıyor..." : "Çıkış Yap"}</span>
+										</DropdownMenuItem>
+									</div>
+								</DropdownMenuContent>
+							</DropdownMenu>
+						)}
+						{userMeLoading && (
+							<div className="w-full flex items-center gap-3 rounded-xl px-3.5 py-3 bg-white/5 border border-white/10">
+								<div className="w-11 h-11 rounded-full bg-white/10 animate-pulse border border-white/20" />
+								<div className="flex-1 space-y-2">
+									<div className="h-3.5 w-28 bg-white/10 rounded animate-pulse" />
+									<div className="h-2.5 w-36 bg-white/10 rounded animate-pulse" />
+								</div>
+							</div>
+						)}
+					</div>
 				) : (
-					<Button
-						variant="outline"
-						onClick={handleLogout}
-						disabled={!isActionable || isLoading}
-						title="Çıkış Yap"
-						size="icon"
-						className="w-full h-10 border-white/20 bg-white/5 hover:bg-white/10 text-white hover:text-white transition-all duration-200"
-						aria-busy={isLoading}
-					>
-						<LogOut className="h-4 w-4" />
-					</Button>
+					<DropdownMenu>
+						<DropdownMenuTrigger asChild>
+							<button
+								className="w-full h-11 flex items-center justify-center rounded-xl bg-white/5 hover:bg-white/10 text-white hover:text-white transition-all duration-200 border border-white/10 hover:border-white/25 hover:shadow-lg hover:shadow-white/5 backdrop-blur-sm group"
+								title={userMe ? `${userMe.firstName} ${userMe.lastName}` : "Kullanıcı"}
+							>
+								{userMe ? (
+									<div className="w-9 h-9 rounded-full bg-gradient-to-br from-white/25 via-white/15 to-white/5 flex items-center justify-center border border-white/25 shadow-md group-hover:shadow-lg group-hover:scale-105 transition-all duration-200">
+										<User className="h-4.5 w-4.5 text-white drop-shadow-sm" />
+									</div>
+								) : (
+									<User className="h-4 w-4" />
+								)}
+							</button>
+						</DropdownMenuTrigger>
+						<DropdownMenuContent 
+							align="end" 
+							side="right"
+							sideOffset={12}
+							className="w-72 bg-white dark:bg-[#1f2937] border border-gray-200/80 dark:border-gray-700/80 shadow-2xl rounded-xl overflow-hidden backdrop-blur-sm"
+						>
+							{userMe && (
+								<>
+									<div className="px-4 py-3.5 bg-gradient-to-r from-gray-50 to-gray-100/50 dark:from-gray-900/80 dark:to-gray-800/80 border-b border-gray-200/80 dark:border-gray-700/80">
+										<div className="flex items-center gap-2">
+											<Mail className="h-3.5 w-3.5 text-gray-400 dark:text-gray-500 shrink-0" />
+											<div className="text-sm text-gray-900 dark:text-gray-100 font-medium truncate">
+												{userMe.email}
+											</div>
+										</div>
+									</div>
+									<div className="p-1.5">
+										<DropdownMenuItem
+											onClick={() => {
+												if (userMe) {
+													navigate(`/user/${userMe.id}`);
+												}
+											}}
+											className="cursor-pointer rounded-lg px-3 py-2.5 text-sm font-medium focus:bg-gray-100 dark:focus:bg-gray-800/50 transition-colors duration-150"
+										>
+											<User className="h-4 w-4 mr-3 text-gray-600 dark:text-gray-400 shrink-0" />
+											<span className="text-gray-900 dark:text-gray-100">Profil Görüntüle</span>
+										</DropdownMenuItem>
+										<DropdownMenuSeparator className="my-1.5 bg-gray-200 dark:bg-gray-700" />
+										<DropdownMenuItem
+											onClick={handleLogout}
+											disabled={!isActionable || isLoading}
+											className="cursor-pointer rounded-lg px-3 py-2.5 text-sm font-medium focus:bg-red-50 dark:focus:bg-red-950/30 text-red-600 dark:text-red-400 focus:text-red-600 dark:focus:text-red-400 transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
+										>
+											<LogOut className="h-4 w-4 mr-3 shrink-0" />
+											<span>{isLoading ? "Çıkış yapılıyor..." : "Çıkış Yap"}</span>
+										</DropdownMenuItem>
+									</div>
+								</>
+							)}
+							{!userMe && (
+								<div className="p-1.5">
+									<DropdownMenuItem
+										onClick={handleLogout}
+										disabled={!isActionable || isLoading}
+										className="cursor-pointer rounded-lg px-3 py-2.5 text-sm font-medium focus:bg-red-50 dark:focus:bg-red-950/30 text-red-600 dark:text-red-400 focus:text-red-600 dark:focus:text-red-400 transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
+									>
+										<LogOut className="h-4 w-4 mr-3 shrink-0" />
+										<span>{isLoading ? "Çıkış yapılıyor..." : "Çıkış Yap"}</span>
+									</DropdownMenuItem>
+								</div>
+							)}
+						</DropdownMenuContent>
+					</DropdownMenu>
 				)}
 			</div>
 		</aside>
