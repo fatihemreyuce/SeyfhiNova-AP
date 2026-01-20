@@ -19,7 +19,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 
 const formSchema = z.object({
-  question: z.string().min(1, "Soru gereklidir"),
+  question: z.string()
+    .min(1, "Soru gereklidir")
+    .max(500, "Soru en fazla 500 karakter olabilir"),
   answer: z.string().min(1, "Cevap gereklidir"),
   orderIndex: z.number().min(0, "Sıra numarası 0 veya daha büyük olmalıdır"),
 });
@@ -119,7 +121,16 @@ export default function FaqEdit() {
                   <FormItem>
                     <FormLabel>Soru</FormLabel>
                     <FormControl>
-                      <Input placeholder="Soruyu giriniz" {...field} />
+                      <div className="space-y-1">
+                        <Input 
+                          placeholder="Soruyu giriniz" 
+                          maxLength={500}
+                          {...field} 
+                        />
+                        <p className="text-xs text-muted-foreground text-right">
+                          {field.value?.length || 0} / 500 karakter
+                        </p>
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -136,6 +147,7 @@ export default function FaqEdit() {
                       <TinyMCEEditor
                         value={field.value}
                         onChange={field.onChange}
+                        maxWords={100000}
                       />
                     </FormControl>
                     <FormMessage />

@@ -86,10 +86,17 @@ export default function ServiceStatsEdit() {
 
   const onSubmit = (values: FormValues) => {
     if (id) {
-      const requestData = {
-        ...values,
-        icon: iconFile || data?.iconName || "",
+      // Yeni ikon seçilmişse icon alanını ekle, seçilmemişse ekleme (backend mevcut ikonu korur)
+      const requestData: any = {
+        title: values.title,
+        numberValue: values.numberValue,
       };
+      
+      // Sadece yeni bir ikon seçilmişse icon alanını ekle
+      if (iconFile) {
+        requestData.icon = iconFile;
+      }
+      
       updateMutation.mutate(
         { id: Number(id), request: requestData },
         {

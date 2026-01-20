@@ -18,7 +18,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 
 const formSchema = z.object({
-  name: z.string().min(1, "Kategori adı gereklidir"),
+  name: z.string()
+    .min(1, "Kategori adı gereklidir")
+    .max(255, "Kategori adı en fazla 255 karakter olabilir"),
   description: z.string().min(1, "Açıklama gereklidir"),
   orderIndex: z.number().min(0, "Sıra numarası 0 veya daha büyük olmalıdır"),
 });
@@ -81,7 +83,16 @@ export default function ServiceCategoryCreate() {
                   <FormItem>
                     <FormLabel>Kategori Adı</FormLabel>
                     <FormControl>
-                      <Input placeholder="Kategori adını giriniz" {...field} />
+                      <div className="space-y-1">
+                        <Input 
+                          placeholder="Kategori adını giriniz" 
+                          maxLength={255}
+                          {...field} 
+                        />
+                        <p className="text-xs text-muted-foreground text-right">
+                          {field.value?.length || 0} / 255 karakter
+                        </p>
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -98,6 +109,7 @@ export default function ServiceCategoryCreate() {
                       <TinyMCEEditor
                         value={field.value}
                         onChange={field.onChange}
+                        maxWords={100000}
                       />
                     </FormControl>
                     <FormMessage />

@@ -1,5 +1,4 @@
 import { NavLink, useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import {
 	DropdownMenu,
@@ -11,7 +10,7 @@ import {
 import DarkModeToggle from "@/components/dark-mode-toggle";
 import { useLoginState } from "@/hooks/use-login-state";
 import { useGetUserMe } from "@/hooks/use-user";
-import { LayoutDashboard, LogOut, Sparkles, FileText, Layers, Briefcase, BarChart3, Images, Handshake, Award, ScrollText, HelpCircle, Bell, UserPlus, Building2, BookOpen, Phone, Info, Users, User, ChevronsUpDown, Mail } from "lucide-react";
+import { LayoutDashboard, LogOut, Sparkles, FileText, Layers, Briefcase, BarChart3, Images, Handshake, Award, HelpCircle, Bell, UserPlus, BookOpen, Phone, Info, Users, User, ChevronsUpDown, Mail, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface NavItem {
@@ -69,6 +68,12 @@ const navigationCategories: NavCategory[] = [
 				to: "/faq",
 				label: "SSS",
 				icon: HelpCircle,
+				end: false,
+			},
+			{
+				to: "/circular",
+				label: "Blog",
+				icon: FileText,
 				end: false,
 			},
 		],
@@ -140,6 +145,12 @@ const navigationCategories: NavCategory[] = [
 				icon: FileText,
 				end: false,
 			},
+			{
+				to: "/settings",
+				label: "Ayarlar",
+				icon: Settings,
+				end: false,
+			},
 		],
 	},
 ];
@@ -166,14 +177,14 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
 	return (
 		<aside
 			className={cn(
-				"fixed left-0 top-0 z-40 h-screen border-r border-seyfhi-accent bg-seyfhi-primary gradient-sidebar transition-all duration-300 ease-in-out",
+				"fixed left-0 top-0 z-40 h-screen border-r border-seyfhi-accent bg-seyfhi-primary gradient-sidebar transition-all duration-300 ease-in-out flex flex-col",
 				isOpen ? "w-64" : "w-0 lg:w-16",
 				isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
 			)}
 		>
 			{/* Header */}
 			<div className={cn(
-				"flex h-20 items-center border-b border-seyfhi-accent/20 transition-all duration-300",
+				"flex h-20 items-center border-b border-seyfhi-accent/20 transition-all duration-300 shrink-0",
 				isOpen ? "justify-between px-6" : "justify-center px-0"
 			)}>
 				<div className="flex items-center gap-3">
@@ -194,10 +205,11 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
 				)}
 			</div>
 
-			{/* Navigation */}
+			{/* Navigation - Scrollable */}
 			<nav className={cn(
-				"flex flex-col gap-4 mt-2 transition-all duration-300 overflow-y-auto ",
-				isOpen ? "p-4" : "p-2 lg:p-2"
+				"flex flex-col gap-4 flex-1 overflow-y-auto overflow-x-hidden transition-all duration-300",
+				isOpen ? "p-4" : "p-2 lg:p-2",
+				"scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent hover:scrollbar-thumb-white/30"
 			)}>
 				<TooltipProvider delayDuration={200}>
 					{navigationCategories.map((category) => (
@@ -258,12 +270,9 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
 				</TooltipProvider>
 			</nav>
 
-			{/* Spacer */}
-			<div className="flex-1" />
-
 			{/* Footer with user profile and logout */}
 			<div className={cn(
-				"absolute bottom-0 left-0 right-0 border-t border-seyfhi-accent/20 transition-all duration-300 bg-seyfhi-primary",
+				"border-t border-seyfhi-accent/20 transition-all duration-300 bg-seyfhi-primary shrink-0",
 				isOpen ? "p-4" : "p-2 lg:p-2"
 			)}>
 				{isOpen ? (

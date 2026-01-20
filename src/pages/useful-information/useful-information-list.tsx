@@ -23,18 +23,11 @@ import {
 } from "@/components/ui/select";
 import { DeleteModal } from "@/components/ui/delete-modal";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
   Plus,
   Search,
   Eye,
   Edit,
   Trash2,
-  MoreVertical,
   ChevronLeft,
   ChevronRight,
   FileText,
@@ -147,30 +140,35 @@ function SortableRow({ item, onView, onEdit, onDelete, truncateText, stripHtml }
         </p>
       </TableCell>
       <TableCell className="text-right">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="h-8 w-8">
-              <MoreVertical className="h-4 w-4 dark:text-foreground/80" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-48">
-            <DropdownMenuItem onClick={() => onView(item.id)}>
-              <Eye className="h-4 w-4 mr-2 dark:text-foreground/80" />
-              Detay Görüntüle
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => onEdit(item.id)}>
-              <Edit className="h-4 w-4 mr-2 dark:text-foreground/80" />
-              Düzenle
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => onDelete(item.id, item.title)}
-              className="text-destructive focus:text-destructive"
-            >
-              <Trash2 className="h-4 w-4 mr-2" />
-              Sil
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <div className="flex items-center justify-end gap-1">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => onView(item.id)}
+            className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:text-blue-400 dark:hover:text-blue-300 dark:hover:bg-blue-950/30"
+            title="Detay Görüntüle"
+          >
+            <Eye className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => onEdit(item.id)}
+            className="h-8 w-8 text-green-600 hover:text-green-700 hover:bg-green-50 dark:text-green-400 dark:hover:text-green-300 dark:hover:bg-green-950/30"
+            title="Düzenle"
+          >
+            <Edit className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => onDelete(item.id, item.title)}
+            className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:text-red-300 dark:hover:bg-red-950/30"
+            title="Sil"
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        </div>
       </TableCell>
     </TableRow>
   );

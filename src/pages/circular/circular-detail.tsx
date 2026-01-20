@@ -45,7 +45,7 @@ export default function CircularDetail() {
   if (!data) {
     return (
       <div className="flex flex-col items-center justify-center py-12">
-        <p className="text-muted-foreground mb-4">Genelge bulunamadı.</p>
+        <p className="text-muted-foreground mb-4">Blog yazısı bulunamadı.</p>
         <Button variant="outline" onClick={() => navigate("/circular")}>
           <ArrowLeft className="h-4 w-4 mr-2" />
           Geri Dön
@@ -68,10 +68,10 @@ export default function CircularDetail() {
           </Button>
           <div>
             <h1 className="text-3xl font-bold tracking-tight">
-              Genelge Detayı: {data.title}
+              Blog Detayı: {data.title}
             </h1>
             <p className="text-muted-foreground">
-              #{data.id} - Genelge detay bilgileri
+              #{data.id} - Blog yazısı detay bilgileri
             </p>
           </div>
         </div>
@@ -145,7 +145,7 @@ export default function CircularDetail() {
                           {fileName}
                         </p>
                         <p className="text-xs text-muted-foreground mt-1">
-                          Genelge dosyası
+                          Blog dosyası
                         </p>
                       </div>
                     </div>

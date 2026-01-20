@@ -20,7 +20,9 @@ import * as z from "zod";
 
 const formSchema = z.object({
   file: z.any().optional(),
-  title: z.string().min(1, "Başlık gereklidir"),
+  title: z.string()
+    .min(1, "Başlık gereklidir")
+    .max(255, "Başlık en fazla 255 karakter olabilir"),
   description: z.string().min(1, "Açıklama gereklidir"),
 });
 
@@ -85,10 +87,17 @@ export default function CircularEdit() {
 
   const onSubmit = (values: FormValues) => {
     if (id) {
-      const requestData = {
-        ...values,
-        file: file || (data?.fileUrl && !file ? data.fileUrl : ""),
+      // Yeni dosya seçilmişse file alanını ekle, seçilmemişse ekleme (backend mevcut dosyayı korur)
+      const requestData: any = {
+        title: values.title,
+        description: values.description,
       };
+      
+      // Sadece yeni bir dosya seçilmişse file alanını ekle
+      if (file) {
+        requestData.file = file;
+      }
+      
       updateMutation.mutate(
         { id: Number(id), request: requestData },
         {
@@ -111,7 +120,7 @@ export default function CircularEdit() {
   if (!data) {
     return (
       <div className="flex flex-col items-center justify-center py-12">
-        <p className="text-muted-foreground mb-4">Genelge bulunamadı.</p>
+        <p className="text-muted-foreground mb-4">Blog yazısı bulunamadı.</p>
         <Button variant="outline" onClick={() => navigate("/circular")}>
           <ArrowLeft className="h-4 w-4 mr-2" />
           Geri Dön
@@ -146,7 +155,7 @@ export default function CircularEdit() {
             <CardHeader>
               <div className="flex items-center gap-2">
                 <FileText className="h-5 w-5 text-primary" />
-                <CardTitle>Genelge Bilgileri</CardTitle>
+                <CardTitle>Blog Bilgileri</CardTitle>
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -284,7 +293,16 @@ export default function CircularEdit() {
                   <FormItem>
                     <FormLabel>Başlık</FormLabel>
                     <FormControl>
-                      <Input placeholder="Genelge başlığını giriniz" {...field} />
+                      <div className="space-y-1">
+                        <Input 
+                          placeholder="Blog başlığını giriniz" 
+                          maxLength={255}
+                          {...field} 
+                        />
+                        <p className="text-xs text-muted-foreground text-right">
+                          {field.value?.length || 0} / 255 karakter
+                        </p>
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -301,6 +319,7 @@ export default function CircularEdit() {
                       <TinyMCEEditor
                         value={field.value}
                         onChange={field.onChange}
+                        maxWords={100000}
                       />
                     </FormControl>
                     <FormMessage />

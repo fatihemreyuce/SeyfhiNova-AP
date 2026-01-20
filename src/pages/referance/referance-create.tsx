@@ -22,11 +22,16 @@ const formSchema = z.object({
   logo: z.any().refine((file) => file instanceof File || typeof file === "string", {
     message: "Logo dosyası gereklidir",
   }),
-  name: z.string().min(1, "İsim gereklidir"),
+  name: z.string()
+    .min(1, "İsim gereklidir")
+    .max(255, "İsim en fazla 255 karakter olabilir"),
   description: z.string().min(1, "Açıklama gereklidir"),
-  websiteUrl: z.string().refine((val) => val === "" || z.string().url().safeParse(val).success, {
-    message: "Geçerli bir URL giriniz",
-  }).optional(),
+  websiteUrl: z.string()
+    .refine((val) => val === "" || z.string().url().safeParse(val).success, {
+      message: "Geçerli bir URL giriniz",
+    })
+    .max(500, "URL en fazla 500 karakter olabilir")
+    .optional(),
   orderIndex: z.number().min(0, "Sıra numarası 0 veya daha büyük olmalıdır"),
 });
 
@@ -185,7 +190,16 @@ export default function ReferanceCreate() {
                   <FormItem>
                     <FormLabel>İsim</FormLabel>
                     <FormControl>
-                      <Input placeholder="Referans ismini giriniz" {...field} />
+                      <div className="space-y-1">
+                        <Input 
+                          placeholder="Referans ismini giriniz" 
+                          maxLength={255}
+                          {...field} 
+                        />
+                        <p className="text-xs text-muted-foreground text-right">
+                          {field.value?.length || 0} / 255 karakter
+                        </p>
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -202,6 +216,7 @@ export default function ReferanceCreate() {
                       <TinyMCEEditor
                         value={field.value}
                         onChange={field.onChange}
+                        maxWords={100000}
                       />
                     </FormControl>
                     <FormMessage />
@@ -216,11 +231,17 @@ export default function ReferanceCreate() {
                   <FormItem>
                     <FormLabel>Web Sitesi URL</FormLabel>
                     <FormControl>
-                      <Input 
-                        type="url"
-                        placeholder="https://example.com" 
-                        {...field} 
-                      />
+                      <div className="space-y-1">
+                        <Input 
+                          type="url"
+                          placeholder="https://example.com" 
+                          maxLength={500}
+                          {...field} 
+                        />
+                        <p className="text-xs text-muted-foreground text-right">
+                          {field.value?.length || 0} / 500 karakter
+                        </p>
+                      </div>
                     </FormControl>
                     <FormMessage />
                     <p className="text-xs text-muted-foreground">

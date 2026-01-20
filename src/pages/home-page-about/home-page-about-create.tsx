@@ -18,9 +18,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 
 const formSchema = z.object({
-  leftTitle: z.string().min(1, "Sol başlık gereklidir"),
+  leftTitle: z.string()
+    .min(1, "Sol başlık gereklidir")
+    .max(255, "Sol başlık en fazla 255 karakter olabilir"),
   leftDescription: z.string().min(1, "Sol açıklama gereklidir"),
-  rightTitle: z.string().min(1, "Sağ başlık gereklidir"),
+  rightTitle: z.string()
+    .min(1, "Sağ başlık gereklidir")
+    .max(255, "Sağ başlık en fazla 255 karakter olabilir"),
   rightDescription: z.string().min(1, "Sağ açıklama gereklidir"),
 });
 
@@ -81,7 +85,16 @@ export default function HomePageAboutCreate() {
                     <FormItem>
                       <FormLabel>Sol Başlık</FormLabel>
                       <FormControl>
-                        <Input placeholder="Sol başlık giriniz" {...field} />
+                        <div className="space-y-1">
+                          <Input 
+                            placeholder="Sol başlık giriniz" 
+                            maxLength={255}
+                            {...field} 
+                          />
+                          <p className="text-xs text-muted-foreground text-right">
+                            {field.value?.length || 0} / 255 karakter
+                          </p>
+                        </div>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -97,6 +110,7 @@ export default function HomePageAboutCreate() {
                         <TinyMCEEditor
                           value={field.value}
                           onChange={field.onChange}
+                          maxWords={100000}
                         />
                       </FormControl>
                       <FormMessage />
@@ -118,7 +132,16 @@ export default function HomePageAboutCreate() {
                     <FormItem>
                       <FormLabel>Sağ Başlık</FormLabel>
                       <FormControl>
-                        <Input placeholder="Sağ başlık giriniz" {...field} />
+                        <div className="space-y-1">
+                          <Input 
+                            placeholder="Sağ başlık giriniz" 
+                            maxLength={255}
+                            {...field} 
+                          />
+                          <p className="text-xs text-muted-foreground text-right">
+                            {field.value?.length || 0} / 255 karakter
+                          </p>
+                        </div>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -134,6 +157,7 @@ export default function HomePageAboutCreate() {
                         <TinyMCEEditor
                           value={field.value}
                           onChange={field.onChange}
+                          maxWords={100000}
                         />
                       </FormControl>
                       <FormMessage />

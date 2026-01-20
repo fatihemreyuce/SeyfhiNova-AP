@@ -210,6 +210,7 @@ export default function OfficialPageEdit() {
                       <TinyMCEEditor
                         value={field.value}
                         onChange={field.onChange}
+                        maxWords={100000}
                       />
                     </FormControl>
                     <FormMessage />

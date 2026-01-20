@@ -21,9 +21,13 @@ import * as z from "zod";
 
 const formSchema = z.object({
   file: z.any().optional(),
-  title: z.string().min(1, "Başlık gereklidir"),
+  title: z.string()
+    .min(1, "Başlık gereklidir")
+    .max(255, "Başlık en fazla 255 karakter olabilir"),
   description: z.string().min(1, "Açıklama gereklidir"),
-  excerpt: z.string().min(1, "Özet gereklidir"),
+  excerpt: z.string()
+    .min(1, "Özet gereklidir")
+    .max(1000, "Özet en fazla 1000 karakter olabilir"),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -89,10 +93,18 @@ export default function UsefulInformationEdit() {
 
   const onSubmit = (values: FormValues) => {
     if (id) {
-      const requestData = {
-        ...values,
-        file: file || (data?.fileUrl && !file ? data.fileUrl : ""),
+      // Yeni dosya seçilmişse file alanını ekle, seçilmemişse ekleme (backend mevcut dosyayı korur)
+      const requestData: any = {
+        title: values.title,
+        description: values.description,
+        excerpt: values.excerpt,
       };
+      
+      // Sadece yeni bir dosya seçilmişse file alanını ekle
+      if (file) {
+        requestData.file = file;
+      }
+      
       updateMutation.mutate(requestData, {
         onSuccess: () => {
           navigate("/useful-information");
@@ -251,7 +263,16 @@ export default function UsefulInformationEdit() {
                   <FormItem>
                     <FormLabel>Başlık</FormLabel>
                     <FormControl>
-                      <Input placeholder="Başlık giriniz" {...field} />
+                      <div className="space-y-1">
+                        <Input 
+                          placeholder="Başlık giriniz" 
+                          maxLength={255}
+                          {...field} 
+                        />
+                        <p className="text-xs text-muted-foreground text-right">
+                          {field.value?.length || 0} / 255 karakter
+                        </p>
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -265,11 +286,17 @@ export default function UsefulInformationEdit() {
                   <FormItem>
                     <FormLabel>Özet</FormLabel>
                     <FormControl>
-                      <Textarea
-                        placeholder="Kısa özet giriniz"
-                        rows={3}
-                        {...field}
-                      />
+                      <div className="space-y-1">
+                        <Textarea
+                          placeholder="Kısa özet giriniz"
+                          rows={3}
+                          maxLength={1000}
+                          {...field}
+                        />
+                        <p className="text-xs text-muted-foreground text-right">
+                          {field.value?.length || 0} / 1000 karakter
+                        </p>
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -286,6 +313,7 @@ export default function UsefulInformationEdit() {
                       <TinyMCEEditor
                         value={field.value}
                         onChange={field.onChange}
+                        maxWords={100000}
                       />
                     </FormControl>
                     <FormMessage />

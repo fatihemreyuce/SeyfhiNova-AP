@@ -84,10 +84,18 @@ export default function PartnerEdit() {
 
   const onSubmit = (values: FormValues) => {
     if (id) {
-      const requestData = {
-        ...values,
-        logo: logoFile || (data?.logoUrl && !logoFile ? data.logoUrl : ""),
+      // Yeni logo seçilmişse logo alanını ekle, seçilmemişse ekleme (backend mevcut logoyu korur)
+      const requestData: any = {
+        name: values.name,
+        websiteUrl: values.websiteUrl,
+        orderIndex: values.orderIndex,
       };
+      
+      // Sadece yeni bir logo seçilmişse logo alanını ekle
+      if (logoFile) {
+        requestData.logo = logoFile;
+      }
+      
       updateMutation.mutate(
         { id: Number(id), request: requestData },
         {

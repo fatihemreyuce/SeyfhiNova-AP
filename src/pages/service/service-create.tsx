@@ -27,7 +27,9 @@ import * as z from "zod";
 
 const formSchema = z.object({
   categoryId: z.number().min(1, "Kategori seçimi gereklidir"),
-  title: z.string().min(1, "Başlık gereklidir"),
+  title: z.string()
+    .min(1, "Başlık gereklidir")
+    .max(255, "Başlık en fazla 255 karakter olabilir"),
   description: z.string().min(1, "Açıklama gereklidir"),
   orderIndex: z.number().min(0, "Sıra numarası 0 veya daha büyük olmalıdır"),
 });
@@ -121,7 +123,16 @@ export default function ServiceCreate() {
                   <FormItem>
                     <FormLabel>Başlık</FormLabel>
                     <FormControl>
-                      <Input placeholder="Servis başlığını giriniz" {...field} />
+                      <div className="space-y-1">
+                        <Input 
+                          placeholder="Servis başlığını giriniz" 
+                          maxLength={255}
+                          {...field} 
+                        />
+                        <p className="text-xs text-muted-foreground text-right">
+                          {field.value?.length || 0} / 255 karakter
+                        </p>
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -138,6 +149,7 @@ export default function ServiceCreate() {
                       <TinyMCEEditor
                         value={field.value}
                         onChange={field.onChange}
+                        maxWords={100000}
                       />
                     </FormControl>
                     <FormMessage />

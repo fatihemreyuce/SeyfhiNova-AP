@@ -30,7 +30,9 @@ const formSchema = z.object({
   }, {
     message: "Dosya gereklidir",
   }),
-  title: z.string().min(1, "Başlık gereklidir"),
+  title: z.string()
+    .min(1, "Başlık gereklidir")
+    .max(255, "Başlık en fazla 255 karakter olabilir"),
   description: z.string().min(1, "Açıklama gereklidir"),
 });
 
@@ -89,9 +91,9 @@ export default function CircularCreate() {
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Yeni Genelge</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Yeni Blog</h1>
           <p className="text-muted-foreground">
-            Yeni bir genelge oluşturun
+            Yeni bir blog yazısı oluşturun
           </p>
         </div>
       </div>
@@ -191,7 +193,16 @@ export default function CircularCreate() {
                   <FormItem>
                     <FormLabel>Başlık</FormLabel>
                     <FormControl>
-                      <Input placeholder="Genelge başlığını giriniz" {...field} />
+                      <div className="space-y-1">
+                        <Input 
+                          placeholder="Blog başlığını giriniz" 
+                          maxLength={255}
+                          {...field} 
+                        />
+                        <p className="text-xs text-muted-foreground text-right">
+                          {field.value?.length || 0} / 255 karakter
+                        </p>
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -208,6 +219,7 @@ export default function CircularCreate() {
                       <TinyMCEEditor
                         value={field.value}
                         onChange={field.onChange}
+                        maxWords={100000}
                       />
                     </FormControl>
                     <FormMessage />

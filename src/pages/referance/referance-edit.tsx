@@ -20,11 +20,16 @@ import * as z from "zod";
 
 const formSchema = z.object({
   logo: z.any().optional(),
-  name: z.string().min(1, "İsim gereklidir"),
+  name: z.string()
+    .min(1, "İsim gereklidir")
+    .max(255, "İsim en fazla 255 karakter olabilir"),
   description: z.string().min(1, "Açıklama gereklidir"),
-  websiteUrl: z.string().refine((val) => val === "" || z.string().url().safeParse(val).success, {
-    message: "Geçerli bir URL giriniz",
-  }).optional(),
+  websiteUrl: z.string()
+    .refine((val) => val === "" || z.string().url().safeParse(val).success, {
+      message: "Geçerli bir URL giriniz",
+    })
+    .max(500, "URL en fazla 500 karakter olabilir")
+    .optional(),
   orderIndex: z.number().min(0, "Sıra numarası 0 veya daha büyük olmalıdır"),
 });
 
@@ -93,10 +98,19 @@ export default function ReferanceEdit() {
 
   const onSubmit = (values: FormValues) => {
     if (id) {
-      const requestData = {
-        ...values,
-        logo: logoFile || (data?.logoUrl && !logoFile ? data.logoUrl : ""),
+      // Yeni logo seçilmişse logo alanını ekle, seçilmemişse ekleme (backend mevcut logoyu korur)
+      const requestData: any = {
+        name: values.name,
+        description: values.description,
+        websiteUrl: values.websiteUrl,
+        orderIndex: values.orderIndex,
       };
+      
+      // Sadece yeni bir logo seçilmişse logo alanını ekle
+      if (logoFile) {
+        requestData.logo = logoFile;
+      }
+      
       updateMutation.mutate(
         { id: Number(id), request: requestData },
         {
@@ -256,7 +270,16 @@ export default function ReferanceEdit() {
                   <FormItem>
                     <FormLabel>İsim</FormLabel>
                     <FormControl>
-                      <Input placeholder="Referans ismini giriniz" {...field} />
+                      <div className="space-y-1">
+                        <Input 
+                          placeholder="Referans ismini giriniz" 
+                          maxLength={255}
+                          {...field} 
+                        />
+                        <p className="text-xs text-muted-foreground text-right">
+                          {field.value?.length || 0} / 255 karakter
+                        </p>
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -273,6 +296,7 @@ export default function ReferanceEdit() {
                       <TinyMCEEditor
                         value={field.value}
                         onChange={field.onChange}
+                        maxWords={100000}
                       />
                     </FormControl>
                     <FormMessage />
@@ -287,11 +311,17 @@ export default function ReferanceEdit() {
                   <FormItem>
                     <FormLabel>Web Sitesi URL</FormLabel>
                     <FormControl>
-                      <Input 
-                        type="url"
-                        placeholder="https://example.com" 
-                        {...field} 
-                      />
+                      <div className="space-y-1">
+                        <Input 
+                          type="url"
+                          placeholder="https://example.com" 
+                          maxLength={500}
+                          {...field} 
+                        />
+                        <p className="text-xs text-muted-foreground text-right">
+                          {field.value?.length || 0} / 500 karakter
+                        </p>
+                      </div>
                     </FormControl>
                     <FormMessage />
                     <p className="text-xs text-muted-foreground">

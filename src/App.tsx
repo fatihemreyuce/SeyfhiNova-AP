@@ -62,6 +62,9 @@ import UserList from "./pages/user/user-list";
 import UserDetail from "./pages/user/user-detail";
 import UserCreate from "./pages/user/user-create";
 import UserEdit from "./pages/user/user-edit";
+import SettingsDetail from "./pages/settings/settings-detail";
+import SettingsCreate from "./pages/settings/settings-create";
+import SettingsEdit from "./pages/settings/settings-edit";
 
 
 function App() {
@@ -131,6 +134,9 @@ function App() {
 							<Route path="/user/create" element={<UserCreate />} />
 							<Route path="/user/:id" element={<UserDetail />} />
 							<Route path="/user/:id/edit" element={<UserEdit />} />
+							<Route path="/settings" element={<SettingsDetail />} />
+							<Route path="/settings/create" element={<SettingsCreate />} />
+							<Route path="/settings/edit" element={<SettingsEdit />} />
 							</Route>
 						</Route>
 					</Routes>
