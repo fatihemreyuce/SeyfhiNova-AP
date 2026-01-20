@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect, useRef } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   useHomePageAbout,
   useDeleteHomePageAbout,
@@ -159,23 +159,97 @@ function SortableRow({ item, onView, onEdit, onDelete, stripHtml }: SortableRowP
 
 export default function HomePageAboutList() {
   const navigate = useNavigate();
-  const [searchInput, setSearchInput] = useState("");
-  const [search, setSearch] = useState("");
-  const [page, setPage] = useState(0);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const isUpdatingURL = useRef(false);
+  
+  // URL'den parametreleri oku (ilk yüklemede)
+  const getInitialSearch = () => searchParams.get("search") || "";
+  const getInitialPage = () => parseInt(searchParams.get("page") || "0", 10);
+  const getInitialSort = () => searchParams.get("sort") || "id,desc";
+  
+  const [searchInput, setSearchInput] = useState(getInitialSearch);
+  const [search, setSearch] = useState(getInitialSearch);
+  const [page, setPage] = useState(getInitialPage);
   const [size] = useState(10);
-  const [sort, setSort] = useState("id,desc");
+  const [sort, setSort] = useState(getInitialSort);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [selectedItemName, setSelectedItemName] = useState<string>("");
 
+  // URL parametrelerini güncelle
+  const updateURLParams = (updates: { search?: string; page?: number; sort?: string }) => {
+    isUpdatingURL.current = true;
+    setSearchParams((prevParams) => {
+      const newParams = new URLSearchParams(prevParams);
+      
+      if (updates.search !== undefined) {
+        if (updates.search) {
+          newParams.set("search", updates.search);
+        } else {
+          newParams.delete("search");
+        }
+      }
+      
+      if (updates.page !== undefined) {
+        if (updates.page > 0) {
+          newParams.set("page", updates.page.toString());
+        } else {
+          newParams.delete("page");
+        }
+      }
+      
+      if (updates.sort !== undefined) {
+        if (updates.sort !== "id,desc") {
+          newParams.set("sort", updates.sort);
+        } else {
+          newParams.delete("sort");
+        }
+      }
+      
+      return newParams;
+    }, { replace: true });
+    
+    // URL güncellemesi tamamlandıktan sonra flag'i sıfırla
+    setTimeout(() => {
+      isUpdatingURL.current = false;
+    }, 0);
+  };
+
+  // URL değişikliklerini dinle (browser back/forward için)
+  useEffect(() => {
+    if (isUpdatingURL.current) {
+      return; // Kendi güncellememizden kaynaklanan değişiklikleri ignore et
+    }
+    
+    const urlSearch = searchParams.get("search") || "";
+    const urlPage = parseInt(searchParams.get("page") || "0", 10);
+    const urlSort = searchParams.get("sort") || "id,desc";
+    
+    if (urlSearch !== search) {
+      setSearch(urlSearch);
+      setSearchInput(urlSearch);
+    }
+    if (urlPage !== page) {
+      setPage(urlPage);
+    }
+    if (urlSort !== sort) {
+      setSort(urlSort);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
+
   // Debounce search - 500ms delay
   useEffect(() => {
     const timer = setTimeout(() => {
-      setSearch(searchInput);
-      setPage(0);
+      if (searchInput !== search) {
+        setSearch(searchInput);
+        updateURLParams({ search: searchInput, page: 0 });
+        setPage(0);
+      }
     }, 500);
 
     return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchInput]);
 
   const { data, isLoading } = useHomePageAbout(search, page, size, sort);
@@ -242,24 +316,30 @@ export default function HomePageAboutList() {
   const clearSearch = () => {
     setSearchInput("");
     setSearch("");
+    updateURLParams({ search: "", page: 0 });
+    setPage(0);
   };
 
   const handlePageChange = (newPage: number) => {
     if (newPage >= 0 && data && newPage < data.totalPages) {
       setPage(newPage);
+      updateURLParams({ page: newPage });
     }
   };
 
   const handleSortChange = (field: string) => {
     const [currentField, currentDir] = sort.split(",");
+    let newSort: string;
     if (currentField === field) {
       // Aynı alana tıklandıysa yönü değiştir
-      setSort(`${field},${currentDir === "asc" ? "desc" : "asc"}`);
+      newSort = `${field},${currentDir === "asc" ? "desc" : "asc"}`;
     } else {
       // Yeni alana tıklandıysa varsayılan olarak desc yap
-      setSort(`${field},desc`);
+      newSort = `${field},desc`;
     }
+    setSort(newSort);
     setPage(0);
+    updateURLParams({ sort: newSort, page: 0 });
   };
 
   const getSortIcon = (field: string) => {
