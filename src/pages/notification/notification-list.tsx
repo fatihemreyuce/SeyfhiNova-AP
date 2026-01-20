@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect, useRef } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   useNotification,
   useDeleteNotification,
@@ -14,6 +14,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -32,7 +33,12 @@ import {
   Bell,
   Send,
   ArrowUpDown,
+  ArrowUp,
+  ArrowDown,
   GripVertical,
+  Search,
+  X,
+  Filter,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -84,7 +90,7 @@ function SortableRow({ item, onView, onEdit, onDelete, onSend, truncateText, str
     <TableRow
       ref={setNodeRef}
       style={style}
-      className={`hover:bg-muted/50 transition-colors ${
+      className={`bg-white dark:bg-card border-b border-gray-100 dark:border-seyfhi-accent/20 hover:bg-gray-50 dark:hover:bg-muted/30 transition-colors ${
         isDragging ? "shadow-lg z-10 opacity-50" : ""
       }`}
     >
@@ -97,27 +103,27 @@ function SortableRow({ item, onView, onEdit, onDelete, onSend, truncateText, str
           <GripVertical className="h-4 w-4 text-muted-foreground" />
         </div>
       </TableCell>
-      <TableCell>
-        <Badge variant="outline" className="font-mono">
+      <TableCell className="whitespace-nowrap">
+        <Badge variant="outline" className="font-mono bg-blue-50 text-blue-600 dark:bg-blue-950/30 dark:text-blue-400">
           #{item.id}
         </Badge>
       </TableCell>
-      <TableCell>
+      <TableCell className="min-w-[200px]">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-md bg-primary/10 flex items-center justify-center shrink-0">
             <Bell className="h-4 w-4 text-primary dark:text-primary" />
           </div>
-          <span className="font-medium dark:text-foreground">
+          <span className="font-medium dark:text-foreground break-words">
             {item.title}
           </span>
         </div>
       </TableCell>
-      <TableCell className="max-w-md">
-        <p className="text-sm text-muted-foreground dark:text-foreground/70 truncate">
+      <TableCell className="min-w-[200px] max-w-md">
+        <p className="text-sm text-muted-foreground dark:text-foreground/70 break-words line-clamp-2">
           {truncateText(stripHtml(item.content))}
         </p>
       </TableCell>
-      <TableCell className="text-right">
+      <TableCell className="text-right whitespace-nowrap">
         <div className="flex items-center justify-end gap-1">
           <Button
             variant="ghost"
@@ -163,12 +169,68 @@ function SortableRow({ item, onView, onEdit, onDelete, onSend, truncateText, str
 
 export default function NotificationList() {
   const navigate = useNavigate();
-  const [page, setPage] = useState(0);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const isUpdatingURL = useRef(false);
+  
+  // URL'den parametreleri oku (ilk yüklemede)
+  const getInitialPage = () => parseInt(searchParams.get("page") || "0", 10);
+  const getInitialSort = () => searchParams.get("sort") || "id,desc";
+  
+  const [page, setPage] = useState(getInitialPage);
   const [size] = useState(10);
-  const [sort, setSort] = useState("id,desc");
+  const [sort, setSort] = useState(getInitialSort);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [selectedItemName, setSelectedItemName] = useState<string>("");
+
+  // URL parametrelerini güncelle
+  const updateURLParams = (updates: { page?: number; sort?: string }) => {
+    isUpdatingURL.current = true;
+    setSearchParams((prevParams) => {
+      const newParams = new URLSearchParams(prevParams);
+      
+      if (updates.page !== undefined) {
+        if (updates.page > 0) {
+          newParams.set("page", updates.page.toString());
+        } else {
+          newParams.delete("page");
+        }
+      }
+      
+      if (updates.sort !== undefined) {
+        if (updates.sort !== "id,desc") {
+          newParams.set("sort", updates.sort);
+        } else {
+          newParams.delete("sort");
+        }
+      }
+      
+      return newParams;
+    }, { replace: true });
+    
+    // URL güncellemesi tamamlandıktan sonra flag'i sıfırla
+    setTimeout(() => {
+      isUpdatingURL.current = false;
+    }, 0);
+  };
+
+  // URL değişikliklerini dinle (browser back/forward için)
+  useEffect(() => {
+    if (isUpdatingURL.current) {
+      return; // Kendi güncellememizden kaynaklanan değişiklikleri ignore et
+    }
+    
+    const urlPage = parseInt(searchParams.get("page") || "0", 10);
+    const urlSort = searchParams.get("sort") || "id,desc";
+    
+    if (urlPage !== page) {
+      setPage(urlPage);
+    }
+    if (urlSort !== sort) {
+      setSort(urlSort);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
 
   const { data, isLoading } = useNotification(page, size, sort);
   const deleteMutation = useDeleteNotification();
@@ -235,12 +297,35 @@ export default function NotificationList() {
   const handlePageChange = (newPage: number) => {
     if (newPage >= 0 && data && newPage < data.totalPages) {
       setPage(newPage);
+      updateURLParams({ page: newPage });
     }
   };
 
-  const handleSortChange = (value: string) => {
-    setSort(value);
+  const handleSortChange = (field: string) => {
+    const [currentField, currentDir] = sort.split(",");
+    let newSort: string;
+    if (currentField === field) {
+      // Aynı alana tıklandıysa yönü değiştir
+      newSort = `${field},${currentDir === "asc" ? "desc" : "asc"}`;
+    } else {
+      // Yeni alana tıklandıysa varsayılan olarak desc yap
+      newSort = `${field},desc`;
+    }
+    setSort(newSort);
     setPage(0);
+    updateURLParams({ sort: newSort, page: 0 });
+  };
+
+  const getSortIcon = (field: string) => {
+    const [currentField, currentDir] = sort.split(",");
+    if (currentField !== field) {
+      return <ArrowUpDown className="h-3.5 w-3.5 opacity-30" />;
+    }
+    return currentDir === "asc" ? (
+      <ArrowUp className="h-3.5 w-3.5 text-primary" />
+    ) : (
+      <ArrowDown className="h-3.5 w-3.5 text-primary" />
+    );
   };
 
   const truncateText = (text: string, maxLength: number = 80) => {
@@ -272,21 +357,7 @@ export default function NotificationList() {
         </Button>
       </div>
 
-      {/* Sort Filter */}
-      <div className="flex items-center gap-4">
-        <Select value={sort} onValueChange={handleSortChange}>
-          <SelectTrigger className="w-[180px]">
-            <ArrowUpDown className="h-4 w-4 mr-2 opacity-50" />
-            <SelectValue placeholder="Sırala" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="id,desc">ID (Yeni → Eski)</SelectItem>
-            <SelectItem value="id,asc">ID (Eski → Yeni)</SelectItem>
-            <SelectItem value="title,asc">Başlık (A → Z)</SelectItem>
-            <SelectItem value="title,desc">Başlık (Z → A)</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
+      {/* Search and Filters - Removed search as API doesn't support it */}
 
       {/* Content */}
       {isLoading ? (
@@ -318,16 +389,18 @@ export default function NotificationList() {
         <>
           {/* Stats Bar */}
           <div className="flex items-center justify-between text-sm">
-            <span className="text-muted-foreground dark:text-foreground/70">
-              Toplam <span className="font-semibold text-foreground">{data.totalElements}</span> bildirim
-            </span>
+            <div className="flex items-center gap-4">
+              <span className="text-muted-foreground dark:text-foreground/70">
+                Toplam <span className="font-semibold text-foreground">{data.totalElements}</span> bildirim
+              </span>
+            </div>
             <span className="text-muted-foreground dark:text-foreground/70">
               Sayfa {page + 1} / {data.totalPages}
             </span>
           </div>
 
           {/* Table */}
-          <div className="rounded-lg border bg-card">
+          <div className="rounded-lg border bg-card overflow-hidden">
             <DndContext
               sensors={sensors}
               collisionDetection={closestCenter}
@@ -336,12 +409,28 @@ export default function NotificationList() {
               <div className="overflow-x-auto scrollbar-hide">
                 <Table>
                   <TableHeader>
-                    <TableRow>
+                    <TableRow className="bg-[#F8F9FA] dark:bg-muted/30 border-b border-gray-200 dark:border-seyfhi-accent/30">
                       <TableHead className="w-[50px]"></TableHead>
-                      <TableHead className="w-[80px]">ID</TableHead>
-                      <TableHead>Başlık</TableHead>
-                      <TableHead className="max-w-md">İçerik</TableHead>
-                      <TableHead className="w-[120px] text-right">İşlemler</TableHead>
+                      <TableHead className="w-[80px]">
+                        <button
+                          onClick={() => handleSortChange("id")}
+                          className="flex items-center gap-2 hover:bg-muted/50 px-2 py-1 rounded transition-colors"
+                        >
+                          <span>ID</span>
+                          {getSortIcon("id")}
+                        </button>
+                      </TableHead>
+                      <TableHead className="min-w-[200px]">
+                        <button
+                          onClick={() => handleSortChange("title")}
+                          className="flex items-center gap-2 hover:bg-muted/50 px-2 py-1 rounded transition-colors"
+                        >
+                          <span>Başlık</span>
+                          {getSortIcon("title")}
+                        </button>
+                      </TableHead>
+                      <TableHead className="min-w-[200px] max-w-md">İçerik</TableHead>
+                      <TableHead className="w-[200px] text-right">İşlemler</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -369,59 +458,46 @@ export default function NotificationList() {
           </div>
 
           {/* Pagination */}
-          {data.totalPages > 1 && (
-            <div className="flex items-center justify-between">
+          {data && (
+            <div className="flex items-center justify-between px-6 py-4 bg-background border rounded-lg shadow-sm mt-4">
               <div className="text-sm text-muted-foreground dark:text-foreground/70">
                 {data.totalElements > 0 && (
                   <>
-                    {(page * size) + 1} - {Math.min((page + 1) * size, data.totalElements)} / {data.totalElements} kayıt gösteriliyor
+                    <span className="font-medium text-foreground">{(page * size) + 1}</span> - <span className="font-medium text-foreground">{Math.min((page + 1) * size, data.totalElements)}</span> / <span className="font-medium text-foreground">{data.totalElements}</span> kayıt gösteriliyor
                   </>
                 )}
               </div>
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handlePageChange(page - 1)}
-                  disabled={page === 0}
-                >
-                  <ChevronLeft className="h-4 w-4 mr-1 dark:text-foreground/80" />
-                  Önceki
-                </Button>
-                <div className="flex items-center gap-1">
-                  {Array.from({ length: Math.min(5, data.totalPages) }, (_, i) => {
-                    let pageNum;
-                    if (data.totalPages <= 5) {
-                      pageNum = i;
-                    } else if (page < 3) {
-                      pageNum = i;
-                    } else if (page > data.totalPages - 4) {
-                      pageNum = data.totalPages - 5 + i;
-                    } else {
-                      pageNum = page - 2 + i;
-                    }
-                    return (
-                      <Button
-                        key={pageNum}
-                        variant={page === pageNum ? "default" : "outline"}
-                        size="sm"
-                        onClick={() => handlePageChange(pageNum)}
-                        className="w-9 h-9 p-0"
-                      >
-                        {pageNum + 1}
-                      </Button>
-                    );
-                  })}
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3">
+                  <span className="text-sm font-medium text-muted-foreground dark:text-foreground/70">Sayfa</span>
+                  <div className="px-4 py-2 bg-muted/50 border-2 border-border rounded-lg">
+                    <span className="text-sm font-bold text-foreground">
+                      {page + 1} / {data.totalPages || 1}
+                    </span>
+                  </div>
                 </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handlePageChange(page + 1)}
-                  disabled={page >= data.totalPages - 1}
-                >
-                  Sonraki
-                  <ChevronRight className="h-4 w-4 ml-1 dark:text-foreground/80" />
-                </Button>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handlePageChange(page - 1)}
+                    disabled={page === 0}
+                    className="h-9 px-4 font-medium bg-background hover:bg-muted border-2 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-background"
+                  >
+                    <ChevronLeft className="h-4 w-4 mr-1" />
+                    Önceki
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handlePageChange(page + 1)}
+                    disabled={page >= (data.totalPages || 1) - 1}
+                    className="h-9 px-4 font-medium bg-background hover:bg-muted border-2 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-background"
+                  >
+                    Sonraki
+                    <ChevronRight className="h-4 w-4 ml-1" />
+                  </Button>
+                </div>
               </div>
             </div>
           )}

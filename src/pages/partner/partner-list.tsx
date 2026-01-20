@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect, useRef } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   usePartner,
   useDeletePartner,
@@ -33,7 +33,10 @@ import {
   Handshake,
   Filter,
   ArrowUpDown,
+  ArrowUp,
+  ArrowDown,
   GripVertical,
+  X,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -82,7 +85,7 @@ function SortableRow({ item, onView, onEdit, onDelete }: SortableRowProps) {
     <TableRow
       ref={setNodeRef}
       style={style}
-      className={`hover:bg-muted/50 transition-colors ${
+      className={`bg-white dark:bg-card border-b border-gray-100 dark:border-seyfhi-accent/20 hover:bg-gray-50 dark:hover:bg-muted/30 transition-colors ${
         isDragging ? "shadow-lg z-10 opacity-50" : ""
       }`}
     >
@@ -95,8 +98,8 @@ function SortableRow({ item, onView, onEdit, onDelete }: SortableRowProps) {
           <GripVertical className="h-4 w-4 text-muted-foreground" />
         </div>
       </TableCell>
-      <TableCell>
-        <Badge variant="outline" className="font-mono">
+      <TableCell className="whitespace-nowrap">
+        <Badge variant="outline" className="font-mono bg-blue-50 text-blue-600 dark:bg-blue-950/30 dark:text-blue-400">
           #{item.id}
         </Badge>
       </TableCell>
@@ -119,22 +122,22 @@ function SortableRow({ item, onView, onEdit, onDelete }: SortableRowProps) {
           </div>
         )}
       </TableCell>
-      <TableCell>
+      <TableCell className="min-w-[200px]">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-md bg-primary/10 flex items-center justify-center shrink-0">
             <Handshake className="h-4 w-4 text-primary dark:text-primary" />
           </div>
-          <span className="font-medium dark:text-foreground">
+          <span className="font-medium dark:text-foreground break-words">
             {item.name}
           </span>
         </div>
       </TableCell>
-      <TableCell className="text-center">
+      <TableCell className="text-center whitespace-nowrap">
         <Badge variant="secondary" className="font-semibold">
           {item.orderIndex}
         </Badge>
       </TableCell>
-      <TableCell className="text-right">
+      <TableCell className="text-right whitespace-nowrap">
         <div className="flex items-center justify-end gap-1">
           <Button
             variant="ghost"
@@ -171,13 +174,98 @@ function SortableRow({ item, onView, onEdit, onDelete }: SortableRowProps) {
 
 export default function PartnerList() {
   const navigate = useNavigate();
-  const [search, setSearch] = useState("");
-  const [page, setPage] = useState(0);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const isUpdatingURL = useRef(false);
+  
+  // URL'den parametreleri oku (ilk yüklemede)
+  const getInitialSearch = () => searchParams.get("search") || "";
+  const getInitialPage = () => parseInt(searchParams.get("page") || "0", 10);
+  const getInitialSort = () => searchParams.get("sort") || "id,desc";
+  
+  const [searchInput, setSearchInput] = useState(getInitialSearch);
+  const [search, setSearch] = useState(getInitialSearch);
+  const [page, setPage] = useState(getInitialPage);
   const [size] = useState(10);
-  const [sort, setSort] = useState("id,desc");
+  const [sort, setSort] = useState(getInitialSort);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [selectedItemName, setSelectedItemName] = useState<string>("");
+
+  // URL parametrelerini güncelle
+  const updateURLParams = (updates: { search?: string; page?: number; sort?: string }) => {
+    isUpdatingURL.current = true;
+    setSearchParams((prevParams) => {
+      const newParams = new URLSearchParams(prevParams);
+      
+      if (updates.search !== undefined) {
+        if (updates.search) {
+          newParams.set("search", updates.search);
+        } else {
+          newParams.delete("search");
+        }
+      }
+      
+      if (updates.page !== undefined) {
+        if (updates.page > 0) {
+          newParams.set("page", updates.page.toString());
+        } else {
+          newParams.delete("page");
+        }
+      }
+      
+      if (updates.sort !== undefined) {
+        if (updates.sort !== "id,desc") {
+          newParams.set("sort", updates.sort);
+        } else {
+          newParams.delete("sort");
+        }
+      }
+      
+      return newParams;
+    }, { replace: true });
+    
+    // URL güncellemesi tamamlandıktan sonra flag'i sıfırla
+    setTimeout(() => {
+      isUpdatingURL.current = false;
+    }, 0);
+  };
+
+  // URL değişikliklerini dinle (browser back/forward için)
+  useEffect(() => {
+    if (isUpdatingURL.current) {
+      return; // Kendi güncellememizden kaynaklanan değişiklikleri ignore et
+    }
+    
+    const urlSearch = searchParams.get("search") || "";
+    const urlPage = parseInt(searchParams.get("page") || "0", 10);
+    const urlSort = searchParams.get("sort") || "id,desc";
+    
+    if (urlSearch !== search) {
+      setSearch(urlSearch);
+      setSearchInput(urlSearch);
+    }
+    if (urlPage !== page) {
+      setPage(urlPage);
+    }
+    if (urlSort !== sort) {
+      setSort(urlSort);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
+
+  // Debounce search - 500ms delay
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (searchInput !== search) {
+        setSearch(searchInput);
+        updateURLParams({ search: searchInput, page: 0 });
+        setPage(0);
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchInput]);
 
   const { data, isLoading } = usePartner(search, page, size, sort);
   const deleteMutation = useDeletePartner();
@@ -236,20 +324,49 @@ export default function PartnerList() {
     }
   };
 
-  const handleSearch = (value: string) => {
-    setSearch(value);
+  const handleSearchInput = (value: string) => {
+    setSearchInput(value);
+  };
+
+  const clearSearch = () => {
+    setSearchInput("");
+    setSearch("");
+    updateURLParams({ search: "", page: 0 });
     setPage(0);
   };
 
   const handlePageChange = (newPage: number) => {
     if (newPage >= 0 && data && newPage < data.totalPages) {
       setPage(newPage);
+      updateURLParams({ page: newPage });
     }
   };
 
-  const handleSortChange = (value: string) => {
-    setSort(value);
+  const handleSortChange = (field: string) => {
+    const [currentField, currentDir] = sort.split(",");
+    let newSort: string;
+    if (currentField === field) {
+      // Aynı alana tıklandıysa yönü değiştir
+      newSort = `${field},${currentDir === "asc" ? "desc" : "asc"}`;
+    } else {
+      // Yeni alana tıklandıysa varsayılan olarak desc yap
+      newSort = `${field},desc`;
+    }
+    setSort(newSort);
     setPage(0);
+    updateURLParams({ sort: newSort, page: 0 });
+  };
+
+  const getSortIcon = (field: string) => {
+    const [currentField, currentDir] = sort.split(",");
+    if (currentField !== field) {
+      return <ArrowUpDown className="h-3.5 w-3.5 opacity-30" />;
+    }
+    return currentDir === "asc" ? (
+      <ArrowUp className="h-3.5 w-3.5 text-primary" />
+    ) : (
+      <ArrowDown className="h-3.5 w-3.5 text-primary" />
+    );
   };
 
   return (
@@ -272,35 +389,21 @@ export default function PartnerList() {
 
       {/* Search and Filters */}
       <div className="flex items-center gap-4">
-        <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground dark:text-foreground/60" />
+        <div className="relative flex-1 max-w-lg">
+          <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground/60 dark:text-foreground/60 z-10" />
           <Input
             placeholder="Ortak ara..."
-            value={search}
-            onChange={(e) => handleSearch(e.target.value)}
-            className="pl-9"
+            value={searchInput}
+            onChange={(e) => handleSearchInput(e.target.value)}
+            className="pl-12 pr-4 h-12 text-base border border-gray-200 dark:border-gray-700 focus:border-primary/50 focus:ring-2 focus:ring-primary/20 shadow-sm hover:shadow-md transition-all duration-200 bg-white dark:bg-card rounded-lg"
           />
         </div>
-        <Select value={sort} onValueChange={handleSortChange}>
-          <SelectTrigger className="w-[180px]">
-            <ArrowUpDown className="h-4 w-4 mr-2 opacity-50" />
-            <SelectValue placeholder="Sırala" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="id,desc">ID (Yeni → Eski)</SelectItem>
-            <SelectItem value="id,asc">ID (Eski → Yeni)</SelectItem>
-            <SelectItem value="name,asc">İsim (A → Z)</SelectItem>
-            <SelectItem value="name,desc">İsim (Z → A)</SelectItem>
-            <SelectItem value="orderIndex,asc">Sıra (Düşük → Yüksek)</SelectItem>
-            <SelectItem value="orderIndex,desc">Sıra (Yüksek → Düşük)</SelectItem>
-          </SelectContent>
-        </Select>
-        {search && (
+        {searchInput && (
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => handleSearch("")}
-            className="shrink-0"
+            onClick={clearSearch}
+            className="shrink-0 h-10"
           >
             Temizle
           </Button>
@@ -345,10 +448,10 @@ export default function PartnerList() {
               <span className="text-muted-foreground dark:text-foreground/70">
                 Toplam <span className="font-semibold text-foreground">{data.totalElements}</span> ortak
               </span>
-              {search && (
+              {searchInput && (
                 <Badge variant="secondary" className="gap-1">
                   <Filter className="h-3 w-3 dark:text-foreground/80" />
-                  Arama: "{search}"
+                  Arama: "{searchInput}"
                 </Badge>
               )}
             </div>
@@ -358,7 +461,7 @@ export default function PartnerList() {
           </div>
 
           {/* Table */}
-          <div className="rounded-lg border bg-card">
+          <div className="rounded-lg border bg-card overflow-hidden">
             <DndContext
               sensors={sensors}
               collisionDetection={closestCenter}
@@ -367,13 +470,37 @@ export default function PartnerList() {
               <div className="overflow-x-auto scrollbar-hide">
                 <Table>
                   <TableHeader>
-                    <TableRow>
+                    <TableRow className="bg-[#F8F9FA] dark:bg-muted/30 border-b border-gray-200 dark:border-seyfhi-accent/30">
                       <TableHead className="w-[50px]"></TableHead>
-                      <TableHead className="w-[80px]">ID</TableHead>
+                      <TableHead className="w-[80px]">
+                        <button
+                          onClick={() => handleSortChange("id")}
+                          className="flex items-center gap-2 hover:bg-muted/50 px-2 py-1 rounded transition-colors"
+                        >
+                          <span>ID</span>
+                          {getSortIcon("id")}
+                        </button>
+                      </TableHead>
                       <TableHead className="w-[120px]">Logo</TableHead>
-                      <TableHead>İsim</TableHead>
-                      <TableHead className="w-[100px] text-center">Sıra</TableHead>
-                      <TableHead className="w-[120px] text-right">İşlemler</TableHead>
+                      <TableHead className="min-w-[200px]">
+                        <button
+                          onClick={() => handleSortChange("name")}
+                          className="flex items-center gap-2 hover:bg-muted/50 px-2 py-1 rounded transition-colors"
+                        >
+                          <span>İsim</span>
+                          {getSortIcon("name")}
+                        </button>
+                      </TableHead>
+                      <TableHead className="w-[100px] text-center">
+                        <button
+                          onClick={() => handleSortChange("orderIndex")}
+                          className="flex items-center gap-2 hover:bg-muted/50 px-2 py-1 rounded transition-colors mx-auto"
+                        >
+                          <span>Sıra</span>
+                          {getSortIcon("orderIndex")}
+                        </button>
+                      </TableHead>
+                      <TableHead className="w-[200px] text-right">İşlemler</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -398,59 +525,46 @@ export default function PartnerList() {
           </div>
 
           {/* Pagination */}
-          {data.totalPages > 1 && (
-            <div className="flex items-center justify-between">
+          {data && (
+            <div className="flex items-center justify-between px-6 py-4 bg-background border rounded-lg shadow-sm mt-4">
               <div className="text-sm text-muted-foreground dark:text-foreground/70">
                 {data.totalElements > 0 && (
                   <>
-                    {(page * size) + 1} - {Math.min((page + 1) * size, data.totalElements)} / {data.totalElements} kayıt gösteriliyor
+                    <span className="font-medium text-foreground">{(page * size) + 1}</span> - <span className="font-medium text-foreground">{Math.min((page + 1) * size, data.totalElements)}</span> / <span className="font-medium text-foreground">{data.totalElements}</span> kayıt gösteriliyor
                   </>
                 )}
               </div>
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handlePageChange(page - 1)}
-                  disabled={page === 0}
-                >
-                  <ChevronLeft className="h-4 w-4 mr-1 dark:text-foreground/80" />
-                  Önceki
-                </Button>
-                <div className="flex items-center gap-1">
-                  {Array.from({ length: Math.min(5, data.totalPages) }, (_, i) => {
-                    let pageNum;
-                    if (data.totalPages <= 5) {
-                      pageNum = i;
-                    } else if (page < 3) {
-                      pageNum = i;
-                    } else if (page > data.totalPages - 4) {
-                      pageNum = data.totalPages - 5 + i;
-                    } else {
-                      pageNum = page - 2 + i;
-                    }
-                    return (
-                      <Button
-                        key={pageNum}
-                        variant={page === pageNum ? "default" : "outline"}
-                        size="sm"
-                        onClick={() => handlePageChange(pageNum)}
-                        className="w-9 h-9 p-0"
-                      >
-                        {pageNum + 1}
-                      </Button>
-                    );
-                  })}
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3">
+                  <span className="text-sm font-medium text-muted-foreground dark:text-foreground/70">Sayfa</span>
+                  <div className="px-4 py-2 bg-muted/50 border-2 border-border rounded-lg">
+                    <span className="text-sm font-bold text-foreground">
+                      {page + 1} / {data.totalPages || 1}
+                    </span>
+                  </div>
                 </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handlePageChange(page + 1)}
-                  disabled={page >= data.totalPages - 1}
-                >
-                  Sonraki
-                  <ChevronRight className="h-4 w-4 ml-1 dark:text-foreground/80" />
-                </Button>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handlePageChange(page - 1)}
+                    disabled={page === 0}
+                    className="h-9 px-4 font-medium bg-background hover:bg-muted border-2 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-background"
+                  >
+                    <ChevronLeft className="h-4 w-4 mr-1" />
+                    Önceki
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handlePageChange(page + 1)}
+                    disabled={page >= (data.totalPages || 1) - 1}
+                    className="h-9 px-4 font-medium bg-background hover:bg-muted border-2 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-background"
+                  >
+                    Sonraki
+                    <ChevronRight className="h-4 w-4 ml-1" />
+                  </Button>
+                </div>
               </div>
             </div>
           )}

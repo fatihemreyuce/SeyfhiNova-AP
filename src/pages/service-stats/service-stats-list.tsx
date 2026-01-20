@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect, useRef } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   useServiceStats,
   useDeleteServiceStats,
@@ -14,13 +14,6 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { DeleteModal } from "@/components/ui/delete-modal";
 import {
   Plus,
@@ -33,6 +26,8 @@ import {
   BarChart3,
   Filter,
   ArrowUpDown,
+  ArrowUp,
+  ArrowDown,
   GripVertical,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -82,80 +77,97 @@ function SortableRow({ item, onView, onEdit, onDelete }: SortableRowProps) {
     <TableRow
       ref={setNodeRef}
       style={style}
-      className={`hover:bg-muted/50 transition-colors ${
+      className={`bg-white dark:bg-card border-b border-gray-100 dark:border-seyfhi-accent/20 hover:bg-gray-50 dark:hover:bg-muted/30 transition-colors text-sm ${
         isDragging ? "shadow-lg z-10 opacity-50" : ""
       }`}
     >
-      <TableCell className="w-[50px]">
+      <TableCell className="w-[40px]">
         <div
           {...attributes}
           {...listeners}
-          className="cursor-grab active:cursor-grabbing p-2 -ml-2 hover:bg-muted/50 rounded transition-colors"
+          className="cursor-grab active:cursor-grabbing p-1.5 -ml-2 hover:bg-muted/50 rounded transition-colors"
         >
-          <GripVertical className="h-4 w-4 text-muted-foreground" />
+          <GripVertical className="h-3.5 w-3.5 text-muted-foreground" />
         </div>
       </TableCell>
-      <TableCell>
-        <Badge variant="outline" className="font-mono">
+      <TableCell className="whitespace-nowrap">
+        <Badge variant="outline" className="text-xs font-mono bg-blue-50 text-blue-600 dark:bg-blue-950/30 dark:text-blue-400 px-2 py-0.5">
           #{item.id}
         </Badge>
       </TableCell>
-      <TableCell>
-        {item.iconName ? (
-          <div className="flex items-center justify-center w-12 h-12 rounded-lg bg-primary/10 border border-border">
-            <span className="text-lg font-bold text-primary">
+      <TableCell className="py-2">
+        {item.iconName && (item.iconName.startsWith("http") || item.iconName.startsWith("/")) ? (
+          <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-muted/30 border border-border overflow-hidden">
+            <img
+              src={item.iconName.replace(/^https:/, "http:")}
+              alt={item.title}
+              className="w-full h-full object-contain p-1"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.style.display = "none";
+                const parent = target.parentElement;
+                if (parent) {
+                  parent.innerHTML = `
+                    <div class="flex items-center justify-center w-full h-full">
+                      <svg class="w-4 h-4 text-muted-foreground opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                      </svg>
+                    </div>
+                  `;
+                }
+              }}
+            />
+          </div>
+        ) : item.iconName ? (
+          <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10 border border-border">
+            <span className="text-sm font-bold text-primary">
               {item.iconName.substring(0, 2).toUpperCase()}
             </span>
           </div>
         ) : (
-          <div className="w-12 h-12 rounded-lg bg-muted/50 border border-border flex items-center justify-center">
-            <BarChart3 className="h-5 w-5 text-muted-foreground dark:text-foreground/60 opacity-50" />
+          <div className="w-10 h-10 rounded-lg bg-muted/50 border border-border flex items-center justify-center">
+            <BarChart3 className="h-4 w-4 text-muted-foreground dark:text-foreground/60 opacity-50" />
           </div>
         )}
       </TableCell>
-      <TableCell>
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-md bg-primary/10 flex items-center justify-center shrink-0">
-            <BarChart3 className="h-4 w-4 text-primary dark:text-primary" />
-          </div>
-          <span className="font-medium dark:text-foreground">
-            {item.title}
-          </span>
-        </div>
+      <TableCell className="py-2">
+        <span className="font-medium dark:text-foreground text-sm">
+          {item.title}
+        </span>
       </TableCell>
-      <TableCell className="text-center">
-        <Badge variant="secondary" className="text-base px-4 py-1.5 font-semibold">
+      <TableCell className="text-center py-2">
+        <Badge variant="secondary" className="text-sm px-3 py-1 font-semibold">
           {item.numberValue}
         </Badge>
       </TableCell>
-      <TableCell className="text-right">
-        <div className="flex items-center justify-end gap-1">
+      <TableCell className="text-right py-2">
+        <div className="flex items-center justify-end gap-0.5">
           <Button
             variant="ghost"
             size="icon"
             onClick={() => onView(item.id)}
-            className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:text-blue-400 dark:hover:text-blue-300 dark:hover:bg-blue-950/30"
+            className="h-7 w-7 text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:text-blue-400 dark:hover:text-blue-300 dark:hover:bg-blue-950/30"
             title="Detay Görüntüle"
           >
-            <Eye className="h-4 w-4" />
+            <Eye className="h-3.5 w-3.5" />
           </Button>
           <Button
             variant="ghost"
             size="icon"
             onClick={() => onEdit(item.id)}
-            className="h-8 w-8 text-green-600 hover:text-green-700 hover:bg-green-50 dark:text-green-400 dark:hover:text-green-300 dark:hover:bg-green-950/30"
+            className="h-7 w-7 text-green-600 hover:text-green-700 hover:bg-green-50 dark:text-green-400 dark:hover:text-green-300 dark:hover:bg-green-950/30"
             title="Düzenle"
           >
-            <Edit className="h-4 w-4" />
+            <Edit className="h-3.5 w-3.5" />
           </Button>
           <Button
             variant="ghost"
             size="icon"
             onClick={() => onDelete(item.id, item.title)}
-            className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:text-red-300 dark:hover:bg-red-950/30"
+            className="h-7 w-7 text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:text-red-300 dark:hover:bg-red-950/30"
             title="Sil"
           >
-            <Trash2 className="h-4 w-4" />
+            <Trash2 className="h-3.5 w-3.5" />
           </Button>
         </div>
       </TableCell>
@@ -165,13 +177,98 @@ function SortableRow({ item, onView, onEdit, onDelete }: SortableRowProps) {
 
 export default function ServiceStatsList() {
   const navigate = useNavigate();
-  const [search, setSearch] = useState("");
-  const [page, setPage] = useState(0);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const isUpdatingURL = useRef(false);
+  
+  // URL'den parametreleri oku (ilk yüklemede)
+  const getInitialSearch = () => searchParams.get("search") || "";
+  const getInitialPage = () => parseInt(searchParams.get("page") || "0", 10);
+  const getInitialSort = () => searchParams.get("sort") || "id,desc";
+  
+  const [searchInput, setSearchInput] = useState(getInitialSearch);
+  const [search, setSearch] = useState(getInitialSearch);
+  const [page, setPage] = useState(getInitialPage);
   const [size] = useState(10);
-  const [sort, setSort] = useState("id,desc");
+  const [sort, setSort] = useState(getInitialSort);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [selectedItemName, setSelectedItemName] = useState<string>("");
+
+  // URL parametrelerini güncelle
+  const updateURLParams = (updates: { search?: string; page?: number; sort?: string }) => {
+    isUpdatingURL.current = true;
+    setSearchParams((prevParams) => {
+      const newParams = new URLSearchParams(prevParams);
+      
+      if (updates.search !== undefined) {
+        if (updates.search) {
+          newParams.set("search", updates.search);
+        } else {
+          newParams.delete("search");
+        }
+      }
+      
+      if (updates.page !== undefined) {
+        if (updates.page > 0) {
+          newParams.set("page", updates.page.toString());
+        } else {
+          newParams.delete("page");
+        }
+      }
+      
+      if (updates.sort !== undefined) {
+        if (updates.sort !== "id,desc") {
+          newParams.set("sort", updates.sort);
+        } else {
+          newParams.delete("sort");
+        }
+      }
+      
+      return newParams;
+    }, { replace: true });
+    
+    // URL güncellemesi tamamlandıktan sonra flag'i sıfırla
+    setTimeout(() => {
+      isUpdatingURL.current = false;
+    }, 0);
+  };
+
+  // URL değişikliklerini dinle (browser back/forward için)
+  useEffect(() => {
+    if (isUpdatingURL.current) {
+      return; // Kendi güncellememizden kaynaklanan değişiklikleri ignore et
+    }
+    
+    const urlSearch = searchParams.get("search") || "";
+    const urlPage = parseInt(searchParams.get("page") || "0", 10);
+    const urlSort = searchParams.get("sort") || "id,desc";
+    
+    if (urlSearch !== search) {
+      setSearch(urlSearch);
+      setSearchInput(urlSearch);
+    }
+    if (urlPage !== page) {
+      setPage(urlPage);
+    }
+    if (urlSort !== sort) {
+      setSort(urlSort);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
+
+  // Debounce search - 500ms delay
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (searchInput !== search) {
+        setSearch(searchInput);
+        updateURLParams({ search: searchInput, page: 0 });
+        setPage(0);
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchInput]);
 
   const { data, isLoading } = useServiceStats(search, page, size, sort);
   const deleteMutation = useDeleteServiceStats();
@@ -230,31 +327,60 @@ export default function ServiceStatsList() {
     }
   };
 
-  const handleSearch = (value: string) => {
-    setSearch(value);
+  const handleSearchInput = (value: string) => {
+    setSearchInput(value);
+  };
+
+  const clearSearch = () => {
+    setSearchInput("");
+    setSearch("");
+    updateURLParams({ search: "", page: 0 });
     setPage(0);
   };
 
   const handlePageChange = (newPage: number) => {
     if (newPage >= 0 && data && newPage < data.totalPages) {
       setPage(newPage);
+      updateURLParams({ page: newPage });
     }
   };
 
-  const handleSortChange = (value: string) => {
-    setSort(value);
+  const handleSortChange = (field: string) => {
+    const [currentField, currentDir] = sort.split(",");
+    let newSort: string;
+    if (currentField === field) {
+      // Aynı alana tıklandıysa yönü değiştir
+      newSort = `${field},${currentDir === "asc" ? "desc" : "asc"}`;
+    } else {
+      // Yeni alana tıklandıysa varsayılan olarak desc yap
+      newSort = `${field},desc`;
+    }
+    setSort(newSort);
     setPage(0);
+    updateURLParams({ sort: newSort, page: 0 });
+  };
+
+  const getSortIcon = (field: string) => {
+    const [currentField, currentDir] = sort.split(",");
+    if (currentField !== field) {
+      return <ArrowUpDown className="h-3.5 w-3.5 opacity-30" />;
+    }
+    return currentDir === "asc" ? (
+      <ArrowUp className="h-3.5 w-3.5 text-primary" />
+    ) : (
+      <ArrowDown className="h-3.5 w-3.5 text-primary" />
+    );
   };
 
   return (
-    <div className="space-y-6 pb-6">
+    <div className="space-y-4 pb-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight dark:text-foreground">
+          <h1 className="text-2xl font-bold tracking-tight dark:text-foreground">
             Servis İstatistikleri
           </h1>
-          <p className="text-muted-foreground dark:text-foreground/70 mt-1">
+          <p className="text-sm text-muted-foreground dark:text-foreground/70 mt-0.5">
             Servis istatistiklerini görüntüleyin ve yönetin
           </p>
         </div>
@@ -266,32 +392,20 @@ export default function ServiceStatsList() {
 
       {/* Search and Filters */}
       <div className="flex items-center gap-4">
-        <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground dark:text-foreground/60" />
+        <div className="relative flex-1 max-w-lg">
+          <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground/60 dark:text-foreground/60 z-10" />
           <Input
             placeholder="İstatistik ara..."
-            value={search}
-            onChange={(e) => handleSearch(e.target.value)}
-            className="pl-9"
+            value={searchInput}
+            onChange={(e) => handleSearchInput(e.target.value)}
+            className="pl-12 pr-4 h-12 text-base border border-gray-200 dark:border-gray-700 focus:border-primary/50 focus:ring-2 focus:ring-primary/20 shadow-sm hover:shadow-md transition-all duration-200 bg-white dark:bg-card rounded-lg"
           />
         </div>
-        <Select value={sort} onValueChange={handleSortChange}>
-          <SelectTrigger className="w-[180px]">
-            <ArrowUpDown className="h-4 w-4 mr-2 opacity-50" />
-            <SelectValue placeholder="Sırala" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="id,desc">ID (Yeni → Eski)</SelectItem>
-            <SelectItem value="id,asc">ID (Eski → Yeni)</SelectItem>
-            <SelectItem value="title,asc">Başlık (A → Z)</SelectItem>
-            <SelectItem value="title,desc">Başlık (Z → A)</SelectItem>
-          </SelectContent>
-        </Select>
-        {search && (
+        {searchInput && (
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => handleSearch("")}
+            onClick={clearSearch}
             className="shrink-0"
           >
             Temizle
@@ -337,10 +451,10 @@ export default function ServiceStatsList() {
               <span className="text-muted-foreground dark:text-foreground/70">
                 Toplam <span className="font-semibold text-foreground">{data.totalElements}</span> istatistik
               </span>
-              {search && (
+              {searchInput && (
                 <Badge variant="secondary" className="gap-1">
                   <Filter className="h-3 w-3 dark:text-foreground/80" />
-                  Arama: "{search}"
+                  Arama: "{searchInput}"
                 </Badge>
               )}
             </div>
@@ -350,7 +464,7 @@ export default function ServiceStatsList() {
           </div>
 
           {/* Table */}
-          <div className="rounded-lg border bg-card">
+          <div className="rounded-lg border bg-card overflow-hidden">
             <DndContext
               sensors={sensors}
               collisionDetection={closestCenter}
@@ -359,13 +473,37 @@ export default function ServiceStatsList() {
               <div className="overflow-x-auto scrollbar-hide">
                 <Table>
                   <TableHeader>
-                    <TableRow>
-                      <TableHead className="w-[50px]"></TableHead>
-                      <TableHead className="w-[80px]">ID</TableHead>
-                      <TableHead className="w-[100px]">İkon</TableHead>
-                      <TableHead>Başlık</TableHead>
-                      <TableHead className="w-[150px] text-center">Değer</TableHead>
-                      <TableHead className="w-[120px] text-right">İşlemler</TableHead>
+                    <TableRow className="bg-[#F8F9FA] dark:bg-muted/30 border-b border-gray-200 dark:border-seyfhi-accent/30">
+                      <TableHead className="w-[40px]"></TableHead>
+                      <TableHead className="w-[70px]">
+                        <button
+                          onClick={() => handleSortChange("id")}
+                          className="flex items-center gap-1.5 hover:bg-muted/50 px-1.5 py-0.5 rounded transition-colors text-sm"
+                        >
+                          <span>ID</span>
+                          {getSortIcon("id")}
+                        </button>
+                      </TableHead>
+                      <TableHead className="w-[90px] text-sm">İkon</TableHead>
+                      <TableHead className="min-w-[120px]">
+                        <button
+                          onClick={() => handleSortChange("title")}
+                          className="flex items-center gap-1.5 hover:bg-muted/50 px-1.5 py-0.5 rounded transition-colors text-sm"
+                        >
+                          <span>Başlık</span>
+                          {getSortIcon("title")}
+                        </button>
+                      </TableHead>
+                      <TableHead className="w-[120px] text-center">
+                        <button
+                          onClick={() => handleSortChange("numberValue")}
+                          className="flex items-center gap-1.5 hover:bg-muted/50 px-1.5 py-0.5 rounded transition-colors mx-auto text-sm"
+                        >
+                          <span>Değer</span>
+                          {getSortIcon("numberValue")}
+                        </button>
+                      </TableHead>
+                      <TableHead className="w-[150px] text-right text-sm">İşlemler</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -390,59 +528,46 @@ export default function ServiceStatsList() {
           </div>
 
           {/* Pagination */}
-          {data.totalPages > 1 && (
-            <div className="flex items-center justify-between">
+          {data && (
+            <div className="flex items-center justify-between px-6 py-4 bg-background border rounded-lg shadow-sm mt-4">
               <div className="text-sm text-muted-foreground dark:text-foreground/70">
                 {data.totalElements > 0 && (
                   <>
-                    {(page * size) + 1} - {Math.min((page + 1) * size, data.totalElements)} / {data.totalElements} kayıt gösteriliyor
+                    <span className="font-medium text-foreground">{(page * size) + 1}</span> - <span className="font-medium text-foreground">{Math.min((page + 1) * size, data.totalElements)}</span> / <span className="font-medium text-foreground">{data.totalElements}</span> kayıt gösteriliyor
                   </>
                 )}
               </div>
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handlePageChange(page - 1)}
-                  disabled={page === 0}
-                >
-                  <ChevronLeft className="h-4 w-4 mr-1 dark:text-foreground/80" />
-                  Önceki
-                </Button>
-                <div className="flex items-center gap-1">
-                  {Array.from({ length: Math.min(5, data.totalPages) }, (_, i) => {
-                    let pageNum;
-                    if (data.totalPages <= 5) {
-                      pageNum = i;
-                    } else if (page < 3) {
-                      pageNum = i;
-                    } else if (page > data.totalPages - 4) {
-                      pageNum = data.totalPages - 5 + i;
-                    } else {
-                      pageNum = page - 2 + i;
-                    }
-                    return (
-                      <Button
-                        key={pageNum}
-                        variant={page === pageNum ? "default" : "outline"}
-                        size="sm"
-                        onClick={() => handlePageChange(pageNum)}
-                        className="w-9 h-9 p-0"
-                      >
-                        {pageNum + 1}
-                      </Button>
-                    );
-                  })}
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3">
+                  <span className="text-sm font-medium text-muted-foreground dark:text-foreground/70">Sayfa</span>
+                  <div className="px-4 py-2 bg-muted/50 border-2 border-border rounded-lg">
+                    <span className="text-sm font-bold text-foreground">
+                      {page + 1} / {data.totalPages || 1}
+                    </span>
+                  </div>
                 </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handlePageChange(page + 1)}
-                  disabled={page >= data.totalPages - 1}
-                >
-                  Sonraki
-                  <ChevronRight className="h-4 w-4 ml-1 dark:text-foreground/80" />
-                </Button>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handlePageChange(page - 1)}
+                    disabled={page === 0}
+                    className="h-9 px-4 font-medium bg-background hover:bg-muted border-2 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-background"
+                  >
+                    <ChevronLeft className="h-4 w-4 mr-1" />
+                    Önceki
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handlePageChange(page + 1)}
+                    disabled={page >= (data.totalPages || 1) - 1}
+                    className="h-9 px-4 font-medium bg-background hover:bg-muted border-2 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-background"
+                  >
+                    Sonraki
+                    <ChevronRight className="h-4 w-4 ml-1" />
+                  </Button>
+                </div>
               </div>
             </div>
           )}

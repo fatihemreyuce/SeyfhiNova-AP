@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect, useRef } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   useCircular,
   useDeleteCircular,
@@ -34,25 +34,11 @@ import {
   ExternalLink,
   Filter,
   ArrowUpDown,
-  GripVertical,
+  ArrowUp,
+  ArrowDown,
+  X,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import {
-  DndContext,
-  closestCenter,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-} from "@dnd-kit/core";
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
-  useSortable,
-} from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
 import type { CircularResponse } from "@/types/circulars.types";
 
 // Sortable Row Component
@@ -66,59 +52,24 @@ interface SortableRowProps {
 }
 
 function SortableRow({ item, onView, onEdit, onDelete, truncateDescription, stripHtml }: SortableRowProps) {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({ id: item.id });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0.5 : 1,
-  };
-
   return (
-    <TableRow
-      ref={setNodeRef}
-      style={style}
-      className={`hover:bg-muted/50 transition-colors ${
-        isDragging ? "shadow-lg z-10 opacity-50" : ""
-      }`}
-    >
-      <TableCell className="w-[50px]">
-        <div
-          {...attributes}
-          {...listeners}
-          className="cursor-grab active:cursor-grabbing p-2 -ml-2 hover:bg-muted/50 rounded transition-colors"
-        >
-          <GripVertical className="h-4 w-4 text-muted-foreground" />
-        </div>
-      </TableCell>
-      <TableCell>
-        <Badge variant="outline" className="font-mono">
+    <TableRow className="bg-white dark:bg-card border-b border-gray-100 dark:border-seyfhi-accent/20 hover:bg-gray-50 dark:hover:bg-muted/30 transition-colors">
+      <TableCell className="whitespace-nowrap">
+        <Badge variant="outline" className="font-mono bg-blue-50 text-blue-600 dark:bg-blue-950/30 dark:text-blue-400">
           #{item.id}
         </Badge>
       </TableCell>
-      <TableCell>
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-md bg-primary/10 flex items-center justify-center shrink-0">
-            <FileText className="h-4 w-4 text-primary dark:text-primary" />
-          </div>
-          <span className="font-medium dark:text-foreground">
-            {item.title}
-          </span>
-        </div>
+      <TableCell className="min-w-[200px]">
+        <span className="font-medium dark:text-foreground break-words">
+          {item.title}
+        </span>
       </TableCell>
-      <TableCell className="max-w-md">
-        <p className="text-sm text-muted-foreground dark:text-foreground/70 truncate">
+      <TableCell className="min-w-[200px] max-w-md">
+        <p className="text-sm text-muted-foreground dark:text-foreground/70 break-words line-clamp-2">
           {truncateDescription(stripHtml(item.description))}
         </p>
       </TableCell>
-      <TableCell>
+      <TableCell className="min-w-[200px]">
         {item.fileUrl ? (
           <a
             href={item.fileUrl.replace(/^https:/, 'http:')}
@@ -134,7 +85,7 @@ function SortableRow({ item, onView, onEdit, onDelete, truncateDescription, stri
           <span className="text-sm text-muted-foreground dark:text-foreground/50">-</span>
         )}
       </TableCell>
-      <TableCell className="text-right">
+      <TableCell className="text-right whitespace-nowrap">
         <div className="flex items-center justify-end gap-1">
           <Button
             variant="ghost"
@@ -171,18 +122,103 @@ function SortableRow({ item, onView, onEdit, onDelete, truncateDescription, stri
 
 export default function CircularList() {
   const navigate = useNavigate();
-  const [search, setSearch] = useState("");
-  const [page, setPage] = useState(0);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const isUpdatingURL = useRef(false);
+  
+  // URL'den parametreleri oku (ilk yüklemede)
+  const getInitialSearch = () => searchParams.get("search") || "";
+  const getInitialPage = () => parseInt(searchParams.get("page") || "0", 10);
+  const getInitialSort = () => searchParams.get("sort") || "id,desc";
+  
+  const [searchInput, setSearchInput] = useState(getInitialSearch);
+  const [search, setSearch] = useState(getInitialSearch);
+  const [page, setPage] = useState(getInitialPage);
   const [size] = useState(10);
-  const [sort, setSort] = useState("id,desc");
+  const [sort, setSort] = useState(getInitialSort);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [selectedItemName, setSelectedItemName] = useState<string>("");
 
+  // URL parametrelerini güncelle
+  const updateURLParams = (updates: { search?: string; page?: number; sort?: string }) => {
+    isUpdatingURL.current = true;
+    setSearchParams((prevParams) => {
+      const newParams = new URLSearchParams(prevParams);
+      
+      if (updates.search !== undefined) {
+        if (updates.search) {
+          newParams.set("search", updates.search);
+        } else {
+          newParams.delete("search");
+        }
+      }
+      
+      if (updates.page !== undefined) {
+        if (updates.page > 0) {
+          newParams.set("page", updates.page.toString());
+        } else {
+          newParams.delete("page");
+        }
+      }
+      
+      if (updates.sort !== undefined) {
+        if (updates.sort !== "id,desc") {
+          newParams.set("sort", updates.sort);
+        } else {
+          newParams.delete("sort");
+        }
+      }
+      
+      return newParams;
+    }, { replace: true });
+    
+    // URL güncellemesi tamamlandıktan sonra flag'i sıfırla
+    setTimeout(() => {
+      isUpdatingURL.current = false;
+    }, 0);
+  };
+
+  // URL değişikliklerini dinle (browser back/forward için)
+  useEffect(() => {
+    if (isUpdatingURL.current) {
+      return; // Kendi güncellememizden kaynaklanan değişiklikleri ignore et
+    }
+    
+    const urlSearch = searchParams.get("search") || "";
+    const urlPage = parseInt(searchParams.get("page") || "0", 10);
+    const urlSort = searchParams.get("sort") || "id,desc";
+    
+    if (urlSearch !== search) {
+      setSearch(urlSearch);
+      setSearchInput(urlSearch);
+    }
+    if (urlPage !== page) {
+      setPage(urlPage);
+    }
+    if (urlSort !== sort) {
+      setSort(urlSort);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
+
+  // Debounce search - 500ms delay
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (searchInput !== search) {
+        setSearch(searchInput);
+        updateURLParams({ search: searchInput, page: 0 });
+        setPage(0);
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchInput]);
+
   const { data, isLoading } = useCircular(search, page, size, sort);
   const deleteMutation = useDeleteCircular();
 
-  // Local state for drag & drop reordering
+  // Local state for items
   const [items, setItems] = useState<CircularResponse[]>([]);
 
   // Update items when data changes
@@ -191,32 +227,6 @@ export default function CircularList() {
       setItems(data.content);
     }
   }, [data]);
-
-  // Sensors for drag and drop
-  const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 8,
-      },
-    }),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  );
-
-  // Handle drag end
-  const handleDragEnd = (event: { active: { id: number }; over: { id: number } | null }) => {
-    const { active, over } = event;
-
-    if (over && active.id !== over.id) {
-      setItems((items) => {
-        const oldIndex = items.findIndex((item) => item.id === active.id);
-        const newIndex = items.findIndex((item) => item.id === over.id);
-
-        return arrayMove(items, oldIndex, newIndex);
-      });
-    }
-  };
 
   const handleDelete = (id: number, itemName: string) => {
     setSelectedId(id);
@@ -236,20 +246,49 @@ export default function CircularList() {
     }
   };
 
-  const handleSearch = (value: string) => {
-    setSearch(value);
+  const handleSearchInput = (value: string) => {
+    setSearchInput(value);
+  };
+
+  const clearSearch = () => {
+    setSearchInput("");
+    setSearch("");
+    updateURLParams({ search: "", page: 0 });
     setPage(0);
   };
 
   const handlePageChange = (newPage: number) => {
     if (newPage >= 0 && data && newPage < data.totalPages) {
       setPage(newPage);
+      updateURLParams({ page: newPage });
     }
   };
 
-  const handleSortChange = (value: string) => {
-    setSort(value);
+  const handleSortChange = (field: string) => {
+    const [currentField, currentDir] = sort.split(",");
+    let newSort: string;
+    if (currentField === field) {
+      // Aynı alana tıklandıysa yönü değiştir
+      newSort = `${field},${currentDir === "asc" ? "desc" : "asc"}`;
+    } else {
+      // Yeni alana tıklandıysa varsayılan olarak desc yap
+      newSort = `${field},desc`;
+    }
+    setSort(newSort);
     setPage(0);
+    updateURLParams({ sort: newSort, page: 0 });
+  };
+
+  const getSortIcon = (field: string) => {
+    const [currentField, currentDir] = sort.split(",");
+    if (currentField !== field) {
+      return <ArrowUpDown className="h-3.5 w-3.5 opacity-30" />;
+    }
+    return currentDir === "asc" ? (
+      <ArrowUp className="h-3.5 w-3.5 text-primary" />
+    ) : (
+      <ArrowDown className="h-3.5 w-3.5 text-primary" />
+    );
   };
 
   const truncateDescription = (text: string, maxLength: number = 80) => {
@@ -283,33 +322,31 @@ export default function CircularList() {
 
       {/* Search and Filters */}
       <div className="flex items-center gap-4">
-        <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground dark:text-foreground/60" />
+        <div className="relative flex-1 max-w-lg">
+          <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-primary/70 dark:text-primary/80 z-10" />
           <Input
             placeholder="Blog ara..."
-            value={search}
-            onChange={(e) => handleSearch(e.target.value)}
-            className="pl-9"
+            value={searchInput}
+            onChange={(e) => handleSearchInput(e.target.value)}
+            className="pl-12 pr-12 h-12 text-base border-2 border-primary/20 focus:border-primary/50 focus:ring-2 focus:ring-primary/20 shadow-md hover:shadow-lg transition-all duration-200 bg-background dark:bg-card"
           />
+          {searchInput && (
+            <button
+              onClick={clearSearch}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors rounded-full p-1 hover:bg-muted"
+              type="button"
+              title="Temizle"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          )}
         </div>
-        <Select value={sort} onValueChange={handleSortChange}>
-          <SelectTrigger className="w-[180px]">
-            <ArrowUpDown className="h-4 w-4 mr-2 opacity-50" />
-            <SelectValue placeholder="Sırala" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="id,desc">ID (Yeni → Eski)</SelectItem>
-            <SelectItem value="id,asc">ID (Eski → Yeni)</SelectItem>
-            <SelectItem value="title,asc">Başlık (A → Z)</SelectItem>
-            <SelectItem value="title,desc">Başlık (Z → A)</SelectItem>
-          </SelectContent>
-        </Select>
-        {search && (
+        {searchInput && (
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => handleSearch("")}
-            className="shrink-0"
+            onClick={clearSearch}
+            className="shrink-0 h-10"
           >
             Temizle
           </Button>
@@ -354,10 +391,10 @@ export default function CircularList() {
               <span className="text-muted-foreground dark:text-foreground/70">
                 Toplam <span className="font-semibold text-foreground">{data.totalElements}</span> blog yazısı
               </span>
-              {search && (
+              {searchInput && (
                 <Badge variant="secondary" className="gap-1">
                   <Filter className="h-3 w-3 dark:text-foreground/80" />
-                  Arama: "{search}"
+                  Arama: "{searchInput}"
                 </Badge>
               )}
             </div>
@@ -367,29 +404,35 @@ export default function CircularList() {
           </div>
 
           {/* Table */}
-          <div className="rounded-lg border bg-card">
-            <DndContext
-              sensors={sensors}
-              collisionDetection={closestCenter}
-              onDragEnd={handleDragEnd}
-            >
+          <div className="rounded-lg border bg-card overflow-hidden">
               <div className="overflow-x-auto scrollbar-hide">
                 <Table>
                   <TableHeader>
-                    <TableRow>
-                      <TableHead className="w-[50px]"></TableHead>
-                      <TableHead className="w-[80px]">ID</TableHead>
-                      <TableHead>Başlık</TableHead>
-                      <TableHead className="max-w-md">Açıklama</TableHead>
-                      <TableHead className="w-[200px]">Dosya</TableHead>
-                      <TableHead className="w-[120px] text-right">İşlemler</TableHead>
+                    <TableRow className="bg-[#F8F9FA] dark:bg-muted/30 border-b border-gray-200 dark:border-seyfhi-accent/30">
+                      <TableHead className="w-[80px]">
+                        <button
+                          onClick={() => handleSortChange("id")}
+                          className="flex items-center gap-2 hover:bg-muted/50 px-2 py-1 rounded transition-colors"
+                        >
+                          <span>ID</span>
+                          {getSortIcon("id")}
+                        </button>
+                      </TableHead>
+                      <TableHead className="min-w-[200px]">
+                        <button
+                          onClick={() => handleSortChange("title")}
+                          className="flex items-center gap-2 hover:bg-muted/50 px-2 py-1 rounded transition-colors"
+                        >
+                          <span>Başlık</span>
+                          {getSortIcon("title")}
+                        </button>
+                      </TableHead>
+                      <TableHead className="min-w-[200px] max-w-md">Açıklama</TableHead>
+                      <TableHead className="min-w-[200px]">Dosya</TableHead>
+                      <TableHead className="w-[200px] text-right">İşlemler</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    <SortableContext
-                      items={items.map((item) => item.id)}
-                      strategy={verticalListSortingStrategy}
-                    >
                       {items.map((item) => (
                         <SortableRow
                           key={item.id}
@@ -401,67 +444,52 @@ export default function CircularList() {
                           stripHtml={stripHtml}
                         />
                       ))}
-                    </SortableContext>
                   </TableBody>
                 </Table>
               </div>
-            </DndContext>
           </div>
 
           {/* Pagination */}
-          {data.totalPages > 1 && (
-            <div className="flex items-center justify-between">
+          {data && (
+            <div className="flex items-center justify-between px-6 py-4 bg-background border rounded-lg shadow-sm mt-4">
               <div className="text-sm text-muted-foreground dark:text-foreground/70">
                 {data.totalElements > 0 && (
                   <>
-                    {(page * size) + 1} - {Math.min((page + 1) * size, data.totalElements)} / {data.totalElements} kayıt gösteriliyor
+                    <span className="font-medium text-foreground">{(page * size) + 1}</span> - <span className="font-medium text-foreground">{Math.min((page + 1) * size, data.totalElements)}</span> / <span className="font-medium text-foreground">{data.totalElements}</span> kayıt gösteriliyor
                   </>
                 )}
               </div>
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handlePageChange(page - 1)}
-                  disabled={page === 0}
-                >
-                  <ChevronLeft className="h-4 w-4 mr-1 dark:text-foreground/80" />
-                  Önceki
-                </Button>
-                <div className="flex items-center gap-1">
-                  {Array.from({ length: Math.min(5, data.totalPages) }, (_, i) => {
-                    let pageNum;
-                    if (data.totalPages <= 5) {
-                      pageNum = i;
-                    } else if (page < 3) {
-                      pageNum = i;
-                    } else if (page > data.totalPages - 4) {
-                      pageNum = data.totalPages - 5 + i;
-                    } else {
-                      pageNum = page - 2 + i;
-                    }
-                    return (
-                      <Button
-                        key={pageNum}
-                        variant={page === pageNum ? "default" : "outline"}
-                        size="sm"
-                        onClick={() => handlePageChange(pageNum)}
-                        className="w-9 h-9 p-0"
-                      >
-                        {pageNum + 1}
-                      </Button>
-                    );
-                  })}
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3">
+                  <span className="text-sm font-medium text-muted-foreground dark:text-foreground/70">Sayfa</span>
+                  <div className="px-4 py-2 bg-muted/50 border-2 border-border rounded-lg">
+                    <span className="text-sm font-bold text-foreground">
+                      {page + 1} / {data.totalPages || 1}
+                    </span>
+                  </div>
                 </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handlePageChange(page + 1)}
-                  disabled={page >= data.totalPages - 1}
-                >
-                  Sonraki
-                  <ChevronRight className="h-4 w-4 ml-1 dark:text-foreground/80" />
-                </Button>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handlePageChange(page - 1)}
+                    disabled={page === 0}
+                    className="h-9 px-4 font-medium bg-background hover:bg-muted border-2 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-background"
+                  >
+                    <ChevronLeft className="h-4 w-4 mr-1" />
+                    Önceki
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handlePageChange(page + 1)}
+                    disabled={page >= (data.totalPages || 1) - 1}
+                    className="h-9 px-4 font-medium bg-background hover:bg-muted border-2 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-background"
+                  >
+                    Sonraki
+                    <ChevronRight className="h-4 w-4 ml-1" />
+                  </Button>
+                </div>
               </div>
             </div>
           )}

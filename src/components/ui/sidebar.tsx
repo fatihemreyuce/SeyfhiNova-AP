@@ -277,32 +277,39 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
 			)}>
 				{isOpen ? (
 					<div className="space-y-2">
-						{/* User Profile */}
+						{/* User Profile - Enhanced Design */}
 						{userMe && (
 							<DropdownMenu>
 								<DropdownMenuTrigger asChild>
 									<button
 										className={cn(
-											"w-full flex items-center gap-3 rounded-xl px-3.5 py-3 text-sm font-medium transition-all duration-200 group",
-											"bg-white/5 hover:bg-white/10 text-white/90 hover:text-white",
-											"border border-white/10 hover:border-white/25 hover:shadow-lg hover:shadow-white/5",
-											"backdrop-blur-sm"
+											"w-full flex items-center gap-3 rounded-2xl px-4 py-3.5 text-sm font-medium transition-all duration-300 group",
+											"bg-slate-800/60 hover:bg-slate-800/80 text-white",
+											"border border-slate-700/50 hover:border-slate-600/70",
+											"backdrop-blur-md shadow-lg hover:shadow-xl",
+											"hover:scale-[1.02] active:scale-[0.98]"
 										)}
 									>
-										<div className="relative w-11 h-11 rounded-full bg-gradient-to-br from-white/25 via-white/15 to-white/5 flex items-center justify-center shrink-0 border border-white/25 shadow-md group-hover:shadow-lg group-hover:scale-105 transition-all duration-200">
-											<User className="h-5 w-5 text-white drop-shadow-sm" />
-											<div className="absolute inset-0 rounded-full bg-white/0 group-hover:bg-white/10 transition-colors duration-200" />
+										{/* Avatar - Enhanced */}
+										<div className="relative w-12 h-12 rounded-full bg-gradient-to-br from-slate-600 via-slate-500 to-slate-600 flex items-center justify-center shrink-0 border-2 border-slate-500/50 shadow-inner group-hover:border-slate-400/70 transition-all duration-300 group-hover:scale-105">
+											<User className="h-6 w-6 text-white/90 drop-shadow-sm" strokeWidth={2} />
+											{/* Subtle inner glow */}
+											<div className="absolute inset-0 rounded-full bg-white/5 group-hover:bg-white/10 transition-colors duration-300" />
 										</div>
+										
+										{/* User Info - Enhanced */}
 										<div className="flex-1 text-left min-w-0">
-											<div className="text-sm font-semibold text-white truncate leading-tight mb-0.5">
+											<div className="text-sm font-bold text-white truncate leading-tight mb-1.5 drop-shadow-sm">
 												{userMe.firstName} {userMe.lastName}
 											</div>
-											<div className="text-xs text-white/70 truncate flex items-center gap-1.5 font-normal">
-												<Mail className="h-3 w-3 opacity-75" />
+											<div className="text-xs text-slate-300 truncate flex items-center gap-1.5 font-medium">
+												<Mail className="h-3.5 w-3.5 text-slate-400 shrink-0" strokeWidth={2} />
 												<span className="truncate">{userMe.email}</span>
 											</div>
 										</div>
-										<ChevronsUpDown className="h-4 w-4 text-white/50 shrink-0 group-hover:text-white/70 transition-colors" />
+										
+										{/* Chevron Icon - Enhanced */}
+										<ChevronsUpDown className="h-4 w-4 text-slate-400 shrink-0 group-hover:text-slate-300 transition-all duration-300 group-hover:scale-110" strokeWidth={2} />
 									</button>
 								</DropdownMenuTrigger>
 								<DropdownMenuContent 
