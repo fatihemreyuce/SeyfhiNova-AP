@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect, useCallback } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   useUsers,
   useDeleteUser,
@@ -163,24 +163,67 @@ function SortableRow({ item, onView, onEdit, onDelete, getRoleBadge }: SortableR
 
 export default function UserList() {
   const navigate = useNavigate();
-  const [searchInput, setSearchInput] = useState("");
-  const [search, setSearch] = useState("");
-  const [page, setPage] = useState(0);
+  const [searchParams, setSearchParams] = useSearchParams();
+  
+  // URL'den parametreleri oku
+  const urlSearch = searchParams.get("search") || "";
+  const urlPage = parseInt(searchParams.get("page") || "0", 10);
+  const urlSort = searchParams.get("sort") || "id,desc";
+  
+  const [searchInput, setSearchInput] = useState(urlSearch);
+  const [search, setSearch] = useState(urlSearch);
+  const [page, setPage] = useState(urlPage);
   const [size] = useState(10);
-  const [sort, setSort] = useState("id,desc");
+  const [sort, setSort] = useState(urlSort);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [selectedItemName, setSelectedItemName] = useState<string>("");
 
+  // URL parametrelerini güncelle
+  const updateURLParams = useCallback((newSearch: string, newPage: number, newSort: string) => {
+    const params = new URLSearchParams();
+    if (newSearch) {
+      params.set("search", newSearch);
+    }
+    if (newPage > 0) {
+      params.set("page", newPage.toString());
+    }
+    if (newSort && newSort !== "id,desc") {
+      params.set("sort", newSort);
+    }
+    setSearchParams(params, { replace: true });
+  }, [setSearchParams]);
+
+  // URL'den gelen parametreleri state'e senkronize et (sadece URL değiştiğinde)
+  useEffect(() => {
+    // URL'den gelen değerler state'ten farklıysa güncelle
+    if (urlSearch !== searchInput) {
+      setSearchInput(urlSearch);
+      setSearch(urlSearch);
+    }
+    if (urlPage !== page) {
+      setPage(urlPage);
+    }
+    if (urlSort !== sort) {
+      setSort(urlSort);
+    }
+  }, [urlSearch, urlPage, urlSort]);
+
   // Debounce search - 500ms delay
   useEffect(() => {
+    // Eğer searchInput URL'deki değerle aynıysa URL'i güncelleme
+    if (searchInput === urlSearch) {
+      return;
+    }
+
     const timer = setTimeout(() => {
       setSearch(searchInput);
       setPage(0);
+      updateURLParams(searchInput, 0, sort);
     }, 500);
 
     return () => clearTimeout(timer);
-  }, [searchInput]);
+  }, [searchInput, sort, urlSearch, updateURLParams]);
 
   const { data, isLoading } = useUsers(search, page, size, sort);
   const deleteMutation = useDeleteUser();
@@ -246,24 +289,30 @@ export default function UserList() {
   const clearSearch = () => {
     setSearchInput("");
     setSearch("");
+    setPage(0);
+    updateURLParams("", 0, sort);
   };
 
   const handlePageChange = (newPage: number) => {
     if (newPage >= 0 && data && newPage < data.totalPages) {
       setPage(newPage);
+      updateURLParams(search, newPage, sort);
     }
   };
 
   const handleSortChange = (field: string) => {
     const [currentField, currentDir] = sort.split(",");
+    let newSort: string;
     if (currentField === field) {
       // Aynı alana tıklandıysa yönü değiştir
-      setSort(`${field},${currentDir === "asc" ? "desc" : "asc"}`);
+      newSort = `${field},${currentDir === "asc" ? "desc" : "asc"}`;
     } else {
       // Yeni alana tıklandıysa varsayılan olarak desc yap
-      setSort(`${field},desc`);
+      newSort = `${field},desc`;
     }
+    setSort(newSort);
     setPage(0);
+    updateURLParams(search, 0, newSort);
   };
 
   const getSortIcon = (field: string) => {

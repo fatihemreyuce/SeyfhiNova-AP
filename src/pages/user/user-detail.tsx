@@ -25,9 +25,6 @@ import {
   Eye,
   EyeOff,
   X,
-  Hash,
-  AtSign,
-  FileText,
 } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -121,46 +118,44 @@ export default function UserDetail() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 pb-8">
-      {/* Header Section */}
-      <div className="sticky top-0 z-40 bg-background/80 backdrop-blur-xl border-b border-border/40 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 gap-4">
-            <div className="flex items-center gap-3">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => navigate("/user")}
-                className="h-9 w-9 hover:bg-muted"
-              >
-                <ArrowLeft className="h-4 w-4" />
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => navigate("/user")}
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">
+              Kullanıcı Detayı
+            </h1>
+            <p className="text-muted-foreground">
+              #{data.id} - {data.username} kullanıcısının detay bilgileri
+            </p>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <Dialog 
+            open={passwordDialogOpen} 
+            onOpenChange={(open) => {
+              setPasswordDialogOpen(open);
+              if (!open) {
+                passwordForm.reset();
+                setShowOldPassword(false);
+                setShowNewPassword(false);
+              }
+            }}
+          >
+            <DialogTrigger asChild>
+              <Button variant="outline">
+                <Key className="h-4 w-4 mr-2" />
+                Şifre Değiştir
               </Button>
-              <div className="h-6 w-px bg-border"></div>
-              <div className="flex items-center gap-3">
-                <div className="h-2 w-2 rounded-full bg-primary animate-pulse"></div>
-                <h1 className="text-lg font-semibold text-foreground">
-                  Kullanıcı Detayı
-                </h1>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <Dialog 
-                open={passwordDialogOpen} 
-                onOpenChange={(open) => {
-                  setPasswordDialogOpen(open);
-                  if (!open) {
-                    passwordForm.reset();
-                    setShowOldPassword(false);
-                    setShowNewPassword(false);
-                  }
-                }}
-              >
-                <DialogTrigger asChild>
-                  <Button variant="outline" className="gap-2">
-                    <Key className="h-4 w-4" />
-                    Şifre Değiştir
-                  </Button>
-                </DialogTrigger>
+            </DialogTrigger>
             <DialogContent className="sm:max-w-[500px] rounded-2xl">
               <DialogHeader className="space-y-3 pb-4 border-b border-border/50">
                 <div className="flex items-center gap-3">
@@ -291,242 +286,101 @@ export default function UserDetail() {
                 </form>
               </Form>
             </DialogContent>
-              </Dialog>
-              <Button 
-                onClick={() => navigate(`/user/${id}/edit`)}
-                className="gap-2"
-              >
-                <Edit className="h-4 w-4" />
-                Düzenle
-              </Button>
+          </Dialog>
+          <Button onClick={() => navigate(`/user/${id}/edit`)}>
+            <Edit className="h-4 w-4 mr-2" />
+            Düzenle
+          </Button>
+        </div>
+      </div>
+
+      {/* Profile Card */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-center gap-4">
+            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+              <User className="h-8 w-8 text-primary" />
+            </div>
+            <div>
+              <CardTitle className="text-2xl">
+                {data.firstName} {data.lastName}
+              </CardTitle>
+              <p className="text-muted-foreground mt-1">@{data.username}</p>
             </div>
           </div>
-        </div>
-      </div>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-6 md:grid-cols-2">
+            {/* Hesap Bilgileri */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold mb-4">Hesap Bilgileri</h3>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                    <User className="h-4 w-4" />
+                    Kullanıcı Adı
+                  </label>
+                  <p className="text-base font-medium">{data.username}</p>
+                </div>
 
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Profile Header */}
-        <div className="mb-8">
-          <Card className="border-0 shadow-lg bg-gradient-to-br from-card to-card/50 overflow-hidden">
-            <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl -mr-48 -mt-48"></div>
-            <CardContent className="relative p-8">
-              <div className="flex items-start gap-6">
-                <div className="relative">
-                  <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center shadow-xl">
-                    <User className="h-12 w-12 text-primary-foreground" />
-                  </div>
-                  <div className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-green-500 border-4 border-card shadow-lg"></div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                    <Mail className="h-4 w-4" />
+                    E-posta
+                  </label>
+                  <p className="text-base font-medium">{data.email}</p>
                 </div>
-                <div className="flex-1 pt-2">
-                  <div className="flex items-center gap-3 mb-2">
-                    <Badge 
-                      variant="outline" 
-                      className="font-mono text-xs bg-primary/10 text-primary border-primary/20 px-2.5 py-0.5"
-                    >
-                      ID: {data.id}
-                    </Badge>
-                    <div className="h-1 w-1 rounded-full bg-muted-foreground/40"></div>
-                    <span className="text-xs text-muted-foreground uppercase tracking-wider">
-                      Kullanıcı
-                    </span>
-                  </div>
-                  <h2 className="text-4xl font-bold tracking-tight text-foreground mb-2">
-                    {data.firstName} {data.lastName}
-                  </h2>
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <AtSign className="h-4 w-4" />
-                    <span className="text-lg">@{data.username}</span>
-                  </div>
-                </div>
-                <div className="pt-2">
-                  {getRoleBadge(data.role)}
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                    <Shield className="h-4 w-4" />
+                    Rol
+                  </label>
+                  <div>{getRoleBadge(data.role)}</div>
                 </div>
               </div>
-            </CardContent>
-          </Card>
-        </div>
+            </div>
 
-        {/* Content Grid */}
-        <div className="grid gap-6 lg:grid-cols-3">
-          {/* Left Column - Account Info */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Account Information Card */}
-            <Card className="border shadow-md">
-              <CardHeader>
-                <CardTitle className="text-lg font-semibold flex items-center gap-2">
-                  <Shield className="h-5 w-5 text-primary" />
-                  Hesap Bilgileri
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="space-y-4">
-                  <div className="flex items-start justify-between py-4 border-b border-border last:border-0">
-                    <div className="flex items-center gap-3 flex-1">
-                      <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                        <User className="h-5 w-5 text-primary" />
-                      </div>
-                      <div className="flex-1">
-                        <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">
-                          Kullanıcı Adı
-                        </p>
-                        <p className="text-base font-semibold text-foreground">{data.username}</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start justify-between py-4 border-b border-border last:border-0">
-                    <div className="flex items-center gap-3 flex-1">
-                      <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                        <Mail className="h-5 w-5 text-primary" />
-                      </div>
-                      <div className="flex-1">
-                        <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">
-                          E-posta
-                        </p>
-                        <p className="text-base font-semibold text-foreground break-all">{data.email}</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start justify-between py-4">
-                    <div className="flex items-center gap-3 flex-1">
-                      <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                        <Shield className="h-5 w-5 text-primary" />
-                      </div>
-                      <div className="flex-1">
-                        <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">
-                          Rol
-                        </p>
-                        <div>{getRoleBadge(data.role)}</div>
-                      </div>
-                    </div>
-                  </div>
+            {/* Kişisel Bilgiler */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold mb-4">Kişisel Bilgiler</h3>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-muted-foreground">
+                    Ad
+                  </label>
+                  <p className="text-base font-medium">{data.firstName}</p>
                 </div>
-              </CardContent>
-            </Card>
 
-            {/* Personal Information Card */}
-            <Card className="border shadow-md">
-              <CardHeader>
-                <CardTitle className="text-lg font-semibold flex items-center gap-2">
-                  <FileText className="h-5 w-5 text-primary" />
-                  Kişisel Bilgiler
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="space-y-4">
-                  <div className="flex items-start justify-between py-4 border-b border-border last:border-0">
-                    <div className="flex items-center gap-3 flex-1">
-                      <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                        <User className="h-5 w-5 text-primary" />
-                      </div>
-                      <div className="flex-1">
-                        <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">
-                          Ad
-                        </p>
-                        <p className="text-base font-semibold text-foreground">{data.firstName}</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start justify-between py-4 border-b border-border last:border-0">
-                    <div className="flex items-center gap-3 flex-1">
-                      <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                        <User className="h-5 w-5 text-primary" />
-                      </div>
-                      <div className="flex-1">
-                        <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">
-                          Soyad
-                        </p>
-                        <p className="text-base font-semibold text-foreground">{data.lastName}</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start justify-between py-4">
-                    <div className="flex items-center gap-3 flex-1">
-                      <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                        <Lock className="h-5 w-5 text-primary" />
-                      </div>
-                      <div className="flex-1">
-                        <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">
-                          Şifre
-                        </p>
-                        <p className="text-sm text-muted-foreground italic mb-2">
-                          Şifre güvenlik nedeniyle gösterilmez
-                        </p>
-                      </div>
-                    </div>
-                  </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-muted-foreground">
+                    Soyad
+                  </label>
+                  <p className="text-base font-medium">{data.lastName}</p>
                 </div>
-              </CardContent>
-            </Card>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                    <Lock className="h-4 w-4" />
+                    Şifre
+                  </label>
+                  <p className="text-sm text-muted-foreground italic">
+                    Şifre güvenlik nedeniyle gösterilmez
+                  </p>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setPasswordDialogOpen(true)}
+                  >
+                    <Key className="h-3 w-3 mr-2" />
+                    Şifreyi Değiştir
+                  </Button>
+                </div>
+              </div>
+            </div>
           </div>
-
-          {/* Right Column - Quick Info */}
-          <div className="space-y-6">
-            {/* Quick Info Card */}
-            <Card className="border shadow-md">
-              <CardHeader>
-                <CardTitle className="text-lg font-semibold flex items-center gap-2">
-                  <Hash className="h-5 w-5 text-primary" />
-                  Hızlı Bilgiler
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-start justify-between py-3 border-b border-border last:border-0">
-                  <div className="flex items-center gap-3">
-                    <div className="h-9 w-9 rounded-lg bg-muted flex items-center justify-center">
-                      <Hash className="h-4 w-4 text-muted-foreground" />
-                    </div>
-                    <div>
-                      <p className="text-xs font-medium text-muted-foreground mb-1">Kullanıcı ID</p>
-                      <p className="text-base font-semibold text-foreground">#{data.id}</p>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="flex items-start justify-between py-3 border-b border-border last:border-0">
-                  <div className="flex items-center gap-3">
-                    <div className="h-9 w-9 rounded-lg bg-muted flex items-center justify-center">
-                      <AtSign className="h-4 w-4 text-muted-foreground" />
-                    </div>
-                    <div>
-                      <p className="text-xs font-medium text-muted-foreground mb-1">Kullanıcı Adı</p>
-                      <p className="text-base font-semibold text-foreground">@{data.username}</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex items-start justify-between py-3 border-b border-border last:border-0">
-                  <div className="flex items-center gap-3">
-                    <div className="h-9 w-9 rounded-lg bg-muted flex items-center justify-center">
-                      <Shield className="h-4 w-4 text-muted-foreground" />
-                    </div>
-                    <div>
-                      <p className="text-xs font-medium text-muted-foreground mb-1">Rol</p>
-                      <div>{getRoleBadge(data.role)}</div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex items-start justify-between py-3">
-                  <div className="flex items-center gap-3">
-                    <div className="h-9 w-9 rounded-lg bg-muted flex items-center justify-center">
-                      <Mail className="h-4 w-4 text-muted-foreground" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-xs font-medium text-muted-foreground mb-1">E-posta</p>
-                      <p className="text-base font-semibold text-foreground truncate">{data.email}</p>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

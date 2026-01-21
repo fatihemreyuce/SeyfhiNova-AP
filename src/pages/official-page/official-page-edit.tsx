@@ -69,31 +69,51 @@ export default function OfficialPageEdit() {
 
   const onSubmit = (values: FormValues) => {
     // Backend için documents dizisini dönüştür
-    // Mevcut dokümanlar (string URL + id) için sadece id gönderilir
-    // Yeni dokümanlar (File) için file ve name gönderilir
+    // Mevcut dokümanlar için: asset olarak boş string gönder (backend mevcut dosyayı korur)
+    // Yeni dokümanlar için: asset (File) ve name gönder
     const formattedDocuments = values.documents.map((doc) => {
-      // Eğer asset bir string (URL) ise ve id varsa, mevcut doküman - sadece id gönder
-      if (typeof doc.asset === "string" && doc.asset && doc.id) {
-        // Mevcut doküman için sadece id gönderilir, backend bunu korur
-        return { id: doc.id };
-      }
-      // Eğer asset bir File ise, yeni doküman
+      // Eğer asset bir File ise, yeni doküman - asset (File) ve name gönder
       if (doc.asset instanceof File) {
-        return { file: doc.asset, name: doc.name };
+        return {
+          asset: doc.asset,
+          name: doc.name,
+        };
       }
+      
+      // Eğer asset bir string (URL) ise, mevcut doküman - asset olarak boş string gönder
+      // Backend mevcut dosyayı korur, yeni dosya gönderilmediği sürece
+      if (typeof doc.asset === "string" && doc.asset) {
+        return {
+          asset: "", // Boş string - backend mevcut dosyayı korur
+          name: doc.name,
+        };
+      }
+      
       // Diğer durumlar (sadece name varsa, yeni doküman ama dosya seçilmemiş)
-      return { name: doc.name };
+      return {
+        asset: "",
+        name: doc.name || "",
+      };
     });
 
-    // Console'a gönderilen veriyi yazdır (debug için)
-    console.log("Formatted Documents:", formattedDocuments);
+    // qualityPolicy -> qualityPolitics olarak değiştir ve orderNumber'ı string'e çevir
+    // objectToFormData içinde String() kullanılıyor ama yine de burada string olarak gönderelim
+    const formattedQualityPolitics = values.qualityPolicy.map((policy) => ({
+      text: policy.text,
+      orderNumber: String(policy.orderNumber), // String'e çevir
+    }));
 
     const requestData = {
-      ...values,
+      description: values.description,
       documents: formattedDocuments,
+      qualityPolitics: formattedQualityPolitics, // qualityPolicy değil, qualityPolitics
     };
 
-    updateMutation.mutate(requestData, {
+    console.log("Request Data:", requestData);
+    console.log("Documents:", formattedDocuments);
+    console.log("Quality Politics:", formattedQualityPolitics);
+
+    updateMutation.mutate(requestData as any, {
       onSuccess: () => {
         navigate("/official-page");
       },

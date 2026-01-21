@@ -5,13 +5,13 @@ export interface Documents{
 
 export interface qualityPolicy{
    text:string;
-   orderNumber:number;
+   orderNumber:string;
 }
 
 export interface OfficialPageRequest{
     description:string;
     documents:Documents[];
-    qualityPolicy:qualityPolicy[];
+    qualityPolitics:qualityPolicy[];
 }
 
 export interface OfficialPageResponse{
