@@ -40,6 +40,7 @@ import {
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
+import { restrictToVerticalAxis, restrictToParentElement } from "@dnd-kit/modifiers";
 import {
   arrayMove,
   SortableContext,
@@ -374,25 +375,25 @@ export default function HomePageAboutList() {
   };
 
   return (
-    <div className="space-y-6 pb-6">
+    <div className="space-y-4 md:space-y-6 pb-4 md:pb-6 px-4 md:px-0">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight dark:text-foreground">
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight dark:text-foreground">
             Ana Sayfa Hakkında
           </h1>
-          <p className="text-muted-foreground dark:text-foreground/70 mt-1">
+          <p className="text-sm md:text-base text-muted-foreground dark:text-foreground/70 mt-1">
             Ana sayfa hakkında bölümlerini görüntüleyin ve yönetin
           </p>
         </div>
-        <Button onClick={() => navigate("/home-page-about/create")}>
+        <Button onClick={() => navigate("/home-page-about/create")} className="w-full sm:w-auto">
           <Plus className="h-4 w-4 mr-2" />
           Yeni Ekle
         </Button>
       </div>
 
       {/* Search and Filters */}
-      <div className="flex items-center gap-4">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
         <div className="relative flex-1 max-w-lg">
           <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-primary/70 dark:text-primary/80 z-10" />
           <Input
@@ -457,8 +458,8 @@ export default function HomePageAboutList() {
       ) : (
         <>
           {/* Stats Bar */}
-          <div className="flex items-center justify-between text-sm">
-            <div className="flex items-center gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4 text-sm">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-4">
               <span className="text-muted-foreground dark:text-foreground/70">
                 Toplam <span className="font-semibold text-foreground">{data.totalElements}</span> kayıt
               </span>
@@ -480,6 +481,7 @@ export default function HomePageAboutList() {
               sensors={sensors}
               collisionDetection={closestCenter}
               onDragEnd={handleDragEnd}
+              modifiers={[restrictToVerticalAxis, restrictToParentElement]}
             >
               <div className="overflow-x-auto scrollbar-hide">
                 <Table>
@@ -546,19 +548,19 @@ export default function HomePageAboutList() {
 
           {/* Pagination */}
           {data && (
-            <div className="flex items-center justify-between px-6 py-4 bg-background border rounded-lg shadow-sm mt-4">
-              <div className="text-sm text-muted-foreground dark:text-foreground/70">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 px-4 sm:px-6 py-4 bg-background border rounded-lg shadow-sm mt-4">
+              <div className="text-xs sm:text-sm text-muted-foreground dark:text-foreground/70">
                 {data.totalElements > 0 && (
                   <>
                     <span className="font-medium text-foreground">{(page * size) + 1}</span> - <span className="font-medium text-foreground">{Math.min((page + 1) * size, data.totalElements)}</span> / <span className="font-medium text-foreground">{data.totalElements}</span> kayıt gösteriliyor
                   </>
                 )}
               </div>
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-3">
-                  <span className="text-sm font-medium text-muted-foreground dark:text-foreground/70">Sayfa</span>
-                  <div className="px-4 py-2 bg-muted/50 border-2 border-border rounded-lg">
-                    <span className="text-sm font-bold text-foreground">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <span className="text-xs sm:text-sm font-medium text-muted-foreground dark:text-foreground/70">Sayfa</span>
+                  <div className="px-3 sm:px-4 py-2 bg-muted/50 border-2 border-border rounded-lg">
+                    <span className="text-xs sm:text-sm font-bold text-foreground">
                       {page + 1} / {data.totalPages || 1}
                     </span>
                   </div>

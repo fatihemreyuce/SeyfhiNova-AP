@@ -32,7 +32,10 @@ const formSchema = z.object({
     .min(1, "Başlık gereklidir")
     .max(255, "Başlık en fazla 255 karakter olabilir"),
   description: z.string().min(1, "Açıklama gereklidir"),
-  orderIndex: z.number().min(0, "Sıra numarası 0 veya daha büyük olmalıdır"),
+  orderIndex: z.union([
+    z.string().transform((val) => val === "" ? 0 : parseInt(val, 10) || 0),
+    z.number()
+  ]).refine((val) => val >= 0, "Sıra numarası 0 veya daha büyük olmalıdır"),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -67,8 +70,13 @@ export default function ServiceEdit() {
 
   const onSubmit = (values: FormValues) => {
     if (id) {
+      // orderIndex'i number'a çevir
+      const orderIndex = typeof values.orderIndex === "string" 
+        ? (values.orderIndex === "" ? 0 : parseInt(values.orderIndex, 10) || 0)
+        : values.orderIndex;
+      
       updateMutation.mutate(
-        { id: Number(id), request: values },
+        { id: Number(id), request: { ...values, orderIndex } },
         {
           onSuccess: () => {
             navigate("/service");
@@ -99,18 +107,19 @@ export default function ServiceEdit() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center gap-4">
+    <div className="space-y-4 md:space-y-6 px-4 md:px-0">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
         <Button
           variant="ghost"
           size="icon"
           onClick={() => navigate("/service")}
+          className="self-start sm:self-auto"
         >
           <ArrowLeft className="h-4 w-4" />
         </Button>
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Servis Düzenle</h1>
-          <p className="text-muted-foreground">
+        <div className="flex-1">
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Servis Düzenle</h1>
+          <p className="text-sm md:text-base text-muted-foreground">
             Servisi düzenleyin
           </p>
         </div>
@@ -204,11 +213,18 @@ export default function ServiceEdit() {
                     <FormLabel>Sıra Numarası</FormLabel>
                     <FormControl>
                       <Input
-                        type="number"
+                        type="text"
                         placeholder="0"
+                        className="max-w-[150px]"
                         {...field}
-                        onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
-                        value={field.value}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          // Sadece rakam ve boş string'e izin ver
+                          if (value === "" || /^\d+$/.test(value)) {
+                            field.onChange(value);
+                          }
+                        }}
+                        value={field.value === undefined || field.value === null ? "" : String(field.value)}
                       />
                     </FormControl>
                     <FormMessage />
@@ -221,15 +237,16 @@ export default function ServiceEdit() {
             </CardContent>
           </Card>
 
-          <div className="flex items-center justify-end gap-4">
+          <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-end gap-3 sm:gap-4">
             <Button
               type="button"
               variant="outline"
               onClick={() => navigate("/service")}
+              className="w-full sm:w-auto"
             >
               İptal
             </Button>
-            <Button type="submit" disabled={updateMutation.isPending}>
+            <Button type="submit" disabled={updateMutation.isPending} className="w-full sm:w-auto">
               <Save className="h-4 w-4 mr-2" />
               {updateMutation.isPending ? "Güncelleniyor..." : "Güncelle"}
             </Button>

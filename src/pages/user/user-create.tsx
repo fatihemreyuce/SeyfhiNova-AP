@@ -61,18 +61,19 @@ export default function UserCreate() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center gap-4">
+    <div className="space-y-4 md:space-y-6 px-4 md:px-0">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
         <Button
           variant="ghost"
           size="icon"
           onClick={() => navigate("/user")}
+          className="self-start sm:self-auto"
         >
           <ArrowLeft className="h-4 w-4" />
         </Button>
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Yeni Kullanıcı</h1>
-          <p className="text-muted-foreground">
+        <div className="flex-1">
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Yeni Kullanıcı</h1>
+          <p className="text-sm md:text-base text-muted-foreground">
             Yeni bir kullanıcı hesabı oluşturun
           </p>
         </div>
@@ -80,20 +81,49 @@ export default function UserCreate() {
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <div className="grid gap-6 md:grid-cols-2">
-            <Card>
-              <CardHeader>
-                <CardTitle>Hesap Bilgileri</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
+          <Card className="border-2 shadow-lg">
+            <CardHeader className="pb-6 border-b">
+              <CardTitle className="text-xl font-bold">Kullanıcı Bilgileri</CardTitle>
+            </CardHeader>
+            <CardContent className="pt-6 space-y-6">
+              <div className="grid gap-6 sm:grid-cols-2">
+                <FormField
+                  control={form.control}
+                  name="firstName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm font-semibold">Ad</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Ad giriniz" {...field} className="h-11" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="lastName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm font-semibold">Soyad</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Soyad giriniz" {...field} className="h-11" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="grid gap-6 sm:grid-cols-2">
                 <FormField
                   control={form.control}
                   name="username"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Kullanıcı Adı</FormLabel>
+                      <FormLabel className="text-sm font-semibold">Kullanıcı Adı</FormLabel>
                       <FormControl>
-                        <Input placeholder="Kullanıcı adı giriniz" {...field} />
+                        <Input placeholder="Kullanıcı adı giriniz" {...field} className="h-11" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -104,29 +134,34 @@ export default function UserCreate() {
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>E-posta</FormLabel>
+                      <FormLabel className="text-sm font-semibold">E-posta</FormLabel>
                       <FormControl>
                         <Input
                           type="email"
                           placeholder="E-posta adresi giriniz"
                           {...field}
+                          className="h-11"
                         />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
+              </div>
+
+              <div className="grid gap-6 sm:grid-cols-2">
                 <FormField
                   control={form.control}
                   name="password"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Şifre</FormLabel>
+                      <FormLabel className="text-sm font-semibold">Şifre</FormLabel>
                       <FormControl>
                         <Input
                           type="password"
                           placeholder="Şifre giriniz (min 6 karakter)"
                           {...field}
+                          className="h-11"
                         />
                       </FormControl>
                       <FormMessage />
@@ -138,13 +173,13 @@ export default function UserCreate() {
                   name="role"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Rol</FormLabel>
+                      <FormLabel className="text-sm font-semibold">Rol</FormLabel>
                       <Select
                         onValueChange={field.onChange}
                         defaultValue={field.value}
                       >
                         <FormControl>
-                          <SelectTrigger>
+                          <SelectTrigger className="h-11">
                             <SelectValue placeholder="Rol seçiniz" />
                           </SelectTrigger>
                         </FormControl>
@@ -157,53 +192,20 @@ export default function UserCreate() {
                     </FormItem>
                   )}
                 />
-              </CardContent>
-            </Card>
+              </div>
+            </CardContent>
+          </Card>
 
-            <Card>
-              <CardHeader>
-                <CardTitle>Kişisel Bilgiler</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <FormField
-                  control={form.control}
-                  name="firstName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Ad</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Ad giriniz" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="lastName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Soyad</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Soyad giriniz" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </CardContent>
-            </Card>
-          </div>
-
-          <div className="flex items-center justify-end gap-4">
+          <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-end gap-3 sm:gap-4">
             <Button
               type="button"
               variant="outline"
               onClick={() => navigate("/user")}
+              className="w-full sm:w-auto"
             >
               İptal
             </Button>
-            <Button type="submit" disabled={createMutation.isPending}>
+            <Button type="submit" disabled={createMutation.isPending} className="w-full sm:w-auto">
               <Save className="h-4 w-4 mr-2" />
               {createMutation.isPending ? "Kaydediliyor..." : "Kaydet"}
             </Button>

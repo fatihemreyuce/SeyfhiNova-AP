@@ -30,7 +30,10 @@ const formSchema = z.object({
   qualityPolicy: z.array(
     z.object({
       text: z.string().min(1, "Metin gereklidir"),
-      orderNumber: z.number().min(0, "Sıra numarası 0 veya daha büyük olmalıdır"),
+      orderNumber: z.union([
+        z.string().transform((val) => val === "" ? 0 : parseInt(val, 10) || 0),
+        z.number()
+      ]).refine((val) => val >= 0, "Sıra numarası 0 veya daha büyük olmalıdır"),
     })
   ),
 });
@@ -96,12 +99,16 @@ export default function OfficialPageEdit() {
       };
     });
 
-    // qualityPolicy -> qualityPolitics olarak değiştir ve orderNumber'ı string'e çevir
-    // objectToFormData içinde String() kullanılıyor ama yine de burada string olarak gönderelim
-    const formattedQualityPolitics = values.qualityPolicy.map((policy) => ({
-      text: policy.text,
-      orderNumber: String(policy.orderNumber), // String'e çevir
-    }));
+    // qualityPolicy -> qualityPolitics olarak değiştir ve orderNumber'ı number'a çevir
+    const formattedQualityPolitics = values.qualityPolicy.map((policy) => {
+      const orderNumber = typeof policy.orderNumber === "string" 
+        ? (policy.orderNumber === "" ? 0 : parseInt(policy.orderNumber, 10) || 0)
+        : policy.orderNumber;
+      return {
+        text: policy.text,
+        orderNumber: orderNumber,
+      };
+    });
 
     const requestData = {
       description: values.description,
@@ -193,18 +200,19 @@ export default function OfficialPageEdit() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center gap-4">
+    <div className="space-y-4 md:space-y-6 px-4 md:px-0">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
         <Button
           variant="ghost"
           size="icon"
           onClick={() => navigate("/official-page")}
+          className="self-start sm:self-auto"
         >
           <ArrowLeft className="h-4 w-4" />
         </Button>
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Resmi Sayfa Düzenle</h1>
-          <p className="text-muted-foreground">
+        <div className="flex-1">
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Resmi Sayfa Düzenle</h1>
+          <p className="text-sm md:text-base text-muted-foreground">
             Resmi sayfayı düzenleyin
           </p>
         </div>
@@ -389,12 +397,18 @@ export default function OfficialPageEdit() {
                           <FormLabel>Sıra Numarası</FormLabel>
                           <FormControl>
                             <Input
-                              type="number"
-                              {...field}
-                              onChange={(e) =>
-                                field.onChange(parseInt(e.target.value) || 0)
-                              }
+                              type="text"
+                              className="max-w-[150px]"
                               placeholder="0"
+                              {...field}
+                              onChange={(e) => {
+                                const value = e.target.value;
+                                // Sadece rakam ve boş string'e izin ver
+                                if (value === "" || /^\d+$/.test(value)) {
+                                  field.onChange(value);
+                                }
+                              }}
+                              value={field.value === undefined || field.value === null ? "" : String(field.value)}
                             />
                           </FormControl>
                           <FormMessage />
@@ -427,10 +441,11 @@ export default function OfficialPageEdit() {
               type="button"
               variant="outline"
               onClick={() => navigate("/official-page")}
+              className="w-full sm:w-auto"
             >
               İptal
             </Button>
-            <Button type="submit" disabled={updateMutation.isPending}>
+            <Button type="submit" disabled={updateMutation.isPending} className="w-full sm:w-auto">
               <Save className="h-4 w-4 mr-2" />
               {updateMutation.isPending ? "Kaydediliyor..." : "Kaydet"}
             </Button>

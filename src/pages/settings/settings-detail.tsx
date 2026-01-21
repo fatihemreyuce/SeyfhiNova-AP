@@ -62,25 +62,25 @@ export default function SettingsDetail() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6 px-4 md:px-0">
       {/* Header */}
-      <div className="flex items-center justify-between pb-4 border-b border-border/50">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-border/50">
         <div className="space-y-1">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
               <Settings className="h-5 w-5 text-primary" />
             </div>
-            <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+            <h1 className="text-2xl md:text-3xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
               Ayarlar
             </h1>
           </div>
-          <p className="text-muted-foreground ml-13">
+          <p className="text-sm md:text-base text-muted-foreground ml-13">
             Site ayar bilgilerini görüntüleyin ve yönetin
           </p>
         </div>
         <Button 
           onClick={() => navigate(`/settings/edit`)}
-          className="shadow-md hover:shadow-lg transition-shadow"
+          className="shadow-md hover:shadow-lg transition-shadow w-full sm:w-auto"
         >
           <Edit className="h-4 w-4 mr-2" />
           Düzenle
@@ -88,7 +88,7 @@ export default function SettingsDetail() {
       </div>
 
       {/* Two Column Layout */}
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid gap-6 grid-cols-1 lg:grid-cols-2">
         {/* Left Column - Temel Bilgiler */}
         <div className="space-y-6">
           <Card className="border-2 border-border/50 shadow-sm">

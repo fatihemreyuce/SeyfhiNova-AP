@@ -188,14 +188,14 @@ export default function SettingsEdit() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between pb-4 border-b border-border/50">
-        <div className="flex items-center gap-4">
+    <div className="space-y-4 md:space-y-6 px-4 md:px-0">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-border/50">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
           <Button
             variant="ghost"
             size="icon"
             onClick={() => navigate("/settings")}
-            className="hover:bg-muted"
+            className="hover:bg-muted self-start sm:self-auto"
           >
             <ArrowLeft className="h-4 w-4" />
           </Button>
@@ -204,11 +204,11 @@ export default function SettingsEdit() {
               <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
                 <Settings className="h-5 w-5 text-primary" />
               </div>
-              <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+              <h1 className="text-2xl md:text-3xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
                 Ayar Düzenle
               </h1>
             </div>
-            <p className="text-muted-foreground ml-13">
+            <p className="text-sm md:text-base text-muted-foreground ml-13">
               Site ayarlarını düzenleyin ve güncelleyin
             </p>
           </div>
@@ -533,17 +533,19 @@ export default function SettingsEdit() {
             </CardContent>
           </Card>
 
-          <div className="flex items-center justify-end gap-4">
+          <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-end gap-3 sm:gap-4">
             <Button
               type="button"
               variant="outline"
               onClick={() => navigate("/settings")}
+              className="w-full sm:w-auto"
             >
               İptal
             </Button>
             <Button 
               type="submit" 
               disabled={updateMutation.isPending || isLoading || !data?.id}
+              className="w-full sm:w-auto"
             >
               <Save className="h-4 w-4 mr-2" />
               {updateMutation.isPending ? "Güncelleniyor..." : "Güncelle"}

@@ -118,27 +118,28 @@ export default function UserDetail() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6 px-4 md:px-0">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
           <Button
             variant="ghost"
             size="icon"
             onClick={() => navigate("/user")}
+            className="self-start sm:self-auto"
           >
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">
+            <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
               Kullanıcı Detayı
             </h1>
-            <p className="text-muted-foreground">
+            <p className="text-sm md:text-base text-muted-foreground">
               #{data.id} - {data.username} kullanıcısının detay bilgileri
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
           <Dialog 
             open={passwordDialogOpen} 
             onOpenChange={(open) => {
@@ -310,7 +311,7 @@ export default function UserDetail() {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-6 md:grid-cols-2">
+          <div className="grid gap-6 grid-cols-1 md:grid-cols-2">
             {/* Hesap Bilgileri */}
             <div className="space-y-4">
               <h3 className="text-lg font-semibold mb-4">Hesap Bilgileri</h3>

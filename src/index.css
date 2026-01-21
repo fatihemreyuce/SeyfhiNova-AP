@@ -100,8 +100,8 @@
   }
   body {
     @apply bg-seyfhi-background text-seyfhi-text-dark;
-    /* Light mode gradient background - daha belirgin */
-    background-image: linear-gradient(135deg, hsl(200 55% 96%) 0%, hsl(205 50% 90%) 25%, hsl(200 52% 94%) 50%, hsl(208 48% 92%) 75%, hsl(200 55% 96%) 100%);
+    /* Light mode gradient background - daha koyu */
+    background-image: linear-gradient(135deg, hsl(200 55% 80%) 0%, hsl(205 50% 75%) 25%, hsl(200 52% 78%) 50%, hsl(208 48% 76%) 75%, hsl(200 55% 80%) 100%);
     background-attachment: fixed;
   }
   
@@ -130,7 +130,7 @@
   
   /* Gradient backgrounds */
   .gradient-bg {
-    background: linear-gradient(135deg, hsl(200 55% 96%) 0%, hsl(205 50% 90%) 25%, hsl(200 52% 94%) 50%, hsl(208 48% 92%) 75%, hsl(200 55% 96%) 100%);
+    background: linear-gradient(135deg, hsl(200 55% 80%) 0%, hsl(205 50% 75%) 25%, hsl(200 52% 78%) 50%, hsl(208 48% 76%) 75%, hsl(200 55% 80%) 100%);
     background-attachment: fixed;
   }
   
@@ -148,7 +148,7 @@
   }
   
   .gradient-login {
-    background: linear-gradient(135deg, hsl(200 55% 98%) 0%, hsl(205 50% 92%) 25%, hsl(200 52% 95%) 50%, hsl(208 48% 93%) 75%, hsl(200 55% 98%) 100%);
+    background: linear-gradient(135deg, hsl(200 55% 82%) 0%, hsl(205 50% 77%) 25%, hsl(200 52% 80%) 50%, hsl(208 48% 78%) 75%, hsl(200 55% 82%) 100%);
     background-attachment: fixed;
   }
   
@@ -160,7 +160,7 @@
   /* Login page specific styles */
   @media (max-width: 1024px) {
     .gradient-login {
-      background: linear-gradient(135deg, hsl(200 55% 98%) 0%, hsl(205 50% 92%) 25%, hsl(200 52% 95%) 50%, hsl(208 48% 93%) 75%, hsl(200 55% 98%) 100%);
+      background: linear-gradient(135deg, hsl(200 55% 82%) 0%, hsl(205 50% 77%) 25%, hsl(200 52% 80%) 50%, hsl(208 48% 78%) 75%, hsl(200 55% 82%) 100%);
     }
   }
   

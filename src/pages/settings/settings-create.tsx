@@ -100,7 +100,7 @@ export default function SettingsCreate() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6 px-4 md:px-0">
       <div className="flex items-center justify-between pb-4 border-b border-border/50">
         <div className="flex items-center gap-4">
           <Button
@@ -445,15 +445,16 @@ export default function SettingsCreate() {
             </CardContent>
           </Card>
 
-          <div className="flex items-center justify-end gap-4">
+          <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-end gap-3 sm:gap-4">
             <Button
               type="button"
               variant="outline"
               onClick={() => navigate("/settings")}
+              className="w-full sm:w-auto"
             >
               İptal
             </Button>
-            <Button type="submit" disabled={createMutation.isPending}>
+            <Button type="submit" disabled={createMutation.isPending} className="w-full sm:w-auto">
               <Save className="h-4 w-4 mr-2" />
               {createMutation.isPending ? "Kaydediliyor..." : "Kaydet"}
             </Button>

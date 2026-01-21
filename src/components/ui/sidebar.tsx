@@ -178,23 +178,25 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
 		<aside
 			className={cn(
 				"fixed left-0 top-0 z-40 h-screen border-r border-seyfhi-accent bg-seyfhi-primary gradient-sidebar transition-all duration-300 ease-in-out flex flex-col",
-				isOpen ? "w-64" : "w-0 lg:w-16",
-				isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+				isOpen ? "w-[280px] sm:w-64 max-w-[85vw]" : "w-0 lg:w-16",
+				isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0",
+				!isOpen && "overflow-hidden lg:overflow-visible"
 			)}
 		>
 			{/* Header */}
 			<div className={cn(
-				"flex h-20 items-center border-b border-seyfhi-accent/20 transition-all duration-300 shrink-0",
-				isOpen ? "justify-between px-6" : "justify-center px-0"
+				"flex h-16 sm:h-20 items-center border-b border-seyfhi-accent/20 transition-all duration-300 shrink-0",
+				isOpen ? "justify-between px-4 sm:px-6" : "justify-center px-0 lg:px-0",
+				!isOpen && "opacity-0 lg:opacity-100"
 			)}>
-				<div className="flex items-center gap-3">
-					<div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/10 backdrop-blur-sm shadow-lg shrink-0">
-						<Sparkles className="h-5 w-5 text-white" />
+				<div className="flex items-center gap-2 sm:gap-3">
+					<div className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-lg bg-white/10 backdrop-blur-sm shadow-lg shrink-0">
+						<Sparkles className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
 					</div>
 					{isOpen && (
 						<div className="flex flex-col">
-							<span className="text-base font-bold tracking-tight text-white">Seyfhi</span>
-							<span className="text-xs text-white/70 font-medium">Yatırım</span>
+							<span className="text-sm sm:text-base font-bold tracking-tight text-white">Seyfhi</span>
+							<span className="text-[10px] sm:text-xs text-white/70 font-medium">Yatırım</span>
 						</div>
 					)}
 				</div>
@@ -207,15 +209,16 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
 
 			{/* Navigation - Scrollable */}
 			<nav className={cn(
-				"flex flex-col gap-4 flex-1 overflow-y-auto overflow-x-hidden transition-all duration-300",
-				isOpen ? "p-4" : "p-2 lg:p-2",
+				"flex flex-col gap-3 sm:gap-4 flex-1 overflow-y-auto overflow-x-hidden transition-all duration-300",
+				isOpen ? "p-3 sm:p-4" : "p-0 lg:p-2",
+				!isOpen && "lg:overflow-visible opacity-0 lg:opacity-100 pointer-events-none lg:pointer-events-auto",
 				"scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent hover:scrollbar-thumb-white/30"
 			)}>
 				<TooltipProvider delayDuration={200}>
 					{navigationCategories.map((category) => (
 						<div key={category.title} className="space-y-1.5">
 							{isOpen && (
-								<h3 className="px-3.5 text-xs font-semibold text-white/50 uppercase tracking-wider mb-2">
+								<h3 className="px-3 sm:px-3.5 text-[10px] sm:text-xs font-semibold text-white/50 uppercase tracking-wider mb-2">
 									{category.title}
 								</h3>
 							)}
@@ -233,8 +236,8 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
 										}}
 										className={({ isActive }) =>
 											cn(
-												"group flex items-center gap-3 rounded-lg text-sm font-medium transition-all duration-200",
-												isOpen ? "px-3.5 py-2.5" : "px-2 py-2.5 justify-center lg:justify-center",
+												"group flex items-center gap-2 sm:gap-3 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200",
+												isOpen ? "px-3 sm:px-3.5 py-2 sm:py-2.5" : "px-2 py-2.5 justify-center lg:justify-center",
 												isActive
 													? "bg-white/15 text-white shadow-lg shadow-primary/20 scale-[1.02] border-l-4 border-white/40"
 													: "text-white/70 hover:bg-white/10 hover:text-white hover:translate-x-1"
@@ -242,7 +245,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
 										}
 									>
 										<Icon className="h-4 w-4 transition-transform duration-200 group-hover:scale-110 shrink-0" />
-										{isOpen && <span>{item.label}</span>}
+										{isOpen && <span className="truncate">{item.label}</span>}
 									</NavLink>
 								);
 
@@ -273,7 +276,8 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
 			{/* Footer with user profile and logout */}
 			<div className={cn(
 				"border-t border-seyfhi-accent/20 transition-all duration-300 bg-seyfhi-primary shrink-0",
-				isOpen ? "p-4" : "p-2 lg:p-2"
+				isOpen ? "p-3 sm:p-4" : "p-0 lg:p-2",
+				!isOpen && "opacity-0 lg:opacity-100 pointer-events-none lg:pointer-events-auto"
 			)}>
 				{isOpen ? (
 					<div className="space-y-2">
@@ -283,7 +287,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
 								<DropdownMenuTrigger asChild>
 									<button
 										className={cn(
-											"w-full flex items-center gap-3 rounded-2xl px-4 py-3.5 text-sm font-medium transition-all duration-300 group",
+											"w-full flex items-center gap-2 sm:gap-3 rounded-xl sm:rounded-2xl px-3 sm:px-4 py-2.5 sm:py-3.5 text-xs sm:text-sm font-medium transition-all duration-300 group",
 											"bg-slate-800/60 hover:bg-slate-800/80 text-white",
 											"border border-slate-700/50 hover:border-slate-600/70",
 											"backdrop-blur-md shadow-lg hover:shadow-xl",
@@ -291,32 +295,32 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
 										)}
 									>
 										{/* Avatar - Enhanced */}
-										<div className="relative w-12 h-12 rounded-full bg-gradient-to-br from-slate-600 via-slate-500 to-slate-600 flex items-center justify-center shrink-0 border-2 border-slate-500/50 shadow-inner group-hover:border-slate-400/70 transition-all duration-300 group-hover:scale-105">
-											<User className="h-6 w-6 text-white/90 drop-shadow-sm" strokeWidth={2} />
+										<div className="relative w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-slate-600 via-slate-500 to-slate-600 flex items-center justify-center shrink-0 border-2 border-slate-500/50 shadow-inner group-hover:border-slate-400/70 transition-all duration-300 group-hover:scale-105">
+											<User className="h-5 w-5 sm:h-6 sm:w-6 text-white/90 drop-shadow-sm" strokeWidth={2} />
 											{/* Subtle inner glow */}
 											<div className="absolute inset-0 rounded-full bg-white/5 group-hover:bg-white/10 transition-colors duration-300" />
 										</div>
 										
 										{/* User Info - Enhanced */}
 										<div className="flex-1 text-left min-w-0">
-											<div className="text-sm font-bold text-white truncate leading-tight mb-1.5 drop-shadow-sm">
+											<div className="text-xs sm:text-sm font-bold text-white truncate leading-tight mb-1 sm:mb-1.5 drop-shadow-sm">
 												{userMe.firstName} {userMe.lastName}
 											</div>
-											<div className="text-xs text-slate-300 truncate flex items-center gap-1.5 font-medium">
-												<Mail className="h-3.5 w-3.5 text-slate-400 shrink-0" strokeWidth={2} />
+											<div className="text-[10px] sm:text-xs text-slate-300 truncate flex items-center gap-1 sm:gap-1.5 font-medium">
+												<Mail className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-slate-400 shrink-0" strokeWidth={2} />
 												<span className="truncate">{userMe.email}</span>
 											</div>
 										</div>
 										
 										{/* Chevron Icon - Enhanced */}
-										<ChevronsUpDown className="h-4 w-4 text-slate-400 shrink-0 group-hover:text-slate-300 transition-all duration-300 group-hover:scale-110" strokeWidth={2} />
+										<ChevronsUpDown className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-slate-400 shrink-0 group-hover:text-slate-300 transition-all duration-300 group-hover:scale-110" strokeWidth={2} />
 									</button>
 								</DropdownMenuTrigger>
 								<DropdownMenuContent 
 									align="end" 
 									side="top"
 									sideOffset={8}
-									className="w-72 bg-white dark:bg-[#1f2937] border border-gray-200/80 dark:border-gray-700/80 shadow-2xl rounded-xl overflow-hidden backdrop-blur-sm"
+									className="w-[calc(100vw-2rem)] sm:w-72 max-w-[280px] sm:max-w-none bg-white dark:bg-[#1f2937] border border-gray-200/80 dark:border-gray-700/80 shadow-2xl rounded-xl overflow-hidden backdrop-blur-sm"
 								>
 									<div className="px-4 py-3.5 bg-gradient-to-r from-gray-50 to-gray-100/50 dark:from-gray-900/80 dark:to-gray-800/80 border-b border-gray-200/80 dark:border-gray-700/80">
 										<div className="flex items-center gap-2">
@@ -355,11 +359,11 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
 							</DropdownMenu>
 						)}
 						{userMeLoading && (
-							<div className="w-full flex items-center gap-3 rounded-xl px-3.5 py-3 bg-white/5 border border-white/10">
-								<div className="w-11 h-11 rounded-full bg-white/10 animate-pulse border border-white/20" />
-								<div className="flex-1 space-y-2">
-									<div className="h-3.5 w-28 bg-white/10 rounded animate-pulse" />
-									<div className="h-2.5 w-36 bg-white/10 rounded animate-pulse" />
+							<div className="w-full flex items-center gap-2 sm:gap-3 rounded-xl px-3 sm:px-3.5 py-2.5 sm:py-3 bg-white/5 border border-white/10">
+								<div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white/10 animate-pulse border border-white/20 shrink-0" />
+								<div className="flex-1 space-y-1.5 sm:space-y-2">
+									<div className="h-3 sm:h-3.5 w-24 sm:w-28 bg-white/10 rounded animate-pulse" />
+									<div className="h-2 sm:h-2.5 w-32 sm:w-36 bg-white/10 rounded animate-pulse" />
 								</div>
 							</div>
 						)}

@@ -51,18 +51,19 @@ export default function ContactCreate() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center gap-4">
+    <div className="space-y-4 md:space-y-6 px-4 md:px-0">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
         <Button
           variant="ghost"
           size="icon"
           onClick={() => navigate("/contact")}
+          className="self-start sm:self-auto"
         >
           <ArrowLeft className="h-4 w-4" />
         </Button>
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Yeni İletişim</h1>
-          <p className="text-muted-foreground">
+        <div className="flex-1">
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Yeni İletişim</h1>
+          <p className="text-sm md:text-base text-muted-foreground">
             Yeni bir iletişim kaydı oluşturun
           </p>
         </div>
@@ -171,15 +172,16 @@ export default function ContactCreate() {
             </CardContent>
           </Card>
 
-          <div className="flex items-center justify-end gap-4">
+          <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-end gap-3 sm:gap-4">
             <Button
               type="button"
               variant="outline"
               onClick={() => navigate("/contact")}
+              className="w-full sm:w-auto"
             >
               İptal
             </Button>
-            <Button type="submit" disabled={createMutation.isPending}>
+            <Button type="submit" disabled={createMutation.isPending} className="w-full sm:w-auto">
               <Save className="h-4 w-4 mr-2" />
               {createMutation.isPending ? "Kaydediliyor..." : "Kaydet"}
             </Button>

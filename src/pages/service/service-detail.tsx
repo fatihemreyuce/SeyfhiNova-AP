@@ -10,8 +10,8 @@ import {
   Hash,
   Tag,
   FileText,
-  Layers,
   Briefcase,
+  Sparkles,
 } from "lucide-react";
 
 export default function ServiceDetail() {
@@ -27,85 +27,82 @@ export default function ServiceDetail() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <p className="text-muted-foreground">Yükleniyor...</p>
+      <div className="flex items-center justify-center min-h-[80vh]">
+        <div className="text-center space-y-4">
+          <div className="animate-spin rounded-full h-16 w-16 border-4 border-primary border-t-transparent mx-auto"></div>
+          <p className="text-muted-foreground text-lg font-medium">Yükleniyor...</p>
+        </div>
       </div>
     );
   }
 
   if (!data) {
     return (
-      <div className="flex flex-col items-center justify-center py-12">
-        <p className="text-muted-foreground mb-4">Servis bulunamadı.</p>
-        <Button variant="outline" onClick={() => navigate("/service")}>
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Geri Dön
-        </Button>
+      <div className="flex flex-col items-center justify-center min-h-[80vh]">
+        <div className="text-center space-y-6">
+          <div className="w-24 h-24 rounded-full bg-muted flex items-center justify-center mx-auto">
+            <Briefcase className="h-12 w-12 text-muted-foreground" />
+          </div>
+          <div>
+            <h3 className="text-2xl font-bold mb-2">Servis bulunamadı</h3>
+            <p className="text-muted-foreground">Aradığınız servis mevcut değil.</p>
+          </div>
+          <Button variant="outline" onClick={() => navigate("/service")} size="lg">
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Listeye Dön
+          </Button>
+        </div>
       </div>
     );
   }
 
-  const stripHtml = (html: string) => {
-    const tmp = document.createElement("DIV");
-    tmp.innerHTML = html;
-    return tmp.textContent || tmp.innerText || "";
-  };
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 pb-8">
-      {/* Header Section */}
-      <div className="sticky top-0 z-40 bg-background/80 backdrop-blur-xl border-b border-border/40 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 gap-4">
-            <div className="flex items-center gap-3">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => navigate("/service")}
-                className="h-9 w-9 hover:bg-muted"
-              >
-                <ArrowLeft className="h-4 w-4" />
-              </Button>
-              <div className="h-6 w-px bg-border"></div>
-              <div className="flex items-center gap-3">
-                <div className="h-2 w-2 rounded-full bg-primary animate-pulse"></div>
-                <h1 className="text-lg font-semibold text-foreground">
-                  Servis Detayı
-                </h1>
-              </div>
-            </div>
-            <Button 
-              onClick={() => navigate(`/service/${id}/edit`)}
-              className="gap-2"
+    <div className="min-h-screen bg-gradient-to-br from-background via-muted/20 to-background">
+      {/* Sticky Navigation Bar */}
+      <div className="sticky top-0 z-10 backdrop-blur-xl bg-background/80 border-b border-border/50 shadow-sm">
+        <div className="container mx-auto px-4 sm:px-6 py-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => navigate("/service")}
+              className="h-10 w-10 rounded-xl hover:bg-muted transition-all duration-200 self-start sm:self-auto"
             >
-              <Edit className="h-4 w-4" />
-              Düzenle
+              <ArrowLeft className="h-5 w-5 text-foreground dark:text-white" />
             </Button>
+            <div className="flex items-center gap-3">
+              <Button 
+                onClick={() => navigate(`/service/${id}/edit`)}
+                className="h-10 px-4 rounded-xl font-medium bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary shadow-lg hover:shadow-xl transition-all duration-300 w-full sm:w-auto"
+              >
+                <Edit className="h-4 w-4 mr-2 text-white dark:text-white" />
+                Düzenle
+              </Button>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Title Section */}
+      <div className="container mx-auto px-4 sm:px-6 py-6 sm:py-8">
+        {/* Page Header */}
         <div className="mb-8">
-          <div className="flex items-start justify-between gap-4 mb-4">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center shadow-lg">
+              <Briefcase className="h-6 w-6 text-primary" />
+            </div>
             <div className="flex-1">
-              <div className="flex items-center gap-3 mb-2">
-                <Badge 
-                  variant="outline" 
-                  className="font-mono text-xs bg-primary/10 text-primary border-primary/20 px-2.5 py-0.5"
-                >
-                  ID: {data.id}
-                </Badge>
-                <div className="h-1 w-1 rounded-full bg-muted-foreground/40"></div>
-                <span className="text-xs text-muted-foreground uppercase tracking-wider">
-                  Servis
-                </span>
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground dark:text-white mb-2">
+                Servis Detayı
+              </h1>
+              <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+                <p className="text-muted-foreground dark:text-muted-foreground/80">
+                  {data.title}
+                </p>
+                <div className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-muted/50 dark:bg-muted/70">
+                  <Hash className="h-3.5 w-3.5 text-foreground dark:text-white" />
+                  <span className="text-sm font-semibold text-foreground dark:text-white">ID: {data.id}</span>
+                </div>
               </div>
-              <h2 className="text-4xl font-bold tracking-tight text-foreground mb-2">
-                {data.title}
-              </h2>
             </div>
           </div>
         </div>
@@ -115,44 +112,55 @@ export default function ServiceDetail() {
           {/* Left Column - Main Info */}
           <div className="lg:col-span-2 space-y-6">
             {/* Service Info Card */}
-            <Card className="border-0 shadow-lg bg-gradient-to-br from-card to-card/50 overflow-hidden">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -mr-32 -mt-32"></div>
-              <CardHeader className="relative pb-6">
-                <CardTitle className="text-2xl font-bold text-foreground flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center shadow-lg">
-                    <Briefcase className="h-5 w-5 text-primary-foreground" />
+            <Card className="border-2 shadow-xl rounded-3xl overflow-hidden bg-gradient-to-br from-card to-muted/30 dark:from-card dark:to-muted/50 backdrop-blur-sm hover:shadow-2xl transition-all duration-300 group">
+              <CardHeader className="pb-4 border-b border-border/50 bg-gradient-to-r from-blue-500/5 via-blue-500/3 to-transparent">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500/20 to-blue-600/10 dark:from-blue-500/30 dark:to-blue-600/20 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                    <Briefcase className="h-5 w-5 text-blue-600 dark:text-blue-300" />
                   </div>
-                  Servis Bilgileri
-                </CardTitle>
+                  <CardTitle className="text-xl font-bold text-foreground dark:text-white">
+                    Servis Bilgileri
+                  </CardTitle>
+                </div>
               </CardHeader>
-              <CardContent className="relative space-y-6">
+              <CardContent className="pt-6 space-y-6">
                 {/* Category and Order */}
                 <div className="grid gap-4 md:grid-cols-2">
-                  <div className="p-4 rounded-xl bg-gradient-to-br from-primary/10 via-primary/5 to-transparent border border-primary/20">
-                    <div className="flex items-center gap-3 mb-2">
-                      <div className="h-9 w-9 rounded-lg bg-primary/20 flex items-center justify-center">
-                        <Tag className="h-4 w-4 text-primary" />
+                  <div className="p-5 rounded-2xl bg-gradient-to-br from-primary/10 via-primary/5 to-transparent dark:from-primary/20 dark:via-primary/10 border-2 border-primary/20 dark:border-primary/30 group-hover:border-primary/40 dark:group-hover:border-primary/50 transition-all duration-300">
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="h-10 w-10 rounded-xl bg-primary/20 dark:bg-primary/30 flex items-center justify-center">
+                        <Tag className="h-5 w-5 text-primary" />
                       </div>
-                      <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                      <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground dark:text-muted-foreground/80">
                         Kategori
                       </p>
                     </div>
-                    <Badge variant="secondary" className="text-base px-3 py-1.5 font-semibold mt-2">
+                    <Badge className="text-base px-4 py-2 font-semibold bg-gradient-to-r from-primary to-primary/90 text-white border-0 shadow-lg">
                       {getCategoryName(data.categoryId)}
                     </Badge>
                   </div>
 
-                  <div className="p-4 rounded-xl bg-gradient-to-br from-primary/10 via-primary/5 to-transparent border border-primary/20">
-                    <div className="flex items-center gap-3 mb-2">
-                      <div className="h-9 w-9 rounded-lg bg-primary/20 flex items-center justify-center">
-                        <Hash className="h-4 w-4 text-primary" />
+                  <div className="p-5 rounded-2xl bg-gradient-to-br from-primary/10 via-primary/5 to-transparent dark:from-primary/20 dark:via-primary/10 border-2 border-primary/20 dark:border-primary/30 group-hover:border-primary/40 dark:group-hover:border-primary/50 transition-all duration-300">
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="h-10 w-10 rounded-xl bg-primary/20 flex items-center justify-center">
+                        <Hash className="h-5 w-5 text-primary" />
                       </div>
-                      <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                      <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground dark:text-muted-foreground/80">
                         Sıra Numarası
                       </p>
                     </div>
-                    <div className="text-2xl font-bold text-foreground mt-2">
-                      #{data.orderIndex}
+                    <div className="flex items-center gap-4">
+                      <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/10 dark:from-primary/30 dark:to-primary/20 flex items-center justify-center border-2 border-primary/30 shadow-lg">
+                        <Hash className="h-8 w-8 text-primary" />
+                      </div>
+                      <div>
+                        <p className="text-4xl font-bold text-foreground dark:text-white">
+                          {data.orderIndex}
+                        </p>
+                        <p className="text-xs text-muted-foreground dark:text-muted-foreground/80 mt-1">
+                          Sıralama pozisyonu
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -160,25 +168,31 @@ export default function ServiceDetail() {
             </Card>
 
             {/* Description Card */}
-            <Card className="border shadow-md">
-              <CardHeader>
-                <CardTitle className="text-lg font-semibold flex items-center gap-2">
-                  <FileText className="h-5 w-5 text-primary" />
-                  Detaylı Açıklama
-                </CardTitle>
+            <Card className="border-2 shadow-xl rounded-3xl overflow-hidden bg-gradient-to-br from-card to-muted/30 dark:from-card dark:to-muted/50 backdrop-blur-sm hover:shadow-2xl transition-all duration-300 group">
+              <CardHeader className="pb-4 border-b border-border/50 bg-gradient-to-r from-purple-500/5 via-purple-500/3 to-transparent">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500/20 to-purple-600/10 dark:from-purple-500/30 dark:to-purple-600/20 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                    <FileText className="h-5 w-5 text-purple-600 dark:text-purple-300" />
+                  </div>
+                  <CardTitle className="text-xl font-bold text-foreground dark:text-white">
+                    Detaylı Açıklama
+                  </CardTitle>
+                </div>
               </CardHeader>
-              <CardContent>
+              <CardContent className="pt-6">
                 {data.description ? (
-                  <div className="prose prose-sm max-w-none dark:prose-invert prose-headings:font-semibold prose-p:text-foreground/90 prose-a:text-primary prose-strong:text-foreground">
+                  <div className="p-6 rounded-2xl bg-gradient-to-br from-muted/40 to-muted/20 dark:from-muted/60 dark:to-muted/40 border-2 border-border/50 dark:border-border/70 group-hover:border-primary/50 dark:group-hover:border-primary/60 transition-all duration-300 min-h-[300px]">
                     <div
                       dangerouslySetInnerHTML={{ __html: data.description }}
-                      className="rounded-lg p-6 bg-muted/30 border border-border min-h-[200px]"
+                      className="prose prose-sm max-w-none dark:prose-invert prose-headings:text-foreground dark:prose-headings:text-white prose-p:text-foreground/90 dark:prose-p:text-white/90 prose-strong:text-foreground dark:prose-strong:text-white prose-a:text-primary dark:prose-a:text-primary"
                     />
                   </div>
                 ) : (
-                  <div className="rounded-lg p-12 bg-muted/20 border-2 border-dashed border-border flex flex-col items-center justify-center text-center min-h-[200px]">
-                    <FileText className="h-12 w-12 text-muted-foreground opacity-40 mb-3" />
-                    <p className="text-sm font-medium text-muted-foreground">
+                  <div className="p-12 rounded-2xl bg-gradient-to-br from-muted/30 to-muted/10 dark:from-muted/50 dark:to-muted/30 border-2 border-dashed border-border/50 dark:border-border/70 flex flex-col items-center justify-center text-center min-h-[300px]">
+                    <div className="w-20 h-20 rounded-2xl bg-muted/50 dark:bg-muted/70 flex items-center justify-center mb-4 border-2 border-border/50">
+                      <FileText className="h-10 w-10 text-muted-foreground dark:text-muted-foreground/60" />
+                    </div>
+                    <p className="text-sm font-medium text-muted-foreground dark:text-muted-foreground/80">
                       Açıklama bulunmamaktadır
                     </p>
                   </div>
@@ -190,68 +204,55 @@ export default function ServiceDetail() {
           {/* Right Column - Quick Info */}
           <div className="space-y-6">
             {/* Quick Stats Card */}
-            <Card className="border shadow-md">
-              <CardHeader>
-                <CardTitle className="text-lg font-semibold flex items-center gap-2">
-                  <Layers className="h-5 w-5 text-primary" />
-                  Hızlı Bilgiler
-                </CardTitle>
+            <Card className="border-2 shadow-xl rounded-3xl overflow-hidden bg-gradient-to-br from-card to-muted/30 dark:from-card dark:to-muted/50 backdrop-blur-sm hover:shadow-2xl transition-all duration-300">
+              <CardHeader className="pb-4 border-b border-border/50 bg-gradient-to-r from-green-500/5 via-green-500/3 to-transparent">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-green-500/20 to-green-600/10 dark:from-green-500/30 dark:to-green-600/20 flex items-center justify-center shadow-lg">
+                    <Sparkles className="h-5 w-5 text-green-600 dark:text-green-300" />
+                  </div>
+                  <CardTitle className="text-xl font-bold text-foreground dark:text-white">
+                    Hızlı Bilgiler
+                  </CardTitle>
+                </div>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-start justify-between py-3 border-b border-border last:border-0">
+              <CardContent className="pt-6 space-y-4">
+                <div className="p-4 rounded-xl bg-gradient-to-br from-muted/40 to-muted/20 dark:from-muted/60 dark:to-muted/40 border border-border/50 dark:border-border/70">
                   <div className="flex items-center gap-3">
-                    <div className="h-9 w-9 rounded-lg bg-muted flex items-center justify-center">
-                      <Hash className="h-4 w-4 text-muted-foreground" />
+                    <div className="h-10 w-10 rounded-xl bg-primary/10 dark:bg-primary/20 flex items-center justify-center">
+                      <Hash className="h-5 w-5 text-primary" />
                     </div>
                     <div>
-                      <p className="text-xs font-medium text-muted-foreground mb-1">Servis ID</p>
-                      <p className="text-base font-semibold text-foreground">#{data.id}</p>
+                      <p className="text-xs font-semibold text-muted-foreground dark:text-muted-foreground/80 mb-1 uppercase tracking-wide">Servis ID</p>
+                      <p className="text-lg font-bold text-foreground dark:text-white">#{data.id}</p>
                     </div>
                   </div>
                 </div>
                 
-                <div className="flex items-start justify-between py-3 border-b border-border last:border-0">
+                <div className="p-4 rounded-xl bg-gradient-to-br from-muted/40 to-muted/20 dark:from-muted/60 dark:to-muted/40 border border-border/50 dark:border-border/70">
                   <div className="flex items-center gap-3">
-                    <div className="h-9 w-9 rounded-lg bg-muted flex items-center justify-center">
-                      <Tag className="h-4 w-4 text-muted-foreground" />
+                    <div className="h-10 w-10 rounded-xl bg-primary/10 dark:bg-primary/20 flex items-center justify-center">
+                      <Tag className="h-5 w-5 text-primary" />
                     </div>
                     <div>
-                      <p className="text-xs font-medium text-muted-foreground mb-1">Kategori</p>
-                      <p className="text-base font-semibold text-foreground">{getCategoryName(data.categoryId)}</p>
+                      <p className="text-xs font-semibold text-muted-foreground dark:text-muted-foreground/80 mb-1 uppercase tracking-wide">Kategori</p>
+                      <p className="text-lg font-bold text-foreground dark:text-white truncate">{getCategoryName(data.categoryId)}</p>
                     </div>
                   </div>
                 </div>
 
-                <div className="flex items-start justify-between py-3">
+                <div className="p-4 rounded-xl bg-gradient-to-br from-muted/40 to-muted/20 dark:from-muted/60 dark:to-muted/40 border border-border/50 dark:border-border/70">
                   <div className="flex items-center gap-3">
-                    <div className="h-9 w-9 rounded-lg bg-muted flex items-center justify-center">
-                      <Layers className="h-4 w-4 text-muted-foreground" />
+                    <div className="h-10 w-10 rounded-xl bg-primary/10 dark:bg-primary/20 flex items-center justify-center">
+                      <Hash className="h-5 w-5 text-primary" />
                     </div>
                     <div>
-                      <p className="text-xs font-medium text-muted-foreground mb-1">Sıra</p>
-                      <p className="text-base font-semibold text-foreground">#{data.orderIndex}</p>
+                      <p className="text-xs font-semibold text-muted-foreground dark:text-muted-foreground/80 mb-1 uppercase tracking-wide">Sıra</p>
+                      <p className="text-lg font-bold text-foreground dark:text-white">#{data.orderIndex}</p>
                     </div>
                   </div>
                 </div>
               </CardContent>
             </Card>
-
-            {/* Description Preview Card */}
-            {data.description && (
-              <Card className="border shadow-md">
-                <CardHeader>
-                  <CardTitle className="text-lg font-semibold flex items-center gap-2">
-                    <FileText className="h-5 w-5 text-primary" />
-                    Özet
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-muted-foreground leading-relaxed line-clamp-6">
-                    {stripHtml(data.description)}
-                  </p>
-                </CardContent>
-              </Card>
-            )}
           </div>
         </div>
       </div>

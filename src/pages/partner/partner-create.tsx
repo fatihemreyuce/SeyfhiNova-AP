@@ -22,7 +22,10 @@ const formSchema = z.object({
     message: "Logo dosyası gereklidir",
   }),
   name: z.string().min(1, "İsim gereklidir"),
-  orderIndex: z.number().min(0, "Sıra numarası 0 veya daha büyük olmalıdır"),
+  orderIndex: z.union([
+    z.string().transform((val) => val === "" ? 0 : parseInt(val, 10) || 0),
+    z.number()
+  ]).refine((val) => val >= 0, "Sıra numarası 0 veya daha büyük olmalıdır"),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -66,7 +69,12 @@ export default function PartnerCreate() {
   };
 
   const onSubmit = (values: FormValues) => {
-    createMutation.mutate(values, {
+    // orderIndex'i number'a çevir
+    const orderIndex = typeof values.orderIndex === "string" 
+      ? (values.orderIndex === "" ? 0 : parseInt(values.orderIndex, 10) || 0)
+      : values.orderIndex;
+    
+    createMutation.mutate({ ...values, orderIndex }, {
       onSuccess: () => {
         navigate("/partner");
       },
@@ -74,18 +82,19 @@ export default function PartnerCreate() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center gap-4">
+    <div className="space-y-4 md:space-y-6 px-4 md:px-0">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
         <Button
           variant="ghost"
           size="icon"
           onClick={() => navigate("/partner")}
+          className="self-start sm:self-auto"
         >
           <ArrowLeft className="h-4 w-4" />
         </Button>
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Yeni Ortak</h1>
-          <p className="text-muted-foreground">
+        <div className="flex-1">
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Yeni Ortak</h1>
+          <p className="text-sm md:text-base text-muted-foreground">
             Yeni bir ortak oluşturun
           </p>
         </div>
@@ -209,15 +218,16 @@ export default function PartnerCreate() {
             </CardContent>
           </Card>
 
-          <div className="flex items-center justify-end gap-4">
+          <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-end gap-3 sm:gap-4">
             <Button
               type="button"
               variant="outline"
               onClick={() => navigate("/partner")}
+              className="w-full sm:w-auto"
             >
               İptal
             </Button>
-            <Button type="submit" disabled={createMutation.isPending}>
+            <Button type="submit" disabled={createMutation.isPending} className="w-full sm:w-auto">
               <Save className="h-4 w-4 mr-2" />
               {createMutation.isPending ? "Kaydediliyor..." : "Kaydet"}
             </Button>
