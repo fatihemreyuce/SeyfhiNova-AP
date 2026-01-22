@@ -59,7 +59,7 @@ export default function ContactCreate() {
           onClick={() => navigate("/contact")}
           className="self-start sm:self-auto"
         >
-          <ArrowLeft className="h-4 w-4" />
+          <ArrowLeft className="h-4 w-4 text-primary dark:text-blue-400" />
         </Button>
         <div className="flex-1">
           <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Yeni İletişim</h1>
@@ -74,7 +74,7 @@ export default function ContactCreate() {
           <Card>
             <CardHeader>
               <div className="flex items-center gap-2">
-                <Mail className="h-5 w-5 text-primary" />
+                <Mail className="h-5 w-5 text-primary dark:text-blue-400" />
                 <CardTitle>İletişim Bilgileri</CardTitle>
               </div>
             </CardHeader>
@@ -88,7 +88,7 @@ export default function ContactCreate() {
                       <FormLabel>Ad</FormLabel>
                       <FormControl>
                         <div className="relative">
-                          <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                          <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-blue-500" />
                           <Input
                             placeholder="Ad giriniz"
                             className="pl-9"
@@ -124,7 +124,7 @@ export default function ContactCreate() {
                     <FormLabel>Telefon</FormLabel>
                     <FormControl>
                       <div className="relative">
-                        <Phone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                        <Phone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-green-500" />
                         <Input
                           type="tel"
                           placeholder="Telefon numarası giriniz"
@@ -182,7 +182,7 @@ export default function ContactCreate() {
               İptal
             </Button>
             <Button type="submit" disabled={createMutation.isPending} className="w-full sm:w-auto">
-              <Save className="h-4 w-4 mr-2" />
+              <Save className="h-4 w-4 mr-2 text-white" />
               {createMutation.isPending ? "Kaydediliyor..." : "Kaydet"}
             </Button>
           </div>

@@ -76,7 +76,7 @@ export default function NotificationEdit() {
       <div className="flex flex-col items-center justify-center py-12">
         <p className="text-muted-foreground mb-4">Bildirim bulunamadı.</p>
         <Button variant="outline" onClick={() => navigate("/notification")}>
-          <ArrowLeft className="h-4 w-4 mr-2" />
+          <ArrowLeft className="h-4 w-4 mr-2 text-primary" />
           Geri Dön
         </Button>
       </div>
@@ -92,7 +92,7 @@ export default function NotificationEdit() {
           onClick={() => navigate("/notification")}
           className="self-start sm:self-auto"
         >
-          <ArrowLeft className="h-4 w-4" />
+          <ArrowLeft className="h-4 w-4 text-foreground dark:text-white" />
         </Button>
         <div className="flex-1">
           <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Bildirim Düzenle</h1>
@@ -107,7 +107,7 @@ export default function NotificationEdit() {
           <Card>
             <CardHeader>
               <div className="flex items-center gap-2">
-                <Bell className="h-5 w-5 text-primary" />
+                <Bell className="h-5 w-5 text-primary dark:text-blue-400" />
                 <CardTitle>Bildirim Bilgileri</CardTitle>
               </div>
             </CardHeader>
@@ -165,7 +165,7 @@ export default function NotificationEdit() {
               İptal
             </Button>
             <Button type="submit" disabled={updateMutation.isPending} className="w-full sm:w-auto">
-              <Save className="h-4 w-4 mr-2" />
+              <Save className="h-4 w-4 mr-2 text-white" />
               {updateMutation.isPending ? "Güncelleniyor..." : "Güncelle"}
             </Button>
           </div>

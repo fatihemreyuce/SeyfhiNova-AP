@@ -192,7 +192,7 @@ export default function OfficialPageEdit() {
       <div className="flex flex-col items-center justify-center py-12">
         <p className="text-muted-foreground mb-4">Resmi sayfa bulunamadı.</p>
         <Button variant="outline" onClick={() => navigate("/official-page")}>
-          <ArrowLeft className="h-4 w-4 mr-2" />
+          <ArrowLeft className="h-4 w-4 mr-2 text-primary dark:text-blue-400" />
           Geri Dön
         </Button>
       </div>
@@ -208,7 +208,7 @@ export default function OfficialPageEdit() {
           onClick={() => navigate("/official-page")}
           className="self-start sm:self-auto"
         >
-          <ArrowLeft className="h-4 w-4" />
+          <ArrowLeft className="h-4 w-4 text-primary dark:text-blue-400" />
         </Button>
         <div className="flex-1">
           <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Resmi Sayfa Düzenle</h1>
@@ -224,7 +224,7 @@ export default function OfficialPageEdit() {
           <Card>
             <CardHeader>
               <div className="flex items-center gap-2">
-                <FileText className="h-5 w-5 text-primary" />
+                <FileText className="h-5 w-5 text-primary dark:text-blue-400" />
                 <CardTitle>Açıklama</CardTitle>
               </div>
             </CardHeader>
@@ -253,7 +253,7 @@ export default function OfficialPageEdit() {
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <FileText className="h-5 w-5 text-primary" />
+                  <FileText className="h-5 w-5 text-primary dark:text-blue-400" />
                   <CardTitle>Belgeler</CardTitle>
                 </div>
                 <Button
@@ -297,7 +297,7 @@ export default function OfficialPageEdit() {
                             <div className="space-y-2">
                               {typeof document.asset === "string" && document.asset ? (
                                 <div className="flex items-center gap-2 p-2 border rounded bg-background">
-                                  <FileText className="h-4 w-4 text-muted-foreground" />
+                                  <FileText className="h-4 w-4 text-blue-500" />
                                   <span className="text-sm flex-1 truncate">
                                     {document.asset}
                                   </span>
@@ -355,7 +355,7 @@ export default function OfficialPageEdit() {
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <FileText className="h-5 w-5 text-primary" />
+                  <FileText className="h-5 w-5 text-primary dark:text-blue-400" />
                   <CardTitle>Kalite Politikası</CardTitle>
                 </div>
                 <Button
@@ -446,7 +446,7 @@ export default function OfficialPageEdit() {
               İptal
             </Button>
             <Button type="submit" disabled={updateMutation.isPending} className="w-full sm:w-auto">
-              <Save className="h-4 w-4 mr-2" />
+              <Save className="h-4 w-4 mr-2 text-white" />
               {updateMutation.isPending ? "Kaydediliyor..." : "Kaydet"}
             </Button>
           </div>

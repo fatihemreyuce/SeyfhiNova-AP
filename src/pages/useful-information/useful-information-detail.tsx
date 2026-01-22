@@ -70,14 +70,14 @@ export default function UsefulInformationDetail() {
       <div className="flex flex-col items-center justify-center min-h-[80vh]">
         <div className="text-center space-y-6">
           <div className="w-24 h-24 rounded-full bg-muted flex items-center justify-center mx-auto">
-            <Info className="h-12 w-12 text-muted-foreground" />
+            <Info className="h-12 w-12 text-blue-500" />
           </div>
           <div>
             <h3 className="text-2xl font-bold mb-2">Kullanışlı bilgi bulunamadı</h3>
             <p className="text-muted-foreground">Aradığınız bilgi mevcut değil.</p>
           </div>
           <Button variant="outline" onClick={() => navigate("/useful-information")} size="lg">
-            <ArrowLeft className="h-4 w-4 mr-2" />
+            <ArrowLeft className="h-4 w-4 mr-2 text-primary dark:text-blue-400" />
             Listeye Dön
           </Button>
         </div>
@@ -172,15 +172,15 @@ export default function UsefulInformationDetail() {
                 </div>
               </div>
 
-              {/* Özet */}
+              {/* Alt Açıklama */}
               {data.excerpt && (
                 <div className="space-y-3">
                   <div className="flex items-center gap-2">
                     <div className="w-8 h-8 rounded-lg bg-primary/10 dark:bg-primary/20 flex items-center justify-center">
-                      <FileText className="h-4 w-4 text-primary" />
+                      <FileText className="h-4 w-4 text-primary dark:text-blue-400" />
                     </div>
                     <label className="text-sm font-semibold text-muted-foreground dark:text-muted-foreground/80 uppercase tracking-wide">
-                      Özet
+                      Alt Açıklama
                     </label>
                   </div>
                   <div className="p-5 rounded-2xl bg-gradient-to-br from-muted/40 to-muted/20 dark:from-muted/60 dark:to-muted/40 border-2 border-border/50 dark:border-border/70 group-hover:border-primary/50 dark:group-hover:border-primary/60 transition-all duration-300">
@@ -196,9 +196,9 @@ export default function UsefulInformationDetail() {
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
                   <div className="w-8 h-8 rounded-lg bg-primary/10 dark:bg-primary/20 flex items-center justify-center">
-                    <FileText className="h-4 w-4 text-primary" />
+                    <FileText className="h-4 w-4 text-primary dark:text-blue-400" />
                   </div>
-                  <label className="text-sm font-semibold text-muted-foreground dark:text-muted-foreground/80 uppercase tracking-wide">
+                    <label className="text-sm font-semibold text-muted-foreground dark:text-muted-foreground/80 uppercase tracking-wide">
                     Açıklama
                   </label>
                 </div>
@@ -211,7 +211,7 @@ export default function UsefulInformationDetail() {
                   ) : (
                     <div className="flex flex-col items-center justify-center h-full min-h-[150px] text-center">
                       <div className="w-16 h-16 rounded-full bg-muted/50 dark:bg-muted/70 flex items-center justify-center mb-4">
-                        <FileText className="h-8 w-8 text-muted-foreground dark:text-muted-foreground/60" />
+                        <FileText className="h-8 w-8 text-blue-500" />
                       </div>
                       <p className="text-sm text-muted-foreground dark:text-muted-foreground/80 italic">
                         Açıklama bulunmamaktadır
@@ -267,7 +267,7 @@ export default function UsefulInformationDetail() {
                   <div className="w-full h-80 rounded-2xl border-2 border-dashed border-border/50 dark:border-border/70 bg-gradient-to-br from-muted/30 to-muted/10 dark:from-muted/50 dark:to-muted/30 flex items-center justify-center group-hover:border-primary/50 dark:group-hover:border-primary/60 transition-all duration-300">
                     <div className="flex flex-col items-center text-center space-y-4">
                       <div className="w-20 h-20 rounded-2xl bg-muted/50 dark:bg-muted/70 flex items-center justify-center border-2 border-border/50">
-                        <FileText className="h-10 w-10 text-muted-foreground dark:text-muted-foreground/60" />
+                        <FileText className="h-10 w-10 text-blue-500" />
                       </div>
                       <div>
                         <p className="text-sm font-medium text-muted-foreground dark:text-muted-foreground/80 mb-1">

@@ -28,153 +28,9 @@ import {
   ArrowUpDown,
   ArrowUp,
   ArrowDown,
-  GripVertical,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import {
-  DndContext,
-  closestCenter,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-} from "@dnd-kit/core";
-import { restrictToVerticalAxis, restrictToParentElement } from "@dnd-kit/modifiers";
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
-  useSortable,
-} from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
 import type { ServiceStatsResponse } from "@/types/service.stats.types";
-
-// Sortable Row Component
-interface SortableRowProps {
-  item: ServiceStatsResponse;
-  onView: (id: number) => void;
-  onEdit: (id: number) => void;
-  onDelete: (id: number, name: string) => void;
-}
-
-function SortableRow({ item, onView, onEdit, onDelete }: SortableRowProps) {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({ id: item.id });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0.5 : 1,
-  };
-
-  return (
-    <TableRow
-      ref={setNodeRef}
-      style={style}
-      className={`bg-white dark:bg-card border-b border-gray-100 dark:border-seyfhi-accent/20 hover:bg-gray-50 dark:hover:bg-muted/30 transition-colors text-sm ${
-        isDragging ? "shadow-lg z-10 opacity-50" : ""
-      }`}
-    >
-      <TableCell className="w-[40px]">
-        <div
-          {...attributes}
-          {...listeners}
-          className="cursor-grab active:cursor-grabbing p-1.5 -ml-2 hover:bg-muted/50 rounded transition-colors"
-        >
-          <GripVertical className="h-3.5 w-3.5 text-muted-foreground" />
-        </div>
-      </TableCell>
-      <TableCell className="whitespace-nowrap">
-        <Badge variant="outline" className="text-xs font-mono bg-blue-50 text-blue-600 dark:bg-blue-950/30 dark:text-blue-400 px-2 py-0.5">
-          #{item.id}
-        </Badge>
-      </TableCell>
-      <TableCell className="py-2">
-        {item.iconName && (item.iconName.startsWith("http") || item.iconName.startsWith("/")) ? (
-          <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-muted/30 border border-border overflow-hidden">
-            <img
-              src={item.iconName.replace(/^https:/, "http:")}
-              alt={item.title}
-              className="w-full h-full object-contain p-1"
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                target.style.display = "none";
-                const parent = target.parentElement;
-                if (parent) {
-                  parent.innerHTML = `
-                    <div class="flex items-center justify-center w-full h-full">
-                      <svg class="w-4 h-4 text-muted-foreground opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                      </svg>
-                    </div>
-                  `;
-                }
-              }}
-            />
-          </div>
-        ) : item.iconName ? (
-          <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10 border border-border">
-            <span className="text-sm font-bold text-primary">
-              {item.iconName.substring(0, 2).toUpperCase()}
-            </span>
-          </div>
-        ) : (
-          <div className="w-10 h-10 rounded-lg bg-muted/50 border border-border flex items-center justify-center">
-            <BarChart3 className="h-4 w-4 text-muted-foreground dark:text-foreground/60 opacity-50" />
-          </div>
-        )}
-      </TableCell>
-      <TableCell className="py-2">
-        <span className="font-medium dark:text-foreground text-sm">
-          {item.title}
-        </span>
-      </TableCell>
-      <TableCell className="text-center py-2">
-        <Badge variant="secondary" className="text-sm px-3 py-1 font-semibold">
-          {item.numberValue}
-        </Badge>
-      </TableCell>
-      <TableCell className="text-right py-2">
-        <div className="flex items-center justify-end gap-0.5">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => onView(item.id)}
-            className="h-7 w-7 text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:text-blue-400 dark:hover:text-blue-300 dark:hover:bg-blue-950/30"
-            title="Detay Görüntüle"
-          >
-            <Eye className="h-3.5 w-3.5" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => onEdit(item.id)}
-            className="h-7 w-7 text-green-600 hover:text-green-700 hover:bg-green-50 dark:text-green-400 dark:hover:text-green-300 dark:hover:bg-green-950/30"
-            title="Düzenle"
-          >
-            <Edit className="h-3.5 w-3.5" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => onDelete(item.id, item.title)}
-            className="h-7 w-7 text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:text-red-300 dark:hover:bg-red-950/30"
-            title="Sil"
-          >
-            <Trash2 className="h-3.5 w-3.5" />
-          </Button>
-        </div>
-      </TableCell>
-    </TableRow>
-  );
-}
 
 export default function ServiceStatsList() {
   const navigate = useNavigate();
@@ -274,42 +130,6 @@ export default function ServiceStatsList() {
   const { data, isLoading } = useServiceStats(search, page, size, sort);
   const deleteMutation = useDeleteServiceStats();
 
-  // Local state for drag & drop reordering
-  const [items, setItems] = useState<ServiceStatsResponse[]>([]);
-
-  // Update items when data changes
-  useEffect(() => {
-    if (data?.content) {
-      setItems(data.content);
-    }
-  }, [data]);
-
-  // Sensors for drag and drop
-  const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 8,
-      },
-    }),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  );
-
-  // Handle drag end
-  const handleDragEnd = (event: { active: { id: number }; over: { id: number } | null }) => {
-    const { active, over } = event;
-
-    if (over && active.id !== over.id) {
-      setItems((items) => {
-        const oldIndex = items.findIndex((item) => item.id === active.id);
-        const newIndex = items.findIndex((item) => item.id === over.id);
-
-        return arrayMove(items, oldIndex, newIndex);
-      });
-    }
-  };
-
   const handleDelete = (id: number, itemName: string) => {
     setSelectedId(id);
     setSelectedItemName(itemName);
@@ -367,9 +187,9 @@ export default function ServiceStatsList() {
       return <ArrowUpDown className="h-3.5 w-3.5 opacity-30" />;
     }
     return currentDir === "asc" ? (
-      <ArrowUp className="h-3.5 w-3.5 text-primary" />
+      <ArrowUp className="h-3.5 w-3.5 text-primary dark:text-blue-400" />
     ) : (
-      <ArrowDown className="h-3.5 w-3.5 text-primary" />
+      <ArrowDown className="h-3.5 w-3.5 text-primary dark:text-blue-400" />
     );
   };
 
@@ -466,67 +286,133 @@ export default function ServiceStatsList() {
 
           {/* Table */}
           <div className="rounded-lg border bg-card overflow-hidden">
-            <DndContext
-              sensors={sensors}
-              collisionDetection={closestCenter}
-              onDragEnd={handleDragEnd}
-              modifiers={[restrictToVerticalAxis, restrictToParentElement]}
-            >
-              <div className="overflow-x-auto scrollbar-hide">
-                <Table>
-                  <TableHeader>
-                    <TableRow className="bg-[#F8F9FA] dark:bg-muted/30 border-b border-gray-200 dark:border-seyfhi-accent/30">
-                      <TableHead className="w-[40px]"></TableHead>
-                      <TableHead className="w-[70px]">
-                        <button
-                          onClick={() => handleSortChange("id")}
-                          className="flex items-center gap-1.5 hover:bg-muted/50 px-1.5 py-0.5 rounded transition-colors text-sm"
-                        >
-                          <span>ID</span>
-                          {getSortIcon("id")}
-                        </button>
-                      </TableHead>
-                      <TableHead className="w-[90px] text-sm">İkon</TableHead>
-                      <TableHead className="min-w-[120px]">
-                        <button
-                          onClick={() => handleSortChange("title")}
-                          className="flex items-center gap-1.5 hover:bg-muted/50 px-1.5 py-0.5 rounded transition-colors text-sm"
-                        >
-                          <span>Başlık</span>
-                          {getSortIcon("title")}
-                        </button>
-                      </TableHead>
-                      <TableHead className="w-[120px] text-center">
-                        <button
-                          onClick={() => handleSortChange("numberValue")}
-                          className="flex items-center gap-1.5 hover:bg-muted/50 px-1.5 py-0.5 rounded transition-colors mx-auto text-sm"
-                        >
-                          <span>Değer</span>
-                          {getSortIcon("numberValue")}
-                        </button>
-                      </TableHead>
-                      <TableHead className="w-[150px] text-right text-sm">İşlemler</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    <SortableContext
-                      items={items.map((item) => item.id)}
-                      strategy={verticalListSortingStrategy}
+            <div className="overflow-x-auto scrollbar-hide">
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-[#F8F9FA] dark:bg-muted/30 border-b border-gray-200 dark:border-seyfhi-accent/30">
+                    <TableHead className="w-[70px]">
+                      <button
+                        onClick={() => handleSortChange("id")}
+                        className="flex items-center gap-1.5 hover:bg-muted/50 px-1.5 py-0.5 rounded transition-colors text-sm"
+                      >
+                        <span>ID</span>
+                        {getSortIcon("id")}
+                      </button>
+                    </TableHead>
+                    <TableHead className="w-[90px] text-sm">İkon</TableHead>
+                    <TableHead className="min-w-[120px]">
+                      <button
+                        onClick={() => handleSortChange("title")}
+                        className="flex items-center gap-1.5 hover:bg-muted/50 px-1.5 py-0.5 rounded transition-colors text-sm"
+                      >
+                        <span>Başlık</span>
+                        {getSortIcon("title")}
+                      </button>
+                    </TableHead>
+                    <TableHead className="w-[120px] text-center">
+                      <button
+                        onClick={() => handleSortChange("numberValue")}
+                        className="flex items-center gap-1.5 hover:bg-muted/50 px-1.5 py-0.5 rounded transition-colors mx-auto text-sm"
+                      >
+                        <span>Değer</span>
+                        {getSortIcon("numberValue")}
+                      </button>
+                    </TableHead>
+                    <TableHead className="w-[150px] text-right text-sm">İşlemler</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {data.content.map((item) => (
+                    <TableRow
+                      key={item.id}
+                      className="bg-white dark:bg-card border-b border-gray-100 dark:border-seyfhi-accent/20 hover:bg-gray-50 dark:hover:bg-muted/30 transition-colors text-sm"
                     >
-                      {items.map((item) => (
-                        <SortableRow
-                          key={item.id}
-                          item={item}
-                          onView={(id) => navigate(`/service-stats/${id}`)}
-                          onEdit={(id) => navigate(`/service-stats/${id}/edit`)}
-                          onDelete={handleDelete}
-                        />
-                      ))}
-                    </SortableContext>
-                  </TableBody>
-                </Table>
-              </div>
-            </DndContext>
+                      <TableCell className="whitespace-nowrap">
+                        <Badge variant="outline" className="text-xs font-mono bg-blue-50 text-blue-600 dark:bg-blue-950/30 dark:text-blue-400 px-2 py-0.5">
+                          #{item.id}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="py-2">
+                        {item.iconName && (item.iconName.startsWith("http") || item.iconName.startsWith("/")) ? (
+                          <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-muted/30 border border-border overflow-hidden">
+                            <img
+                              src={item.iconName.replace(/^https:/, "http:")}
+                              alt={item.title}
+                              className="w-full h-full object-contain p-1"
+                              onError={(e) => {
+                                const target = e.target as HTMLImageElement;
+                                target.style.display = "none";
+                                const parent = target.parentElement;
+                                if (parent) {
+                                  parent.innerHTML = `
+                                    <div class="flex items-center justify-center w-full h-full">
+                                      <svg class="w-4 h-4 text-muted-foreground opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                      </svg>
+                                    </div>
+                                  `;
+                                }
+                              }}
+                            />
+                          </div>
+                        ) : item.iconName ? (
+                          <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10 border border-border">
+                            <span className="text-sm font-bold text-primary dark:text-blue-400">
+                              {item.iconName.substring(0, 2).toUpperCase()}
+                            </span>
+                          </div>
+                        ) : (
+                          <div className="w-10 h-10 rounded-lg bg-muted/50 border border-border flex items-center justify-center">
+                            <BarChart3 className="h-4 w-4 text-muted-foreground dark:text-foreground/60 opacity-50" />
+                          </div>
+                        )}
+                      </TableCell>
+                      <TableCell className="py-2">
+                        <span className="font-medium dark:text-foreground text-sm">
+                          {item.title}
+                        </span>
+                      </TableCell>
+                      <TableCell className="text-center py-2">
+                        <Badge variant="secondary" className="text-sm px-3 py-1 font-semibold">
+                          {item.numberValue}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right py-2">
+                        <div className="flex items-center justify-end gap-0.5">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => navigate(`/service-stats/${item.id}`)}
+                            className="h-7 w-7 text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:text-blue-400 dark:hover:text-blue-300 dark:hover:bg-blue-950/30"
+                            title="Detay Görüntüle"
+                          >
+                            <Eye className="h-3.5 w-3.5" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => navigate(`/service-stats/${item.id}/edit`)}
+                            className="h-7 w-7 text-green-600 hover:text-green-700 hover:bg-green-50 dark:text-green-400 dark:hover:text-green-300 dark:hover:bg-green-950/30"
+                            title="Düzenle"
+                          >
+                            <Edit className="h-3.5 w-3.5" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleDelete(item.id, item.title)}
+                            className="h-7 w-7 text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:text-red-300 dark:hover:bg-red-950/30"
+                            title="Sil"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           </div>
 
           {/* Pagination */}

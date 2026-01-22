@@ -122,7 +122,7 @@ export default function CircularEdit() {
       <div className="flex flex-col items-center justify-center py-12">
         <p className="text-muted-foreground mb-4">Blog yazısı bulunamadı.</p>
         <Button variant="outline" onClick={() => navigate("/circular")}>
-          <ArrowLeft className="h-4 w-4 mr-2" />
+          <ArrowLeft className="h-4 w-4 mr-2 text-primary dark:text-blue-400" />
           Geri Dön
         </Button>
       </div>
@@ -140,7 +140,7 @@ export default function CircularEdit() {
           onClick={() => navigate("/circular")}
           className="self-start sm:self-auto"
         >
-          <ArrowLeft className="h-4 w-4" />
+          <ArrowLeft className="h-4 w-4 text-foreground dark:text-white" />
         </Button>
         <div className="flex-1">
           <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Genelge Düzenle</h1>
@@ -155,7 +155,7 @@ export default function CircularEdit() {
           <Card>
             <CardHeader>
               <div className="flex items-center gap-2">
-                <FileText className="h-5 w-5 text-primary" />
+                <FileText className="h-5 w-5 text-primary dark:text-blue-400" />
                 <CardTitle>Blog Bilgileri</CardTitle>
               </div>
             </CardHeader>
@@ -179,7 +179,7 @@ export default function CircularEdit() {
                             />
                             <div className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-border rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors cursor-pointer group">
                               <div className="flex flex-col items-center justify-center pt-6 pb-6">
-                                <Upload className="w-10 h-10 mb-3 text-muted-foreground group-hover:text-primary transition-colors" />
+                                <Upload className="w-10 h-10 mb-3 text-primary/70 group-hover:text-primary transition-colors" />
                                 <p className="mb-2 text-sm font-semibold text-foreground">
                                   Dosya seçmek için tıklayın
                                 </p>
@@ -340,7 +340,7 @@ export default function CircularEdit() {
               İptal
             </Button>
             <Button type="submit" disabled={updateMutation.isPending} className="w-full sm:w-auto">
-              <Save className="h-4 w-4 mr-2" />
+              <Save className="h-4 w-4 mr-2 text-white" />
               {updateMutation.isPending ? "Güncelleniyor..." : "Güncelle"}
             </Button>
           </div>

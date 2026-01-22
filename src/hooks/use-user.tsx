@@ -63,7 +63,7 @@ export const useGetUserById = (id:number) => {
 export const useChangePassword = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: ({ id, password }: { id: number; password: string }) => changePassword(id, password),
+        mutationFn: ({ id, oldPassword, newPassword }: { id: number; oldPassword: string; newPassword: string }) => changePassword(id, oldPassword, newPassword),
         onSuccess: () => {
             toast.success("Şifre başarıyla değiştirildi");
             queryClient.invalidateQueries({ queryKey: ["users"] });

@@ -102,7 +102,7 @@ export default function ReferanceCreate() {
           onClick={() => navigate("/referance")}
           className="self-start sm:self-auto"
         >
-          <ArrowLeft className="h-4 w-4" />
+          <ArrowLeft className="h-4 w-4 text-primary dark:text-blue-400" />
         </Button>
         <div className="flex-1">
           <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Yeni Referans</h1>
@@ -117,7 +117,7 @@ export default function ReferanceCreate() {
           <Card>
             <CardHeader>
               <div className="flex items-center gap-2">
-                <Award className="h-5 w-5 text-primary" />
+                <Award className="h-5 w-5 text-primary dark:text-blue-400" />
                 <CardTitle>Referans Bilgileri</CardTitle>
               </div>
             </CardHeader>
@@ -141,7 +141,7 @@ export default function ReferanceCreate() {
                             />
                             <div className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-border rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors cursor-pointer group">
                               <div className="flex flex-col items-center justify-center pt-6 pb-6">
-                                <Upload className="w-10 h-10 mb-3 text-muted-foreground group-hover:text-primary transition-colors" />
+                                <Upload className="w-10 h-10 mb-3 text-primary/70 group-hover:text-primary transition-colors" />
                                 <p className="mb-2 text-sm font-semibold text-foreground">
                                   Dosya seçmek için tıklayın
                                 </p>
@@ -302,7 +302,7 @@ export default function ReferanceCreate() {
               İptal
             </Button>
             <Button type="submit" disabled={createMutation.isPending} className="w-full sm:w-auto">
-              <Save className="h-4 w-4 mr-2" />
+              <Save className="h-4 w-4 mr-2 text-white" />
               {createMutation.isPending ? "Kaydediliyor..." : "Kaydet"}
             </Button>
           </div>

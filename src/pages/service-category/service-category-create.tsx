@@ -65,7 +65,7 @@ export default function ServiceCategoryCreate() {
           onClick={() => navigate("/service-category")}
           className="self-start sm:self-auto"
         >
-          <ArrowLeft className="h-4 w-4" />
+          <ArrowLeft className="h-4 w-4 text-primary dark:text-blue-400" />
         </Button>
         <div className="flex-1">
           <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Yeni Servis Kategorisi</h1>
@@ -80,7 +80,7 @@ export default function ServiceCategoryCreate() {
           <Card>
             <CardHeader>
               <div className="flex items-center gap-2">
-                <Layers className="h-5 w-5 text-primary" />
+                <Layers className="h-5 w-5 text-primary dark:text-blue-400" />
                 <CardTitle>Kategori Bilgileri</CardTitle>
               </div>
             </CardHeader>
@@ -168,7 +168,7 @@ export default function ServiceCategoryCreate() {
               İptal
             </Button>
             <Button type="submit" disabled={createMutation.isPending} className="w-full sm:w-auto">
-              <Save className="h-4 w-4 mr-2" />
+              <Save className="h-4 w-4 mr-2 text-white" />
               {createMutation.isPending ? "Kaydediliyor..." : "Kaydet"}
             </Button>
           </div>

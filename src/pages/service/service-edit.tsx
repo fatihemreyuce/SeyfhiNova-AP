@@ -115,7 +115,7 @@ export default function ServiceEdit() {
           onClick={() => navigate("/service")}
           className="self-start sm:self-auto"
         >
-          <ArrowLeft className="h-4 w-4" />
+          <ArrowLeft className="h-4 w-4 text-primary dark:text-blue-400" />
         </Button>
         <div className="flex-1">
           <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Servis Düzenle</h1>
@@ -130,7 +130,7 @@ export default function ServiceEdit() {
           <Card>
             <CardHeader>
               <div className="flex items-center gap-2">
-                <Briefcase className="h-5 w-5 text-primary" />
+                <Briefcase className="h-5 w-5 text-primary dark:text-blue-400" />
                 <CardTitle>Servis Bilgileri</CardTitle>
               </div>
             </CardHeader>
@@ -247,7 +247,7 @@ export default function ServiceEdit() {
               İptal
             </Button>
             <Button type="submit" disabled={updateMutation.isPending} className="w-full sm:w-auto">
-              <Save className="h-4 w-4 mr-2" />
+              <Save className="h-4 w-4 mr-2 text-white" />
               {updateMutation.isPending ? "Güncelleniyor..." : "Güncelle"}
             </Button>
           </div>

@@ -68,7 +68,7 @@ export default function SettingsDetail() {
         <div className="space-y-1">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-              <Settings className="h-5 w-5 text-primary" />
+              <Settings className="h-5 w-5 text-primary dark:text-blue-400" />
             </div>
             <h1 className="text-2xl md:text-3xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
               Ayarlar
@@ -94,7 +94,7 @@ export default function SettingsDetail() {
           <Card className="border-2 border-border/50 shadow-sm">
             <CardHeader className="bg-gradient-to-r from-muted/30 to-transparent border-b border-border/50">
               <CardTitle className="flex items-center gap-2">
-                <Settings className="h-5 w-5 text-primary" />
+                <Settings className="h-5 w-5 text-primary dark:text-blue-400" />
                 <span>Temel Bilgiler</span>
               </CardTitle>
             </CardHeader>
@@ -102,7 +102,7 @@ export default function SettingsDetail() {
               {/* Logo Preview */}
               <div className="space-y-3">
                 <label className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                  <Settings className="h-4 w-4" />
+                  <Settings className="h-4 w-4 text-blue-500" />
                   Site Logosu
                 </label>
                 {imageUrl && (imageUrl.startsWith("http") || imageUrl.startsWith("/")) ? (
@@ -143,7 +143,7 @@ export default function SettingsDetail() {
                   <div className="w-full h-56 rounded-xl border-2 border-dashed border-border/50 bg-gradient-to-br from-muted/30 to-muted/10 flex items-center justify-center transition-colors">
                     <div className="flex flex-col items-center text-center space-y-3">
                       <div className="w-20 h-20 rounded-full bg-muted/50 flex items-center justify-center border-2 border-dashed border-border">
-                        <Settings className="h-10 w-10 text-muted-foreground opacity-50" />
+                        <Settings className="h-10 w-10 text-blue-500 opacity-50" />
                       </div>
                       <p className="text-sm text-muted-foreground font-medium">
                         Logo bulunmamaktadır
@@ -188,7 +188,7 @@ export default function SettingsDetail() {
 
               <div className="space-y-2">
                 <label className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                  <Mail className="h-4 w-4" />
+                  <Mail className="h-4 w-4 text-orange-500" />
                   E-posta
                 </label>
                 {data.email ? (
@@ -211,7 +211,7 @@ export default function SettingsDetail() {
 
               <div className="space-y-2">
                 <label className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                  <Phone className="h-4 w-4" />
+                  <Phone className="h-4 w-4 text-green-500" />
                   Telefon Numarası
                 </label>
                 {data.phoneNumber ? (
@@ -234,7 +234,7 @@ export default function SettingsDetail() {
 
               <div className="space-y-2">
                 <label className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                  <MapPin className="h-4 w-4" />
+                  <MapPin className="h-4 w-4 text-red-500" />
                   Adres
                 </label>
                 <div className="rounded-md border p-4 bg-muted/30 min-h-[80px]">
@@ -257,14 +257,14 @@ export default function SettingsDetail() {
           <Card className="border-2 border-border/50 shadow-sm">
             <CardHeader className="bg-gradient-to-r from-muted/30 to-transparent border-b border-border/50">
               <CardTitle className="flex items-center gap-2">
-                <Globe className="h-5 w-5 text-primary" />
+                <Globe className="h-5 w-5 text-primary dark:text-blue-400" />
                 Sosyal Medya
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
                 <label className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                  <Instagram className="h-4 w-4" />
+                  <Instagram className="h-4 w-4 text-pink-500" />
                   Instagram URL
                 </label>
                 {data.instagramUrl ? (
@@ -306,7 +306,7 @@ export default function SettingsDetail() {
 
               <div className="space-y-2">
                 <label className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                  <Linkedin className="h-4 w-4" />
+                  <Linkedin className="h-4 w-4 text-blue-600" />
                   LinkedIn URL
                 </label>
                 {data.linkedinUrl ? (
@@ -354,7 +354,7 @@ export default function SettingsDetail() {
           <Card className="border-2 border-border/50 shadow-sm">
             <CardHeader className="bg-gradient-to-r from-muted/30 to-transparent border-b border-border/50">
               <CardTitle className="flex items-center gap-2">
-                <FileText className="h-5 w-5 text-primary" />
+                <FileText className="h-5 w-5 text-primary dark:text-blue-400" />
                 Metin İçerikleri
               </CardTitle>
             </CardHeader>
@@ -379,7 +379,7 @@ export default function SettingsDetail() {
 
               <div className="space-y-2">
                 <label className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                  <Shield className="h-4 w-4" />
+                  <Shield className="h-4 w-4 text-green-500" />
                   Gizlilik Politikası
                 </label>
                 <div className="rounded-lg border-2 border-border/50 p-5 bg-gradient-to-br from-background to-muted/20 shadow-sm min-h-[120px]">
@@ -416,7 +416,7 @@ export default function SettingsDetail() {
 
               <div className="space-y-2">
                 <label className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                  <Cookie className="h-4 w-4" />
+                  <Cookie className="h-4 w-4 text-amber-500" />
                   Çerez Politikası
                 </label>
                 <div className="rounded-lg border-2 border-border/50 p-5 bg-gradient-to-br from-background to-muted/20 shadow-sm min-h-[120px]">
@@ -439,7 +439,7 @@ export default function SettingsDetail() {
           <Card className="border-2 border-border/50 shadow-sm">
             <CardHeader className="bg-gradient-to-r from-muted/30 to-transparent border-b border-border/50">
               <CardTitle className="flex items-center gap-2">
-                <FileText className="h-5 w-5 text-primary" />
+                <FileText className="h-5 w-5 text-primary dark:text-blue-400" />
                 Oluşturma Bilgileri
               </CardTitle>
             </CardHeader>

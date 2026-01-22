@@ -48,7 +48,7 @@ export default function ServiceDetail() {
             <p className="text-muted-foreground">Aradığınız servis mevcut değil.</p>
           </div>
           <Button variant="outline" onClick={() => navigate("/service")} size="lg">
-            <ArrowLeft className="h-4 w-4 mr-2" />
+            <ArrowLeft className="h-4 w-4 mr-2 text-primary dark:text-blue-400" />
             Listeye Dön
           </Button>
         </div>
@@ -88,7 +88,7 @@ export default function ServiceDetail() {
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center shadow-lg">
-              <Briefcase className="h-6 w-6 text-primary" />
+              <Briefcase className="h-6 w-6 text-primary dark:text-blue-400" />
             </div>
             <div className="flex-1">
               <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground dark:text-white mb-2">
@@ -129,7 +129,7 @@ export default function ServiceDetail() {
                   <div className="p-5 rounded-2xl bg-gradient-to-br from-primary/10 via-primary/5 to-transparent dark:from-primary/20 dark:via-primary/10 border-2 border-primary/20 dark:border-primary/30 group-hover:border-primary/40 dark:group-hover:border-primary/50 transition-all duration-300">
                     <div className="flex items-center gap-3 mb-3">
                       <div className="h-10 w-10 rounded-xl bg-primary/20 dark:bg-primary/30 flex items-center justify-center">
-                        <Tag className="h-5 w-5 text-primary" />
+                        <Tag className="h-5 w-5 text-primary dark:text-blue-400" />
                       </div>
                       <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground dark:text-muted-foreground/80">
                         Kategori
@@ -143,7 +143,7 @@ export default function ServiceDetail() {
                   <div className="p-5 rounded-2xl bg-gradient-to-br from-primary/10 via-primary/5 to-transparent dark:from-primary/20 dark:via-primary/10 border-2 border-primary/20 dark:border-primary/30 group-hover:border-primary/40 dark:group-hover:border-primary/50 transition-all duration-300">
                     <div className="flex items-center gap-3 mb-3">
                       <div className="h-10 w-10 rounded-xl bg-primary/20 flex items-center justify-center">
-                        <Hash className="h-5 w-5 text-primary" />
+                        <Hash className="h-5 w-5 text-primary dark:text-blue-400" />
                       </div>
                       <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground dark:text-muted-foreground/80">
                         Sıra Numarası
@@ -151,7 +151,7 @@ export default function ServiceDetail() {
                     </div>
                     <div className="flex items-center gap-4">
                       <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/10 dark:from-primary/30 dark:to-primary/20 flex items-center justify-center border-2 border-primary/30 shadow-lg">
-                        <Hash className="h-8 w-8 text-primary" />
+                        <Hash className="h-8 w-8 text-primary dark:text-blue-400" />
                       </div>
                       <div>
                         <p className="text-4xl font-bold text-foreground dark:text-white">
@@ -219,7 +219,7 @@ export default function ServiceDetail() {
                 <div className="p-4 rounded-xl bg-gradient-to-br from-muted/40 to-muted/20 dark:from-muted/60 dark:to-muted/40 border border-border/50 dark:border-border/70">
                   <div className="flex items-center gap-3">
                     <div className="h-10 w-10 rounded-xl bg-primary/10 dark:bg-primary/20 flex items-center justify-center">
-                      <Hash className="h-5 w-5 text-primary" />
+                      <Hash className="h-5 w-5 text-primary dark:text-blue-400" />
                     </div>
                     <div>
                       <p className="text-xs font-semibold text-muted-foreground dark:text-muted-foreground/80 mb-1 uppercase tracking-wide">Servis ID</p>
@@ -231,7 +231,7 @@ export default function ServiceDetail() {
                 <div className="p-4 rounded-xl bg-gradient-to-br from-muted/40 to-muted/20 dark:from-muted/60 dark:to-muted/40 border border-border/50 dark:border-border/70">
                   <div className="flex items-center gap-3">
                     <div className="h-10 w-10 rounded-xl bg-primary/10 dark:bg-primary/20 flex items-center justify-center">
-                      <Tag className="h-5 w-5 text-primary" />
+                      <Tag className="h-5 w-5 text-primary dark:text-blue-400" />
                     </div>
                     <div>
                       <p className="text-xs font-semibold text-muted-foreground dark:text-muted-foreground/80 mb-1 uppercase tracking-wide">Kategori</p>
@@ -243,7 +243,7 @@ export default function ServiceDetail() {
                 <div className="p-4 rounded-xl bg-gradient-to-br from-muted/40 to-muted/20 dark:from-muted/60 dark:to-muted/40 border border-border/50 dark:border-border/70">
                   <div className="flex items-center gap-3">
                     <div className="h-10 w-10 rounded-xl bg-primary/10 dark:bg-primary/20 flex items-center justify-center">
-                      <Hash className="h-5 w-5 text-primary" />
+                      <Hash className="h-5 w-5 text-primary dark:text-blue-400" />
                     </div>
                     <div>
                       <p className="text-xs font-semibold text-muted-foreground dark:text-muted-foreground/80 mb-1 uppercase tracking-wide">Sıra</p>

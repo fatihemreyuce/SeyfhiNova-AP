@@ -39,14 +39,14 @@ export default function OfficialPageDetail() {
       <div className="flex flex-col items-center justify-center min-h-[80vh]">
         <div className="text-center space-y-6">
           <div className="w-24 h-24 rounded-full bg-muted flex items-center justify-center mx-auto">
-            <FileText className="h-12 w-12 text-muted-foreground" />
+            <FileText className="h-12 w-12 text-blue-500" />
           </div>
           <div>
             <h3 className="text-2xl font-bold mb-2">Resmi sayfa bulunamadı</h3>
             <p className="text-muted-foreground">Resmi sayfa mevcut değil.</p>
           </div>
           <Button variant="outline" onClick={() => navigate("/official-page")} size="lg">
-            <ArrowLeft className="h-4 w-4 mr-2" />
+            <ArrowLeft className="h-4 w-4 mr-2 text-primary dark:text-blue-400" />
             Geri Dön
           </Button>
         </div>
@@ -150,7 +150,7 @@ export default function OfficialPageDetail() {
                     ) : (
                       <div className="flex flex-col items-center justify-center h-full min-h-[150px] text-center">
                         <div className="w-16 h-16 rounded-full bg-muted/50 dark:bg-muted/70 flex items-center justify-center mb-4">
-                          <FileText className="h-8 w-8 text-muted-foreground dark:text-muted-foreground/60" />
+                          <FileText className="h-8 w-8 text-blue-500" />
                         </div>
                         <p className="text-sm text-muted-foreground dark:text-muted-foreground/80 italic">
                           Açıklama bulunmamaktadır
@@ -264,7 +264,7 @@ export default function OfficialPageDetail() {
                         <div className="flex items-center justify-between gap-3">
                           <div className="flex items-center gap-3 flex-1 min-w-0">
                             <div className="w-10 h-10 rounded-xl bg-primary/10 dark:bg-primary/20 flex items-center justify-center flex-shrink-0">
-                              <FileText className="h-5 w-5 text-primary" />
+                              <FileText className="h-5 w-5 text-primary dark:text-blue-400" />
                             </div>
                             <div className="flex-1 min-w-0">
                               <p className="text-sm font-bold text-foreground dark:text-white truncate mb-1">
@@ -317,7 +317,7 @@ export default function OfficialPageDetail() {
               ) : (
                 <div className="flex flex-col items-center justify-center py-12 text-center">
                   <div className="w-16 h-16 rounded-full bg-muted/50 dark:bg-muted/70 flex items-center justify-center mb-4">
-                    <File className="h-8 w-8 text-muted-foreground dark:text-muted-foreground/60" />
+                    <File className="h-8 w-8 text-blue-500" />
                   </div>
                   <p className="text-sm text-muted-foreground dark:text-muted-foreground/80 italic">
                     Belge bulunmamaktadır

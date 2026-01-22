@@ -5,6 +5,9 @@ import {
   useDeleteNotification,
   useSendNotification,
 } from "@/hooks/use-notifications";
+import { useGetUserMe } from "@/hooks/use-user";
+import { login } from "@/services/auth-services";
+import { toast } from "sonner";
 import {
   Table,
   TableBody,
@@ -24,6 +27,14 @@ import {
 } from "@/components/ui/select";
 import { DeleteModal } from "@/components/ui/delete-modal";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
   Plus,
   Eye,
   Edit,
@@ -35,138 +46,14 @@ import {
   ArrowUpDown,
   ArrowUp,
   ArrowDown,
-  GripVertical,
   Search,
   X,
   Filter,
+  Lock,
+  EyeOff,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import {
-  DndContext,
-  closestCenter,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-} from "@dnd-kit/core";
-import { restrictToVerticalAxis, restrictToParentElement } from "@dnd-kit/modifiers";
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
-  useSortable,
-} from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
 import type { NotificationResponse } from "@/types/notifications.types";
-
-// Sortable Row Component
-interface SortableRowProps {
-  item: NotificationResponse;
-  onView: (id: number) => void;
-  onEdit: (id: number) => void;
-  onDelete: (id: number, name: string) => void;
-  onSend: (id: number) => void;
-  truncateText: (text: string, maxLength?: number) => string;
-  stripHtml: (html: string) => string;
-}
-
-function SortableRow({ item, onView, onEdit, onDelete, onSend, truncateText, stripHtml }: SortableRowProps) {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({ id: item.id });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0.5 : 1,
-  };
-
-  return (
-    <TableRow
-      ref={setNodeRef}
-      style={style}
-      className={`bg-white dark:bg-card border-b border-gray-100 dark:border-seyfhi-accent/20 hover:bg-gray-50 dark:hover:bg-muted/30 transition-colors ${
-        isDragging ? "shadow-lg z-10 opacity-50" : ""
-      }`}
-    >
-      <TableCell className="w-[50px]">
-        <div
-          {...attributes}
-          {...listeners}
-          className="cursor-grab active:cursor-grabbing p-2 -ml-2 hover:bg-muted/50 rounded transition-colors"
-        >
-          <GripVertical className="h-4 w-4 text-muted-foreground" />
-        </div>
-      </TableCell>
-      <TableCell className="whitespace-nowrap">
-        <Badge variant="outline" className="font-mono bg-blue-50 text-blue-600 dark:bg-blue-950/30 dark:text-blue-400">
-          #{item.id}
-        </Badge>
-      </TableCell>
-      <TableCell className="min-w-[200px]">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-md bg-primary/10 flex items-center justify-center shrink-0">
-            <Bell className="h-4 w-4 text-primary dark:text-primary" />
-          </div>
-          <span className="font-medium dark:text-foreground break-words">
-            {item.title}
-          </span>
-        </div>
-      </TableCell>
-      <TableCell className="min-w-[200px] max-w-md">
-        <p className="text-sm text-muted-foreground dark:text-foreground/70 break-words line-clamp-2">
-          {truncateText(stripHtml(item.content))}
-        </p>
-      </TableCell>
-      <TableCell className="text-right whitespace-nowrap">
-        <div className="flex items-center justify-end gap-1">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => onView(item.id)}
-            className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:text-blue-400 dark:hover:text-blue-300 dark:hover:bg-blue-950/30"
-            title="Detay Görüntüle"
-          >
-            <Eye className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => onEdit(item.id)}
-            className="h-8 w-8 text-green-600 hover:text-green-700 hover:bg-green-50 dark:text-green-400 dark:hover:text-green-300 dark:hover:bg-green-950/30"
-            title="Düzenle"
-          >
-            <Edit className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => onSend(item.id)}
-            className="h-8 w-8 text-purple-600 hover:text-purple-700 hover:bg-purple-50 dark:text-purple-400 dark:hover:text-purple-300 dark:hover:bg-purple-950/30"
-            title="Gönder"
-          >
-            <Send className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => onDelete(item.id, item.title)}
-            className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:text-red-300 dark:hover:bg-red-950/30"
-            title="Sil"
-          >
-            <Trash2 className="h-4 w-4" />
-          </Button>
-        </div>
-      </TableCell>
-    </TableRow>
-  );
-}
 
 export default function NotificationList() {
   const navigate = useNavigate();
@@ -183,6 +70,10 @@ export default function NotificationList() {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [selectedItemName, setSelectedItemName] = useState<string>("");
+  const [passwordDialogOpen, setPasswordDialogOpen] = useState(false);
+  const [passwordToSend, setPasswordToSend] = useState<string>("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [pendingSendId, setPendingSendId] = useState<number | null>(null);
 
   // URL parametrelerini güncelle
   const updateURLParams = (updates: { page?: number; sort?: string }) => {
@@ -236,42 +127,9 @@ export default function NotificationList() {
   const { data, isLoading } = useNotification(page, size, sort);
   const deleteMutation = useDeleteNotification();
   const sendMutation = useSendNotification();
-
-  // Local state for drag & drop reordering
-  const [items, setItems] = useState<NotificationResponse[]>([]);
-
-  // Update items when data changes
-  useEffect(() => {
-    if (data?.content) {
-      setItems(data.content);
-    }
-  }, [data]);
-
-  // Sensors for drag and drop
-  const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 8,
-      },
-    }),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  );
-
-  // Handle drag end
-  const handleDragEnd = (event: { active: { id: number }; over: { id: number } | null }) => {
-    const { active, over } = event;
-
-    if (over && active.id !== over.id) {
-      setItems((items) => {
-        const oldIndex = items.findIndex((item) => item.id === active.id);
-        const newIndex = items.findIndex((item) => item.id === over.id);
-
-        return arrayMove(items, oldIndex, newIndex);
-      });
-    }
-  };
+  const { data: userMe } = useGetUserMe();
+  const [passwordError, setPasswordError] = useState<string>("");
+  const [isVerifyingPassword, setIsVerifyingPassword] = useState(false);
 
   const handleDelete = (id: number, itemName: string) => {
     setSelectedId(id);
@@ -292,7 +150,52 @@ export default function NotificationList() {
   };
 
   const handleSend = (id: number) => {
-    sendMutation.mutate(id);
+    setPendingSendId(id);
+    setPasswordDialogOpen(true);
+    setPasswordToSend("");
+  };
+
+  const confirmSend = async () => {
+    if (!pendingSendId || !passwordToSend.trim()) {
+      return;
+    }
+
+    if (!userMe?.email) {
+      toast.error("Kullanıcı bilgisi alınamadı. Lütfen sayfayı yenileyin.");
+      return;
+    }
+
+    setPasswordError("");
+    setIsVerifyingPassword(true);
+
+    try {
+      // Şifre doğrulaması için login endpoint'ini kullan
+      await login({
+        email: userMe.email,
+        password: passwordToSend,
+      });
+
+      // Şifre doğru, bildirimi gönder
+      sendMutation.mutate(pendingSendId, {
+        onSuccess: () => {
+          setPasswordDialogOpen(false);
+          setPendingSendId(null);
+          setPasswordToSend("");
+          setShowPassword(false);
+          setPasswordError("");
+        },
+        onError: () => {
+          // Bildirim gönderme hatası
+          setPasswordError("");
+        },
+      });
+    } catch (error: any) {
+      // Şifre yanlış
+      setPasswordError("Şifre yanlış. Lütfen tekrar deneyin.");
+      setPasswordToSend("");
+    } finally {
+      setIsVerifyingPassword(false);
+    }
   };
 
   const handlePageChange = (newPage: number) => {
@@ -323,9 +226,9 @@ export default function NotificationList() {
       return <ArrowUpDown className="h-3.5 w-3.5 opacity-30" />;
     }
     return currentDir === "asc" ? (
-      <ArrowUp className="h-3.5 w-3.5 text-primary" />
+      <ArrowUp className="h-3.5 w-3.5 text-primary dark:text-blue-400" />
     ) : (
-      <ArrowDown className="h-3.5 w-3.5 text-primary" />
+      <ArrowDown className="h-3.5 w-3.5 text-primary dark:text-blue-400" />
     );
   };
 
@@ -402,61 +305,98 @@ export default function NotificationList() {
 
           {/* Table */}
           <div className="rounded-lg border bg-card overflow-hidden">
-            <DndContext
-              sensors={sensors}
-              collisionDetection={closestCenter}
-              onDragEnd={handleDragEnd}
-              modifiers={[restrictToVerticalAxis, restrictToParentElement]}
-            >
-              <div className="overflow-x-auto scrollbar-hide">
-                <Table>
-                  <TableHeader>
-                    <TableRow className="bg-[#F8F9FA] dark:bg-muted/30 border-b border-gray-200 dark:border-seyfhi-accent/30">
-                      <TableHead className="w-[50px]"></TableHead>
-                      <TableHead className="w-[80px]">
-                        <button
-                          onClick={() => handleSortChange("id")}
-                          className="flex items-center gap-2 hover:bg-muted/50 px-2 py-1 rounded transition-colors"
-                        >
-                          <span>ID</span>
-                          {getSortIcon("id")}
-                        </button>
-                      </TableHead>
-                      <TableHead className="min-w-[200px]">
-                        <button
-                          onClick={() => handleSortChange("title")}
-                          className="flex items-center gap-2 hover:bg-muted/50 px-2 py-1 rounded transition-colors"
-                        >
-                          <span>Başlık</span>
-                          {getSortIcon("title")}
-                        </button>
-                      </TableHead>
-                      <TableHead className="min-w-[200px] max-w-md">İçerik</TableHead>
-                      <TableHead className="w-[200px] text-right">İşlemler</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    <SortableContext
-                      items={items.map((item) => item.id)}
-                      strategy={verticalListSortingStrategy}
+            <div className="overflow-x-auto scrollbar-hide">
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-[#F8F9FA] dark:bg-muted/30 border-b border-gray-200 dark:border-seyfhi-accent/30">
+                    <TableHead className="w-[80px]">
+                      <button
+                        onClick={() => handleSortChange("id")}
+                        className="flex items-center gap-2 hover:bg-muted/50 px-2 py-1 rounded transition-colors"
+                      >
+                        <span>ID</span>
+                        {getSortIcon("id")}
+                      </button>
+                    </TableHead>
+                    <TableHead className="min-w-[200px]">
+                      <button
+                        onClick={() => handleSortChange("title")}
+                        className="flex items-center gap-2 hover:bg-muted/50 px-2 py-1 rounded transition-colors"
+                      >
+                        <span>Başlık</span>
+                        {getSortIcon("title")}
+                      </button>
+                    </TableHead>
+                    <TableHead className="min-w-[200px] max-w-md">İçerik</TableHead>
+                    <TableHead className="w-[200px] text-right">İşlemler</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {data.content.map((item) => (
+                    <TableRow
+                      key={item.id}
+                      className="bg-white dark:bg-card border-b border-gray-100 dark:border-seyfhi-accent/20 hover:bg-gray-50 dark:hover:bg-muted/30 transition-colors"
                     >
-                      {items.map((item) => (
-                        <SortableRow
-                          key={item.id}
-                          item={item}
-                          onView={(id) => navigate(`/notification/${id}`)}
-                          onEdit={(id) => navigate(`/notification/${id}/edit`)}
-                          onDelete={handleDelete}
-                          onSend={handleSend}
-                          truncateText={truncateText}
-                          stripHtml={stripHtml}
-                        />
-                      ))}
-                    </SortableContext>
-                  </TableBody>
-                </Table>
-              </div>
-            </DndContext>
+                      <TableCell className="whitespace-nowrap">
+                        <Badge variant="outline" className="font-mono bg-blue-50 text-blue-600 dark:bg-blue-950/30 dark:text-blue-400">
+                          #{item.id}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="min-w-[200px]">
+                        <span className="font-medium dark:text-foreground break-words">
+                          {item.title}
+                        </span>
+                      </TableCell>
+                      <TableCell className="min-w-[200px] max-w-md">
+                        <p className="text-sm text-muted-foreground dark:text-foreground/70 break-words line-clamp-2">
+                          {truncateText(stripHtml(item.content))}
+                        </p>
+                      </TableCell>
+                      <TableCell className="text-right whitespace-nowrap">
+                        <div className="flex items-center justify-end gap-1">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => navigate(`/notification/${item.id}`)}
+                            className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:text-blue-400 dark:hover:text-blue-300 dark:hover:bg-blue-950/30"
+                            title="Detay Görüntüle"
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => navigate(`/notification/${item.id}/edit`)}
+                            className="h-8 w-8 text-green-600 hover:text-green-700 hover:bg-green-50 dark:text-green-400 dark:hover:text-green-300 dark:hover:bg-green-950/30"
+                            title="Düzenle"
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleSend(item.id)}
+                            className="h-8 w-8 text-purple-600 hover:text-purple-700 hover:bg-purple-50 dark:text-purple-400 dark:hover:text-purple-300 dark:hover:bg-purple-950/30"
+                            title="Gönder"
+                          >
+                            <Send className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleDelete(item.id, item.title)}
+                            className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:text-red-300 dark:hover:bg-red-950/30"
+                            title="Sil"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           </div>
 
           {/* Pagination */}
@@ -513,6 +453,107 @@ export default function NotificationList() {
         itemName={selectedItemName}
         loading={deleteMutation.isPending}
       />
+
+      {/* Password Dialog */}
+      <Dialog 
+        open={passwordDialogOpen} 
+        onOpenChange={(open) => {
+          setPasswordDialogOpen(open);
+          if (!open) {
+            setPasswordToSend("");
+            setShowPassword(false);
+            setPendingSendId(null);
+          }
+        }}
+      >
+        <DialogContent className="sm:max-w-[500px] rounded-2xl">
+          <DialogHeader className="space-y-3 pb-4 border-b border-border/50">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                <Lock className="h-5 w-5 text-primary dark:text-blue-400" />
+              </div>
+              <div>
+                <DialogTitle className="text-2xl font-bold">Şifre Onayı</DialogTitle>
+                <DialogDescription className="text-sm text-muted-foreground mt-1">
+                  Bildirimi göndermek için şifrenizi giriniz.
+                </DialogDescription>
+              </div>
+            </div>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <label htmlFor="password" className="text-sm font-semibold text-foreground">
+                Şifre
+              </label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Şifrenizi giriniz"
+                  value={passwordToSend}
+                  onChange={(e) => {
+                    setPasswordToSend(e.target.value);
+                    setPasswordError("");
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && passwordToSend.trim() && !isVerifyingPassword) {
+                      confirmSend();
+                    }
+                  }}
+                  className={`pl-10 pr-10 h-12 text-base ${
+                    passwordError ? "border-red-500 focus-visible:ring-red-500" : ""
+                  }`}
+                  autoFocus
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-5 w-5" />
+                  ) : (
+                    <Eye className="h-5 w-5" />
+                  )}
+                </button>
+              </div>
+              {passwordError && (
+                <p className="text-sm text-red-500 font-medium mt-1">{passwordError}</p>
+              )}
+            </div>
+          </div>
+
+          <DialogFooter className="gap-2">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setPasswordDialogOpen(false);
+                setPasswordToSend("");
+                setShowPassword(false);
+                setPendingSendId(null);
+                setPasswordError("");
+              }}
+              disabled={sendMutation.isPending || isVerifyingPassword}
+            >
+              İptal
+            </Button>
+            <Button
+              onClick={confirmSend}
+              disabled={!passwordToSend.trim() || sendMutation.isPending || isVerifyingPassword}
+              className="bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary"
+            >
+              <Send className="h-4 w-4 mr-2" />
+              {isVerifyingPassword
+                ? "Doğrulanıyor..."
+                : sendMutation.isPending
+                ? "Gönderiliyor..."
+                : "Gönder"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

@@ -28,7 +28,7 @@ export const useCreateUsefulInformation = () => {
 export const useUpdateUsefulInformation = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: (request: UsefulInformationRequest) => updateUsefulInformation(request),
+        mutationFn: ({ id, request }: { id: number; request: UsefulInformationRequest }) => updateUsefulInformation(id, request),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["useful-information"] });
             toast.success("Kullanışlı bilgi başarıyla güncellendi");

@@ -34,14 +34,14 @@ export default function HomePageAboutDetail() {
       <div className="flex flex-col items-center justify-center min-h-[80vh]">
         <div className="text-center space-y-6">
           <div className="w-24 h-24 rounded-full bg-muted flex items-center justify-center mx-auto">
-            <FileText className="h-12 w-12 text-muted-foreground" />
+            <FileText className="h-12 w-12 text-blue-500" />
           </div>
           <div>
             <h3 className="text-2xl font-bold mb-2">Kayıt bulunamadı</h3>
             <p className="text-muted-foreground">Aradığınız kayıt mevcut değil.</p>
           </div>
           <Button variant="outline" onClick={() => navigate("/home-page-about")} size="lg">
-            <ArrowLeft className="h-4 w-4 mr-2" />
+            <ArrowLeft className="h-4 w-4 mr-2 text-primary dark:text-blue-400" />
             Listeye Dön
           </Button>
         </div>
@@ -160,7 +160,7 @@ export default function HomePageAboutDetail() {
                   ) : (
                     <div className="flex flex-col items-center justify-center h-full min-h-[250px] text-center">
                       <div className="w-16 h-16 rounded-full bg-muted/50 dark:bg-muted/70 flex items-center justify-center mb-4">
-                        <FileText className="h-8 w-8 text-muted-foreground dark:text-muted-foreground/60" />
+                        <FileText className="h-8 w-8 text-blue-500" />
                       </div>
                       <p className="text-sm text-muted-foreground dark:text-muted-foreground/80 italic">
                         Açıklama bulunmamaktadır
@@ -230,7 +230,7 @@ export default function HomePageAboutDetail() {
                   ) : (
                     <div className="flex flex-col items-center justify-center h-full min-h-[250px] text-center">
                       <div className="w-16 h-16 rounded-full bg-muted/50 dark:bg-muted/70 flex items-center justify-center mb-4">
-                        <FileText className="h-8 w-8 text-muted-foreground dark:text-muted-foreground/60" />
+                        <FileText className="h-8 w-8 text-blue-500" />
                       </div>
                       <p className="text-sm text-muted-foreground dark:text-muted-foreground/80 italic">
                         Açıklama bulunmamaktadır

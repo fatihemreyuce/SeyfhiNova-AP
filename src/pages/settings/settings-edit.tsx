@@ -176,7 +176,7 @@ export default function SettingsEdit() {
         </p>
         <div className="flex gap-2">
           <Button variant="outline" onClick={() => navigate("/settings")}>
-            <ArrowLeft className="h-4 w-4 mr-2" />
+            <ArrowLeft className="h-4 w-4 mr-2 text-primary dark:text-blue-400" />
             Geri Dön
           </Button>
           <Button variant="default" onClick={() => window.location.reload()}>
@@ -197,12 +197,12 @@ export default function SettingsEdit() {
             onClick={() => navigate("/settings")}
             className="hover:bg-muted self-start sm:self-auto"
           >
-            <ArrowLeft className="h-4 w-4" />
+            <ArrowLeft className="h-4 w-4 text-foreground dark:text-white" />
           </Button>
           <div className="space-y-1">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                <Settings className="h-5 w-5 text-primary" />
+                <Settings className="h-5 w-5 text-primary dark:text-blue-400" />
               </div>
               <h1 className="text-2xl md:text-3xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
                 Ayar Düzenle
@@ -221,7 +221,7 @@ export default function SettingsEdit() {
           <Card className="border-2 border-border/50 shadow-sm">
             <CardHeader className="bg-gradient-to-r from-muted/30 to-transparent border-b border-border/50">
               <div className="flex items-center gap-2">
-                <Settings className="h-5 w-5 text-primary" />
+                <Settings className="h-5 w-5 text-primary dark:text-blue-400" />
                 <CardTitle>Temel Bilgiler</CardTitle>
               </div>
             </CardHeader>
@@ -245,7 +245,7 @@ export default function SettingsEdit() {
                             />
                             <div className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-border rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors cursor-pointer group">
                               <div className="flex flex-col items-center justify-center pt-8 pb-8">
-                                <Upload className="w-12 h-12 mb-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                                <Upload className="w-12 h-12 mb-4 text-primary/70 group-hover:text-primary transition-colors" />
                                 <p className="mb-2 text-sm font-semibold text-foreground">
                                   Logo seçmek için tıklayın
                                 </p>
@@ -303,7 +303,7 @@ export default function SettingsEdit() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="flex items-center gap-2">
-                      <Mail className="h-4 w-4" />
+                      <Mail className="h-4 w-4 text-orange-500" />
                       E-posta
                     </FormLabel>
                     <FormControl>
@@ -330,7 +330,7 @@ export default function SettingsEdit() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="flex items-center gap-2">
-                        <Phone className="h-4 w-4" />
+                        <Phone className="h-4 w-4 text-green-500" />
                         Telefon Numarası
                       </FormLabel>
                       <FormControl>
@@ -358,7 +358,7 @@ export default function SettingsEdit() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="flex items-center gap-2">
-                      <MapPin className="h-4 w-4" />
+                      <MapPin className="h-4 w-4 text-red-500" />
                       Adres
                     </FormLabel>
                     <FormControl>
@@ -379,7 +379,7 @@ export default function SettingsEdit() {
           <Card className="border-2 border-border/50 shadow-sm">
             <CardHeader className="bg-gradient-to-r from-muted/30 to-transparent border-b border-border/50">
               <div className="flex items-center gap-2">
-                <Globe className="h-5 w-5 text-primary" />
+                <Globe className="h-5 w-5 text-primary dark:text-blue-400" />
                 <CardTitle>Sosyal Medya</CardTitle>
               </div>
             </CardHeader>
@@ -390,7 +390,7 @@ export default function SettingsEdit() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="flex items-center gap-2">
-                      <Instagram className="h-4 w-4" />
+                      <Instagram className="h-4 w-4 text-pink-500" />
                       Instagram URL
                     </FormLabel>
                     <FormControl>
@@ -417,7 +417,7 @@ export default function SettingsEdit() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="flex items-center gap-2">
-                      <Linkedin className="h-4 w-4" />
+                      <Linkedin className="h-4 w-4 text-blue-600" />
                       LinkedIn URL
                     </FormLabel>
                     <FormControl>
@@ -444,7 +444,7 @@ export default function SettingsEdit() {
           <Card className="border-2 border-border/50 shadow-sm">
             <CardHeader className="bg-gradient-to-r from-muted/30 to-transparent border-b border-border/50">
               <div className="flex items-center gap-2">
-                <FileText className="h-5 w-5 text-primary" />
+                <FileText className="h-5 w-5 text-primary dark:text-blue-400" />
                 <CardTitle>Metin İçerikleri</CardTitle>
               </div>
             </CardHeader>
@@ -474,7 +474,7 @@ export default function SettingsEdit() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="flex items-center gap-2">
-                      <Shield className="h-4 w-4" />
+                      <Shield className="h-4 w-4 text-green-500" />
                       Gizlilik Politikası
                     </FormLabel>
                     <FormControl>
@@ -515,7 +515,7 @@ export default function SettingsEdit() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="flex items-center gap-2">
-                      <Cookie className="h-4 w-4" />
+                      <Cookie className="h-4 w-4 text-amber-500" />
                       Çerez Politikası
                     </FormLabel>
                     <FormControl>
@@ -547,7 +547,7 @@ export default function SettingsEdit() {
               disabled={updateMutation.isPending || isLoading || !data?.id}
               className="w-full sm:w-auto"
             >
-              <Save className="h-4 w-4 mr-2" />
+              <Save className="h-4 w-4 mr-2 text-white" />
               {updateMutation.isPending ? "Güncelleniyor..." : "Güncelle"}
             </Button>
           </div>

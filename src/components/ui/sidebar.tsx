@@ -240,11 +240,15 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
 												isOpen ? "px-3 sm:px-3.5 py-2 sm:py-2.5" : "px-2 py-2.5 justify-center lg:justify-center",
 												isActive
 													? "bg-white/15 text-white shadow-lg shadow-primary/20 scale-[1.02] border-l-4 border-white/40"
-													: "text-white/70 hover:bg-white/10 hover:text-white hover:translate-x-1"
+													: "text-white/80 hover:bg-white/10 hover:text-white hover:translate-x-1",
+												!isOpen && "lg:text-white"
 											)
 										}
 									>
-										<Icon className="h-4 w-4 transition-transform duration-200 group-hover:scale-110 shrink-0" />
+										<Icon className={cn(
+											"h-4 w-4 transition-transform duration-200 group-hover:scale-110 shrink-0",
+											isOpen ? "text-current" : "lg:text-white"
+										)} />
 										{isOpen && <span className="truncate">{item.label}</span>}
 									</NavLink>
 								);

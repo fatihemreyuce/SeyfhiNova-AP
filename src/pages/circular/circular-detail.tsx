@@ -55,14 +55,14 @@ export default function CircularDetail() {
       <div className="flex flex-col items-center justify-center min-h-[80vh]">
         <div className="text-center space-y-6">
           <div className="w-24 h-24 rounded-full bg-muted flex items-center justify-center mx-auto">
-            <FileText className="h-12 w-12 text-muted-foreground" />
+            <FileText className="h-12 w-12 text-blue-500" />
           </div>
           <div>
             <h3 className="text-2xl font-bold mb-2">Duyuru bulunamadı</h3>
             <p className="text-muted-foreground">Aradığınız duyuru mevcut değil.</p>
           </div>
           <Button variant="outline" onClick={() => navigate("/circular")} size="lg">
-            <ArrowLeft className="h-4 w-4 mr-2" />
+            <ArrowLeft className="h-4 w-4 mr-2 text-primary dark:text-blue-400" />
             Listeye Dön
           </Button>
         </div>
@@ -102,7 +102,7 @@ export default function CircularDetail() {
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center shadow-lg">
-              <FileText className="h-6 w-6 text-primary" />
+              <FileText className="h-6 w-6 text-primary dark:text-blue-400" />
             </div>
             <div className="flex-1">
               <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground dark:text-white mb-2">
@@ -140,7 +140,7 @@ export default function CircularDetail() {
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
                   <div className="w-8 h-8 rounded-lg bg-primary/10 dark:bg-primary/20 flex items-center justify-center">
-                    <Sparkles className="h-4 w-4 text-primary" />
+                    <Sparkles className="h-4 w-4 text-primary dark:text-blue-400" />
                   </div>
                   <label className="text-sm font-semibold text-muted-foreground dark:text-muted-foreground/80 uppercase tracking-wide">
                     Başlık
@@ -161,7 +161,7 @@ export default function CircularDetail() {
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
                   <div className="w-8 h-8 rounded-lg bg-primary/10 dark:bg-primary/20 flex items-center justify-center">
-                    <FileText className="h-4 w-4 text-primary" />
+                    <FileText className="h-4 w-4 text-primary dark:text-blue-400" />
                   </div>
                   <label className="text-sm font-semibold text-muted-foreground dark:text-muted-foreground/80 uppercase tracking-wide">
                     Açıklama
@@ -205,7 +205,7 @@ export default function CircularDetail() {
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
                   <div className="w-8 h-8 rounded-lg bg-primary/10 dark:bg-primary/20 flex items-center justify-center">
-                    <File className="h-4 w-4 text-primary" />
+                    <File className="h-4 w-4 text-primary dark:text-blue-400" />
                   </div>
                   <label className="text-sm font-semibold text-muted-foreground dark:text-muted-foreground/80 uppercase tracking-wide">
                     Dosya Önizleme
@@ -215,7 +215,7 @@ export default function CircularDetail() {
                   <div className="w-full h-80 rounded-2xl border-2 border-border/50 dark:border-border/70 bg-gradient-to-br from-muted/40 to-muted/20 dark:from-muted/60 dark:to-muted/40 flex items-center justify-center group-hover:border-primary/50 dark:group-hover:border-primary/60 transition-all duration-300 shadow-lg">
                     <div className="flex flex-col items-center justify-center gap-6 p-8">
                       <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/10 dark:from-primary/30 dark:to-primary/20 flex items-center justify-center border-2 border-primary/30 shadow-xl">
-                        <File className="w-12 h-12 text-primary" />
+                        <File className="w-12 h-12 text-primary dark:text-blue-400" />
                       </div>
                       <div className="text-center">
                         <p className="text-base font-bold text-foreground dark:text-white mb-2 truncate max-w-[250px]">
@@ -232,7 +232,7 @@ export default function CircularDetail() {
                   <div className="w-full h-80 rounded-2xl border-2 border-dashed border-border/50 dark:border-border/70 bg-gradient-to-br from-muted/30 to-muted/10 dark:from-muted/50 dark:to-muted/30 flex items-center justify-center group-hover:border-primary/50 dark:group-hover:border-primary/60 transition-all duration-300">
                     <div className="flex flex-col items-center text-center space-y-4">
                       <div className="w-20 h-20 rounded-2xl bg-muted/50 dark:bg-muted/70 flex items-center justify-center border-2 border-border/50">
-                        <FileText className="h-10 w-10 text-muted-foreground dark:text-muted-foreground/60" />
+                        <FileText className="h-10 w-10 text-blue-500" />
                       </div>
                       <div>
                         <p className="text-sm font-medium text-muted-foreground dark:text-muted-foreground/80 mb-1">
@@ -251,7 +251,7 @@ export default function CircularDetail() {
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
                   <div className="w-8 h-8 rounded-lg bg-primary/10 dark:bg-primary/20 flex items-center justify-center">
-                    <Link2 className="h-4 w-4 text-primary" />
+                    <Link2 className="h-4 w-4 text-primary dark:text-blue-400" />
                   </div>
                   <label className="text-sm font-semibold text-muted-foreground dark:text-muted-foreground/80 uppercase tracking-wide">
                     Dosya Yolu

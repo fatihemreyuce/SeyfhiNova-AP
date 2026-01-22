@@ -29,146 +29,9 @@ import {
   ArrowUpDown,
   ArrowUp,
   ArrowDown,
-  GripVertical,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import {
-  DndContext,
-  closestCenter,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-} from "@dnd-kit/core";
-import { restrictToVerticalAxis, restrictToParentElement } from "@dnd-kit/modifiers";
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
-  useSortable,
-} from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
 import type { UsefulInformationResponse } from "@/types/useful.information.types";
-
-// Sortable Row Component
-interface SortableRowProps {
-  item: UsefulInformationResponse;
-  onView: (id: number) => void;
-  onEdit: (id: number) => void;
-  onDelete: (id: number, name: string) => void;
-  truncateText: (text: string, maxLength?: number) => string;
-  stripHtml: (html: string) => string;
-}
-
-function SortableRow({ item, onView, onEdit, onDelete, truncateText, stripHtml }: SortableRowProps) {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({ id: item.id });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0.5 : 1,
-  };
-
-  return (
-    <TableRow
-      ref={setNodeRef}
-      style={style}
-      className={`bg-white dark:bg-card border-b border-gray-100 dark:border-seyfhi-accent/20 hover:bg-gray-50 dark:hover:bg-muted/30 transition-colors ${
-        isDragging ? "shadow-lg z-10 opacity-50" : ""
-      }`}
-    >
-      <TableCell className="w-[50px]">
-        <div
-          {...attributes}
-          {...listeners}
-          className="cursor-grab active:cursor-grabbing p-2 -ml-2 hover:bg-muted/50 rounded transition-colors"
-        >
-          <GripVertical className="h-4 w-4 text-muted-foreground" />
-        </div>
-      </TableCell>
-      <TableCell className="whitespace-nowrap">
-        <Badge variant="outline" className="font-mono bg-blue-50 text-blue-600 dark:bg-blue-950/30 dark:text-blue-400">
-          #{item.id}
-        </Badge>
-      </TableCell>
-      <TableCell>
-        {item.fileUrl ? (
-          <a
-            href={item.fileUrl.replace(/^https:/, "http:")}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-primary dark:text-blue-400 hover:underline flex items-center gap-1.5 text-sm font-medium group"
-          >
-            <FileText className="h-4 w-4 group-hover:text-primary/80" />
-            <span>Dosyayı Görüntüle</span>
-            <ExternalLink className="h-3.5 w-3.5 opacity-70 dark:text-foreground/80" />
-          </a>
-        ) : (
-          <span className="text-sm text-muted-foreground dark:text-foreground/50">-</span>
-        )}
-      </TableCell>
-      <TableCell>
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-md bg-primary/10 flex items-center justify-center shrink-0">
-            <FileText className="h-4 w-4 text-primary dark:text-primary" />
-          </div>
-          <span className="font-medium dark:text-foreground">
-            {item.title}
-          </span>
-        </div>
-      </TableCell>
-      <TableCell className="max-w-md">
-        <p className="text-sm text-muted-foreground dark:text-foreground/70 truncate">
-          {item.excerpt || "-"}
-        </p>
-      </TableCell>
-      <TableCell className="max-w-md">
-        <p className="text-sm text-muted-foreground dark:text-foreground/70 truncate">
-          {truncateText(stripHtml(item.description))}
-        </p>
-      </TableCell>
-      <TableCell className="text-right">
-        <div className="flex items-center justify-end gap-1">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => onView(item.id)}
-            className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:text-blue-400 dark:hover:text-blue-300 dark:hover:bg-blue-950/30"
-            title="Detay Görüntüle"
-          >
-            <Eye className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => onEdit(item.id)}
-            className="h-8 w-8 text-green-600 hover:text-green-700 hover:bg-green-50 dark:text-green-400 dark:hover:text-green-300 dark:hover:bg-green-950/30"
-            title="Düzenle"
-          >
-            <Edit className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => onDelete(item.id, item.title)}
-            className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:text-red-300 dark:hover:bg-red-950/30"
-            title="Sil"
-          >
-            <Trash2 className="h-4 w-4" />
-          </Button>
-        </div>
-      </TableCell>
-    </TableRow>
-  );
-}
 
 export default function UsefulInformationList() {
   const navigate = useNavigate();
@@ -268,42 +131,6 @@ export default function UsefulInformationList() {
   const { data, isLoading } = useUsefulInformation(search, page, size, sort);
   const deleteMutation = useDeleteUsefulInformation();
 
-  // Local state for drag & drop reordering
-  const [items, setItems] = useState<UsefulInformationResponse[]>([]);
-
-  // Update items when data changes
-  useEffect(() => {
-    if (data?.content) {
-      setItems(data.content);
-    }
-  }, [data]);
-
-  // Sensors for drag and drop
-  const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 8,
-      },
-    }),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  );
-
-  // Handle drag end
-  const handleDragEnd = (event: { active: { id: number }; over: { id: number } | null }) => {
-    const { active, over } = event;
-
-    if (over && active.id !== over.id) {
-      setItems((items) => {
-        const oldIndex = items.findIndex((item) => item.id === active.id);
-        const newIndex = items.findIndex((item) => item.id === over.id);
-
-        return arrayMove(items, oldIndex, newIndex);
-      });
-    }
-  };
-
   const handleDelete = (id: number, itemName: string) => {
     setSelectedId(id);
     setSelectedItemName(itemName);
@@ -361,9 +188,9 @@ export default function UsefulInformationList() {
       return <ArrowUpDown className="h-3.5 w-3.5 opacity-30" />;
     }
     return currentDir === "asc" ? (
-      <ArrowUp className="h-3.5 w-3.5 text-primary" />
+      <ArrowUp className="h-3.5 w-3.5 text-primary dark:text-blue-400" />
     ) : (
-      <ArrowDown className="h-3.5 w-3.5 text-primary" />
+      <ArrowDown className="h-3.5 w-3.5 text-primary dark:text-blue-400" />
     );
   };
 
@@ -471,62 +298,112 @@ export default function UsefulInformationList() {
 
           {/* Table */}
           <div className="rounded-lg border bg-card overflow-hidden">
-            <DndContext
-              sensors={sensors}
-              collisionDetection={closestCenter}
-              onDragEnd={handleDragEnd}
-              modifiers={[restrictToVerticalAxis, restrictToParentElement]}
-            >
-              <div className="overflow-x-auto scrollbar-hide">
-                <Table>
-                  <TableHeader>
-                    <TableRow className="bg-[#F8F9FA] dark:bg-muted/30 border-b border-gray-200 dark:border-seyfhi-accent/30">
-                      <TableHead className="w-[50px]"></TableHead>
-                      <TableHead className="w-[80px]">
-                        <button
-                          onClick={() => handleSortChange("id")}
-                          className="flex items-center gap-2 hover:bg-muted/50 px-2 py-1 rounded transition-colors"
-                        >
-                          <span>ID</span>
-                          {getSortIcon("id")}
-                        </button>
-                      </TableHead>
-                      <TableHead className="w-[180px]">Dosya</TableHead>
-                      <TableHead className="min-w-[150px]">
-                        <button
-                          onClick={() => handleSortChange("title")}
-                          className="flex items-center gap-2 hover:bg-muted/50 px-2 py-1 rounded transition-colors"
-                        >
-                          <span>Başlık</span>
-                          {getSortIcon("title")}
-                        </button>
-                      </TableHead>
-                      <TableHead className="max-w-md">Özet</TableHead>
-                      <TableHead className="max-w-md">Açıklama</TableHead>
-                      <TableHead className="w-[200px] text-right">İşlemler</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    <SortableContext
-                      items={items.map((item) => item.id)}
-                      strategy={verticalListSortingStrategy}
+            <div className="overflow-x-auto scrollbar-hide">
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-[#F8F9FA] dark:bg-muted/30 border-b border-gray-200 dark:border-seyfhi-accent/30">
+                    <TableHead className="w-[80px]">
+                      <button
+                        onClick={() => handleSortChange("id")}
+                        className="flex items-center gap-2 hover:bg-muted/50 px-2 py-1 rounded transition-colors"
+                      >
+                        <span>ID</span>
+                        {getSortIcon("id")}
+                      </button>
+                    </TableHead>
+                    <TableHead className="w-[180px]">Dosya</TableHead>
+                    <TableHead className="min-w-[150px]">
+                      <button
+                        onClick={() => handleSortChange("title")}
+                        className="flex items-center gap-2 hover:bg-muted/50 px-2 py-1 rounded transition-colors"
+                      >
+                        <span>Başlık</span>
+                        {getSortIcon("title")}
+                      </button>
+                    </TableHead>
+                    <TableHead className="max-w-md">Alt Açıklama</TableHead>
+                    <TableHead className="max-w-md">Açıklama</TableHead>
+                    <TableHead className="w-[200px] text-right">İşlemler</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {data.content.map((item) => (
+                    <TableRow
+                      key={item.id}
+                      className="bg-white dark:bg-card border-b border-gray-100 dark:border-seyfhi-accent/20 hover:bg-gray-50 dark:hover:bg-muted/30 transition-colors"
                     >
-                      {items.map((item) => (
-                        <SortableRow
-                          key={item.id}
-                          item={item}
-                          onView={(id) => navigate(`/useful-information/${id}`)}
-                          onEdit={(id) => navigate(`/useful-information/${id}/edit`)}
-                          onDelete={handleDelete}
-                          truncateText={truncateText}
-                          stripHtml={stripHtml}
-                        />
-                      ))}
-                    </SortableContext>
-                  </TableBody>
-                </Table>
-              </div>
-            </DndContext>
+                      <TableCell className="whitespace-nowrap">
+                        <Badge variant="outline" className="font-mono bg-blue-50 text-blue-600 dark:bg-blue-950/30 dark:text-blue-400">
+                          #{item.id}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        {item.fileUrl ? (
+                          <a
+                            href={item.fileUrl.replace(/^https:/, "http:")}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-primary dark:text-blue-400 hover:underline flex items-center gap-1.5 text-sm font-medium group"
+                          >
+                            <FileText className="h-4 w-4 group-hover:text-primary/80" />
+                            <span>Dosyayı Görüntüle</span>
+                            <ExternalLink className="h-3.5 w-3.5 opacity-70 dark:text-foreground/80" />
+                          </a>
+                        ) : (
+                          <span className="text-sm text-muted-foreground dark:text-foreground/50">-</span>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <span className="font-medium dark:text-foreground">
+                          {item.title}
+                        </span>
+                      </TableCell>
+                      <TableCell className="max-w-md">
+                        <p className="text-sm text-muted-foreground dark:text-foreground/70 truncate">
+                          {item.excerpt || "-"}
+                        </p>
+                      </TableCell>
+                      <TableCell className="max-w-md">
+                        <p className="text-sm text-muted-foreground dark:text-foreground/70 truncate">
+                          {truncateText(stripHtml(item.description))}
+                        </p>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex items-center justify-end gap-1">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => navigate(`/useful-information/${item.id}`)}
+                            className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:text-blue-400 dark:hover:text-blue-300 dark:hover:bg-blue-950/30"
+                            title="Detay Görüntüle"
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => navigate(`/useful-information/${item.id}/edit`)}
+                            className="h-8 w-8 text-green-600 hover:text-green-700 hover:bg-green-50 dark:text-green-400 dark:hover:text-green-300 dark:hover:bg-green-950/30"
+                            title="Düzenle"
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleDelete(item.id, item.title)}
+                            className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:text-red-300 dark:hover:bg-red-950/30"
+                            title="Sil"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           </div>
 
           {/* Pagination */}

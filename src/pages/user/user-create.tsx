@@ -69,7 +69,7 @@ export default function UserCreate() {
           onClick={() => navigate("/user")}
           className="self-start sm:self-auto"
         >
-          <ArrowLeft className="h-4 w-4" />
+          <ArrowLeft className="h-4 w-4 text-primary dark:text-blue-400" />
         </Button>
         <div className="flex-1">
           <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Yeni Kullanıcı</h1>
@@ -206,7 +206,7 @@ export default function UserCreate() {
               İptal
             </Button>
             <Button type="submit" disabled={createMutation.isPending} className="w-full sm:w-auto">
-              <Save className="h-4 w-4 mr-2" />
+              <Save className="h-4 w-4 mr-2 text-white" />
               {createMutation.isPending ? "Kaydediliyor..." : "Kaydet"}
             </Button>
           </div>

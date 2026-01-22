@@ -31,7 +31,7 @@ export default function AdminLayout() {
         }`}
       >
         {/* Top Bar with Toggle Button */}
-        <div className="sticky top-0 z-20 flex h-14 sm:h-16 items-center gap-3 sm:gap-4 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4 sm:px-6">
+        <div className="sticky top-0 z-20 flex h-14 sm:h-16 items-center gap-3 sm:gap-4 border-b border-border/30 gradient-bg px-4 sm:px-6">
           <Button
             variant="ghost"
             size="icon"

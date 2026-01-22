@@ -3,7 +3,9 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   useServiceCategory,
   useDeleteServiceCategory,
+  useUpdateServiceCategory,
 } from "@/hooks/use-category-service";
+import { toast } from "sonner";
 import {
   Table,
   TableBody,
@@ -97,14 +99,9 @@ function SortableRow({ item, onView, onEdit, onDelete }: SortableRowProps) {
         </Badge>
       </TableCell>
       <TableCell>
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-md bg-primary/10 flex items-center justify-center shrink-0">
-            <Layers className="h-4 w-4 text-primary dark:text-primary" />
-          </div>
-          <span className="font-medium dark:text-foreground">
-            {item.name}
-          </span>
-        </div>
+        <span className="font-medium dark:text-foreground">
+          {item.name}
+        </span>
       </TableCell>
       <TableCell className="max-w-md">
         <p className="text-sm text-muted-foreground dark:text-foreground/70 truncate">
@@ -248,6 +245,7 @@ export default function ServiceCategoryList() {
 
   const { data, isLoading } = useServiceCategory(search, page, size, sort);
   const deleteMutation = useDeleteServiceCategory();
+  const updateMutation = useUpdateServiceCategory();
 
   // Local state for drag & drop reordering
   const [items, setItems] = useState<ServiceCategoryResponse[]>([]);
@@ -276,12 +274,55 @@ export default function ServiceCategoryList() {
     const { active, over } = event;
 
     if (over && active.id !== over.id) {
-      setItems((items) => {
-        const oldIndex = items.findIndex((item) => item.id === active.id);
-        const newIndex = items.findIndex((item) => item.id === over.id);
+      const oldIndex = items.findIndex((item) => item.id === active.id);
+      const newIndex = items.findIndex((item) => item.id === over.id);
 
-        return arrayMove(items, oldIndex, newIndex);
+      const newItems = arrayMove(items, oldIndex, newIndex);
+
+      // Yeni sıralamaya göre orderIndex'leri güncelle
+      // Mevcut orderIndex'leri sıralayarak en yüksekten başla
+      const sortedByCurrentOrder = [...items].sort((a, b) => b.orderIndex - a.orderIndex);
+      const maxOrderIndex = sortedByCurrentOrder[0]?.orderIndex || 0;
+
+      // Yeni sıralamaya göre orderIndex'leri hesapla (en yüksekten başlayarak azalt)
+      const updates: Array<{ id: number; orderIndex: number }> = [];
+      newItems.forEach((item, index) => {
+        const newOrderIndex = maxOrderIndex - index;
+        if (item.orderIndex !== newOrderIndex) {
+          updates.push({ id: item.id, orderIndex: newOrderIndex });
+        }
       });
+
+      // Önce görsel olarak güncelle
+      setItems(newItems);
+
+      // Sonra backend'e güncellemeleri gönder
+      if (updates.length > 0) {
+        // Tüm güncellemeleri sırayla gönder
+        Promise.all(
+          updates.map((update) => {
+            const item = newItems.find((item) => item.id === update.id)!;
+            return updateMutation.mutateAsync({
+              id: update.id,
+              request: {
+                name: item.name,
+                description: item.description,
+                orderIndex: update.orderIndex,
+              },
+            });
+          })
+        )
+          .then(() => {
+            toast.success("Sıralama başarıyla güncellendi");
+          })
+          .catch(() => {
+            toast.error("Sıralama güncellenirken hata oluştu");
+            // Hata durumunda veriyi yeniden yükle
+            if (data?.content) {
+              setItems(data.content);
+            }
+          });
+      }
     }
   };
 
@@ -342,9 +383,9 @@ export default function ServiceCategoryList() {
       return <ArrowUpDown className="h-3.5 w-3.5 opacity-30" />;
     }
     return currentDir === "asc" ? (
-      <ArrowUp className="h-3.5 w-3.5 text-primary" />
+      <ArrowUp className="h-3.5 w-3.5 text-primary dark:text-blue-400" />
     ) : (
-      <ArrowDown className="h-3.5 w-3.5 text-primary" />
+      <ArrowDown className="h-3.5 w-3.5 text-primary dark:text-blue-400" />
     );
   };
 

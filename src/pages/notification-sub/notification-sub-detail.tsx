@@ -34,14 +34,14 @@ export default function NotificationSubDetail() {
       <div className="flex flex-col items-center justify-center min-h-[80vh]">
         <div className="text-center space-y-6">
           <div className="w-24 h-24 rounded-full bg-muted flex items-center justify-center mx-auto">
-            <Mail className="h-12 w-12 text-muted-foreground" />
+            <Mail className="h-12 w-12 text-orange-500" />
           </div>
           <div>
             <h3 className="text-2xl font-bold mb-2">Bildirim aboneliği bulunamadı</h3>
             <p className="text-muted-foreground">Aradığınız abonelik mevcut değil.</p>
           </div>
           <Button variant="outline" onClick={() => navigate("/notification-sub")} size="lg">
-            <ArrowLeft className="h-4 w-4 mr-2" />
+            <ArrowLeft className="h-4 w-4 mr-2 text-primary dark:text-blue-400" />
             Listeye Dön
           </Button>
         </div>
@@ -72,7 +72,7 @@ export default function NotificationSubDetail() {
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center shadow-lg">
-              <Mail className="h-6 w-6 text-primary" />
+              <Mail className="h-6 w-6 text-primary dark:text-blue-400" />
             </div>
             <div className="flex-1">
               <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground dark:text-white mb-2">
@@ -110,7 +110,7 @@ export default function NotificationSubDetail() {
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
                   <div className="w-8 h-8 rounded-lg bg-primary/10 dark:bg-primary/20 flex items-center justify-center">
-                    <User className="h-4 w-4 text-primary" />
+                    <User className="h-4 w-4 text-primary dark:text-blue-400" />
                   </div>
                   <label className="text-sm font-semibold text-muted-foreground dark:text-muted-foreground/80 uppercase tracking-wide">
                     Ad Soyad
@@ -127,7 +127,7 @@ export default function NotificationSubDetail() {
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
                   <div className="w-8 h-8 rounded-lg bg-primary/10 dark:bg-primary/20 flex items-center justify-center">
-                    <Mail className="h-4 w-4 text-primary" />
+                    <Mail className="h-4 w-4 text-primary dark:text-blue-400" />
                   </div>
                   <label className="text-sm font-semibold text-muted-foreground dark:text-muted-foreground/80 uppercase tracking-wide">
                     E-posta
@@ -159,7 +159,7 @@ export default function NotificationSubDetail() {
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
                   <div className="w-8 h-8 rounded-lg bg-primary/10 dark:bg-primary/20 flex items-center justify-center">
-                    <Hash className="h-4 w-4 text-primary" />
+                    <Hash className="h-4 w-4 text-primary dark:text-blue-400" />
                   </div>
                   <label className="text-sm font-semibold text-muted-foreground dark:text-muted-foreground/80 uppercase tracking-wide">
                     Abonelik ID
@@ -168,7 +168,7 @@ export default function NotificationSubDetail() {
                 <div className="p-5 rounded-2xl bg-gradient-to-br from-muted/40 to-muted/20 dark:from-muted/60 dark:to-muted/40 border-2 border-border/50 dark:border-border/70 group-hover:border-primary/50 dark:group-hover:border-primary/60 transition-all duration-300">
                   <div className="flex items-center gap-4">
                     <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/10 dark:from-primary/30 dark:to-primary/20 flex items-center justify-center border-2 border-primary/30 shadow-lg">
-                      <Hash className="h-8 w-8 text-primary" />
+                      <Hash className="h-8 w-8 text-primary dark:text-blue-400" />
                     </div>
                     <div>
                       <p className="text-4xl font-bold text-foreground dark:text-white">
@@ -186,7 +186,7 @@ export default function NotificationSubDetail() {
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
                   <div className="w-8 h-8 rounded-lg bg-primary/10 dark:bg-primary/20 flex items-center justify-center">
-                    <CheckCircle2 className="h-4 w-4 text-primary" />
+                    <CheckCircle2 className="h-4 w-4 text-primary dark:text-blue-400" />
                   </div>
                   <label className="text-sm font-semibold text-muted-foreground dark:text-muted-foreground/80 uppercase tracking-wide">
                     Durum

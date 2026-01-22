@@ -1,8 +1,21 @@
+import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useGetNotificationById, useSendNotification } from "@/hooks/use-notifications";
+import { useGetUserMe } from "@/hooks/use-user";
+import { login } from "@/services/auth-services";
+import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   ArrowLeft,
   Edit,
@@ -11,6 +24,9 @@ import {
   Sparkles,
   Bell,
   FileText,
+  Lock,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 
 export default function NotificationDetail() {
@@ -18,10 +34,56 @@ export default function NotificationDetail() {
   const navigate = useNavigate();
   const { data, isLoading } = useGetNotificationById(Number(id));
   const sendMutation = useSendNotification();
+  const { data: userMe } = useGetUserMe();
+  const [passwordDialogOpen, setPasswordDialogOpen] = useState(false);
+  const [passwordToSend, setPasswordToSend] = useState<string>("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [passwordError, setPasswordError] = useState<string>("");
+  const [isVerifyingPassword, setIsVerifyingPassword] = useState(false);
 
   const handleSend = () => {
-    if (id) {
-      sendMutation.mutate(Number(id));
+    setPasswordDialogOpen(true);
+  };
+
+  const confirmSend = async () => {
+    if (!id || !passwordToSend.trim()) {
+      return;
+    }
+
+    if (!userMe?.email) {
+      toast.error("Kullanıcı bilgisi alınamadı. Lütfen sayfayı yenileyin.");
+      return;
+    }
+
+    setPasswordError("");
+    setIsVerifyingPassword(true);
+
+    try {
+      // Şifre doğrulaması için login endpoint'ini kullan
+      await login({
+        email: userMe.email,
+        password: passwordToSend,
+      });
+
+      // Şifre doğru, bildirimi gönder
+      sendMutation.mutate(Number(id), {
+        onSuccess: () => {
+          setPasswordDialogOpen(false);
+          setPasswordToSend("");
+          setShowPassword(false);
+          setPasswordError("");
+        },
+        onError: () => {
+          // Bildirim gönderme hatası
+          setPasswordError("");
+        },
+      });
+    } catch (error: any) {
+      // Şifre yanlış
+      setPasswordError("Şifre yanlış. Lütfen tekrar deneyin.");
+      setPasswordToSend("");
+    } finally {
+      setIsVerifyingPassword(false);
     }
   };
 
@@ -41,14 +103,14 @@ export default function NotificationDetail() {
       <div className="flex flex-col items-center justify-center min-h-[80vh]">
         <div className="text-center space-y-6">
           <div className="w-24 h-24 rounded-full bg-muted flex items-center justify-center mx-auto">
-            <Bell className="h-12 w-12 text-muted-foreground" />
+            <Bell className="h-12 w-12 text-yellow-500" />
           </div>
           <div>
             <h3 className="text-2xl font-bold mb-2">Bildirim bulunamadı</h3>
             <p className="text-muted-foreground">Aradığınız bildirim mevcut değil.</p>
           </div>
           <Button variant="outline" onClick={() => navigate("/notification")} size="lg">
-            <ArrowLeft className="h-4 w-4 mr-2" />
+            <ArrowLeft className="h-4 w-4 mr-2 text-primary dark:text-blue-400" />
             Listeye Dön
           </Button>
         </div>
@@ -176,7 +238,7 @@ export default function NotificationDetail() {
                 ) : (
                   <div className="flex flex-col items-center justify-center h-full min-h-[250px] text-center">
                     <div className="w-16 h-16 rounded-full bg-muted/50 dark:bg-muted/70 flex items-center justify-center mb-4">
-                      <FileText className="h-8 w-8 text-muted-foreground dark:text-muted-foreground/60" />
+                      <FileText className="h-8 w-8 text-blue-500" />
                     </div>
                     <p className="text-sm text-muted-foreground dark:text-muted-foreground/80 italic">
                       İçerik bulunmamaktadır
@@ -188,6 +250,105 @@ export default function NotificationDetail() {
           </Card>
         </div>
       </div>
+
+      {/* Password Dialog */}
+      <Dialog 
+        open={passwordDialogOpen} 
+        onOpenChange={(open) => {
+          setPasswordDialogOpen(open);
+          if (!open) {
+            setPasswordToSend("");
+            setShowPassword(false);
+          }
+        }}
+      >
+        <DialogContent className="sm:max-w-[500px] rounded-2xl">
+          <DialogHeader className="space-y-3 pb-4 border-b border-border/50">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                <Lock className="h-5 w-5 text-primary dark:text-blue-400" />
+              </div>
+              <div>
+                <DialogTitle className="text-2xl font-bold">Şifre Onayı</DialogTitle>
+                <DialogDescription className="text-sm text-muted-foreground mt-1">
+                  Bildirimi göndermek için şifrenizi giriniz.
+                </DialogDescription>
+              </div>
+            </div>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <label htmlFor="password" className="text-sm font-semibold text-foreground">
+                Şifre
+              </label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Şifrenizi giriniz"
+                  value={passwordToSend}
+                  onChange={(e) => {
+                    setPasswordToSend(e.target.value);
+                    setPasswordError("");
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && passwordToSend.trim() && !isVerifyingPassword) {
+                      confirmSend();
+                    }
+                  }}
+                  className={`pl-10 pr-10 h-12 text-base ${
+                    passwordError ? "border-red-500 focus-visible:ring-red-500" : ""
+                  }`}
+                  autoFocus
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-5 w-5" />
+                  ) : (
+                    <Eye className="h-5 w-5" />
+                  )}
+                </button>
+              </div>
+              {passwordError && (
+                <p className="text-sm text-red-500 font-medium mt-1">{passwordError}</p>
+              )}
+            </div>
+          </div>
+
+          <DialogFooter className="gap-2">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setPasswordDialogOpen(false);
+                setPasswordToSend("");
+                setShowPassword(false);
+                setPasswordError("");
+              }}
+              disabled={sendMutation.isPending || isVerifyingPassword}
+            >
+              İptal
+            </Button>
+            <Button
+              onClick={confirmSend}
+              disabled={!passwordToSend.trim() || sendMutation.isPending || isVerifyingPassword}
+              className="bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary"
+            >
+              <Send className="h-4 w-4 mr-2" />
+              {isVerifyingPassword
+                ? "Doğrulanıyor..."
+                : sendMutation.isPending
+                ? "Gönderiliyor..."
+                : "Gönder"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

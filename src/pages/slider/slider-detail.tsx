@@ -69,7 +69,7 @@ export default function SliderDetail() {
             <p className="text-muted-foreground">Aradığınız slider mevcut değil.</p>
           </div>
           <Button variant="outline" onClick={() => navigate("/slider")} size="lg">
-            <ArrowLeft className="h-4 w-4 mr-2" />
+            <ArrowLeft className="h-4 w-4 mr-2 text-primary dark:text-blue-400" />
             Listeye Dön
           </Button>
         </div>
@@ -109,7 +109,7 @@ export default function SliderDetail() {
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center shadow-lg">
-              <Images className="h-6 w-6 text-primary" />
+              <Images className="h-6 w-6 text-primary dark:text-blue-400" />
             </div>
             <div className="flex-1">
               <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground dark:text-white mb-2">
@@ -147,7 +147,7 @@ export default function SliderDetail() {
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
                   <div className="w-8 h-8 rounded-lg bg-primary/10 dark:bg-primary/20 flex items-center justify-center">
-                    <Sparkles className="h-4 w-4 text-primary" />
+                    <Sparkles className="h-4 w-4 text-primary dark:text-blue-400" />
                   </div>
                   <label className="text-sm font-semibold text-muted-foreground dark:text-muted-foreground/80 uppercase tracking-wide">
                     Başlık
@@ -168,7 +168,7 @@ export default function SliderDetail() {
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
                   <div className="w-8 h-8 rounded-lg bg-primary/10 dark:bg-primary/20 flex items-center justify-center">
-                    <FileText className="h-4 w-4 text-primary" />
+                    <FileText className="h-4 w-4 text-primary dark:text-blue-400" />
                   </div>
                   <label className="text-sm font-semibold text-muted-foreground dark:text-muted-foreground/80 uppercase tracking-wide">
                     Açıklama
@@ -212,7 +212,7 @@ export default function SliderDetail() {
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
                   <div className="w-8 h-8 rounded-lg bg-primary/10 dark:bg-primary/20 flex items-center justify-center">
-                    <ImageIcon className="h-4 w-4 text-primary" />
+                    <ImageIcon className="h-4 w-4 text-primary dark:text-blue-400" />
                   </div>
                   <label className="text-sm font-semibold text-muted-foreground dark:text-muted-foreground/80 uppercase tracking-wide">
                     Görsel Önizleme
@@ -281,7 +281,7 @@ export default function SliderDetail() {
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
                   <div className="w-8 h-8 rounded-lg bg-primary/10 dark:bg-primary/20 flex items-center justify-center">
-                    <Hash className="h-4 w-4 text-primary" />
+                    <Hash className="h-4 w-4 text-primary dark:text-blue-400" />
                   </div>
                   <label className="text-sm font-semibold text-muted-foreground dark:text-muted-foreground/80 uppercase tracking-wide">
                     Sıra Numarası
@@ -290,7 +290,7 @@ export default function SliderDetail() {
                 <div className="p-5 rounded-2xl bg-gradient-to-br from-muted/40 to-muted/20 dark:from-muted/60 dark:to-muted/40 border-2 border-border/50 dark:border-border/70 group-hover:border-primary/50 dark:group-hover:border-primary/60 transition-all duration-300">
                   <div className="flex items-center gap-4">
                     <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/10 dark:from-primary/30 dark:to-primary/20 flex items-center justify-center border-2 border-primary/30 shadow-lg">
-                      <Hash className="h-8 w-8 text-primary" />
+                      <Hash className="h-8 w-8 text-primary dark:text-blue-400" />
                     </div>
                     <div>
                       <p className="text-4xl font-bold text-foreground dark:text-white">
@@ -308,7 +308,7 @@ export default function SliderDetail() {
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
                   <div className="w-8 h-8 rounded-lg bg-primary/10 dark:bg-primary/20 flex items-center justify-center">
-                    <Link2 className="h-4 w-4 text-primary" />
+                    <Link2 className="h-4 w-4 text-primary dark:text-blue-400" />
                   </div>
                   <label className="text-sm font-semibold text-muted-foreground dark:text-muted-foreground/80 uppercase tracking-wide">
                     Görsel Yolu

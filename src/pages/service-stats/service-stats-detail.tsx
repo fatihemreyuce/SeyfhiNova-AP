@@ -61,14 +61,14 @@ export default function ServiceStatsDetail() {
       <div className="flex flex-col items-center justify-center min-h-[80vh]">
         <div className="text-center space-y-6">
           <div className="w-24 h-24 rounded-full bg-muted flex items-center justify-center mx-auto">
-            <TrendingUp className="h-12 w-12 text-muted-foreground" />
+            <TrendingUp className="h-12 w-12 text-green-500" />
           </div>
           <div>
             <h3 className="text-2xl font-bold mb-2">İstatistik bulunamadı</h3>
             <p className="text-muted-foreground">Aradığınız istatistik mevcut değil.</p>
           </div>
           <Button variant="outline" onClick={() => navigate("/service-stats")} size="lg">
-            <ArrowLeft className="h-4 w-4 mr-2" />
+            <ArrowLeft className="h-4 w-4 mr-2 text-primary dark:text-blue-400" />
             Listeye Dön
           </Button>
         </div>
@@ -108,7 +108,7 @@ export default function ServiceStatsDetail() {
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center shadow-lg">
-              <TrendingUp className="h-6 w-6 text-primary" />
+              <TrendingUp className="h-6 w-6 text-primary dark:text-blue-400" />
             </div>
             <div className="flex-1">
               <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground dark:text-white mb-2">
@@ -136,7 +136,7 @@ export default function ServiceStatsDetail() {
               <CardHeader className="pb-4 border-b border-border/50 bg-gradient-to-r from-blue-500/5 via-blue-500/3 to-transparent">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500/20 to-blue-600/10 dark:from-blue-500/30 dark:to-blue-600/20 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                    <TrendingUp className="h-5 w-5 text-blue-600 dark:text-blue-300" />
+                    <TrendingUp className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                   </div>
                   <CardTitle className="text-xl font-bold text-foreground dark:text-white">
                     İstatistik Değeri
@@ -160,7 +160,7 @@ export default function ServiceStatsDetail() {
               <CardHeader className="pb-4 border-b border-border/50 bg-gradient-to-r from-purple-500/5 via-purple-500/3 to-transparent">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500/20 to-purple-600/10 dark:from-purple-500/30 dark:to-purple-600/20 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                    <Sparkles className="h-5 w-5 text-purple-600 dark:text-purple-300" />
+                    <Sparkles className="h-5 w-5 text-purple-600 dark:text-purple-400" />
                   </div>
                   <CardTitle className="text-xl font-bold text-foreground dark:text-white">
                     Detay Bilgileri
@@ -171,7 +171,7 @@ export default function ServiceStatsDetail() {
                 <div className="p-5 rounded-2xl bg-gradient-to-br from-muted/40 to-muted/20 dark:from-muted/60 dark:to-muted/40 border-2 border-border/50 dark:border-border/70 group-hover:border-primary/50 dark:group-hover:border-primary/60 transition-all duration-300">
                   <div className="flex items-center gap-3 mb-3">
                     <div className="w-10 h-10 rounded-xl bg-primary/10 dark:bg-primary/20 flex items-center justify-center">
-                      <Sparkles className="h-5 w-5 text-primary" />
+                      <Sparkles className="h-5 w-5 text-primary dark:text-purple-400" />
                     </div>
                     <div>
                       <p className="text-xs font-semibold text-muted-foreground dark:text-muted-foreground/80 uppercase tracking-wide mb-1">Başlık</p>
@@ -183,7 +183,7 @@ export default function ServiceStatsDetail() {
                 <div className="p-5 rounded-2xl bg-gradient-to-br from-muted/40 to-muted/20 dark:from-muted/60 dark:to-muted/40 border-2 border-border/50 dark:border-border/70 group-hover:border-primary/50 dark:group-hover:border-primary/60 transition-all duration-300">
                   <div className="flex items-center gap-3 mb-3">
                     <div className="w-10 h-10 rounded-xl bg-primary/10 dark:bg-primary/20 flex items-center justify-center">
-                      <TrendingUp className="h-5 w-5 text-primary" />
+                      <TrendingUp className="h-5 w-5 text-primary dark:text-blue-400" />
                     </div>
                     <div>
                       <p className="text-xs font-semibold text-muted-foreground dark:text-muted-foreground/80 uppercase tracking-wide mb-1">Sayısal Değer</p>
@@ -254,7 +254,7 @@ export default function ServiceStatsDetail() {
                   <div className="aspect-square w-full rounded-2xl border-2 border-dashed border-border/50 dark:border-border/70 bg-gradient-to-br from-muted/30 to-muted/10 dark:from-muted/50 dark:to-muted/30 flex items-center justify-center group-hover:border-primary/50 dark:group-hover:border-primary/60 transition-all duration-300">
                     <div className="flex flex-col items-center text-center space-y-4">
                       <div className="w-20 h-20 rounded-2xl bg-muted/50 dark:bg-muted/70 flex items-center justify-center border-2 border-border/50">
-                        <ImageIcon className="h-10 w-10 text-muted-foreground dark:text-muted-foreground/60" />
+                        <ImageIcon className="h-10 w-10 text-purple-500" />
                       </div>
                       <div>
                         <p className="text-sm font-medium text-muted-foreground dark:text-muted-foreground/80 mb-1">

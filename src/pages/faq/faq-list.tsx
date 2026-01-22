@@ -3,7 +3,9 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   useFaq,
   useDeleteFaq,
+  useUpdateFaq,
 } from "@/hooks/use-faqs";
+import { toast } from "sonner";
 import {
   Table,
   TableBody,
@@ -253,6 +255,7 @@ export default function FaqList() {
 
   const { data, isLoading } = useFaq(search, page, size, sort);
   const deleteMutation = useDeleteFaq();
+  const updateMutation = useUpdateFaq();
 
   // Local state for drag & drop reordering
   const [items, setItems] = useState<FaqResponse[]>([]);
@@ -281,12 +284,49 @@ export default function FaqList() {
     const { active, over } = event;
 
     if (over && active.id !== over.id) {
-      setItems((items) => {
-        const oldIndex = items.findIndex((item) => item.id === active.id);
-        const newIndex = items.findIndex((item) => item.id === over.id);
+      const oldIndex = items.findIndex((item) => item.id === active.id);
+      const newIndex = items.findIndex((item) => item.id === over.id);
 
-        return arrayMove(items, oldIndex, newIndex);
+      const newItems = arrayMove(items, oldIndex, newIndex);
+
+      // Yeni sıralamaya göre orderIndex'leri güncelle
+      const sortedByCurrentOrder = [...items].sort((a, b) => b.orderIndex - a.orderIndex);
+      const maxOrderIndex = sortedByCurrentOrder[0]?.orderIndex || 0;
+
+      const updates: Array<{ id: number; orderIndex: number }> = [];
+      newItems.forEach((item, index) => {
+        const newOrderIndex = maxOrderIndex - index;
+        if (item.orderIndex !== newOrderIndex) {
+          updates.push({ id: item.id, orderIndex: newOrderIndex });
+        }
       });
+
+      setItems(newItems);
+
+      if (updates.length > 0) {
+        Promise.all(
+          updates.map((update) => {
+            const item = newItems.find((item) => item.id === update.id)!;
+            return updateMutation.mutateAsync({
+              id: update.id,
+              request: {
+                question: item.question,
+                answer: item.answer,
+                orderIndex: update.orderIndex,
+              },
+            });
+          })
+        )
+          .then(() => {
+            toast.success("Sıralama başarıyla güncellendi");
+          })
+          .catch(() => {
+            toast.error("Sıralama güncellenirken hata oluştu");
+            if (data?.content) {
+              setItems(data.content);
+            }
+          });
+      }
     }
   };
 
@@ -347,9 +387,9 @@ export default function FaqList() {
       return <ArrowUpDown className="h-3.5 w-3.5 opacity-30" />;
     }
     return currentDir === "asc" ? (
-      <ArrowUp className="h-3.5 w-3.5 text-primary" />
+      <ArrowUp className="h-3.5 w-3.5 text-primary dark:text-blue-400" />
     ) : (
-      <ArrowDown className="h-3.5 w-3.5 text-primary" />
+      <ArrowDown className="h-3.5 w-3.5 text-primary dark:text-blue-400" />
     );
   };
 

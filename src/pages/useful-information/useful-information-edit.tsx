@@ -26,8 +26,8 @@ const formSchema = z.object({
     .max(255, "Başlık en fazla 255 karakter olabilir"),
   description: z.string().min(1, "Açıklama gereklidir"),
   excerpt: z.string()
-    .min(1, "Özet gereklidir")
-    .max(1000, "Özet en fazla 1000 karakter olabilir"),
+    .min(1, "Alt açıklama gereklidir")
+    .max(1000, "Alt açıklama en fazla 1000 karakter olabilir"),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -105,7 +105,7 @@ export default function UsefulInformationEdit() {
         requestData.file = file;
       }
       
-      updateMutation.mutate(requestData, {
+      updateMutation.mutate({ id: Number(id), request: requestData }, {
         onSuccess: () => {
           navigate("/useful-information");
         },
@@ -126,7 +126,7 @@ export default function UsefulInformationEdit() {
       <div className="flex flex-col items-center justify-center py-12">
         <p className="text-muted-foreground mb-4">Kullanışlı bilgi bulunamadı.</p>
         <Button variant="outline" onClick={() => navigate("/useful-information")}>
-          <ArrowLeft className="h-4 w-4 mr-2" />
+          <ArrowLeft className="h-4 w-4 mr-2 text-primary dark:text-blue-400" />
           Geri Dön
         </Button>
       </div>
@@ -144,7 +144,7 @@ export default function UsefulInformationEdit() {
           onClick={() => navigate("/useful-information")}
           className="self-start sm:self-auto"
         >
-          <ArrowLeft className="h-4 w-4" />
+          <ArrowLeft className="h-4 w-4 text-primary dark:text-blue-400" />
         </Button>
         <div className="flex-1">
           <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Kullanışlı Bilgi Düzenle</h1>
@@ -159,7 +159,7 @@ export default function UsefulInformationEdit() {
           <Card>
             <CardHeader>
               <div className="flex items-center gap-2">
-                <FileText className="h-5 w-5 text-primary" />
+                <FileText className="h-5 w-5 text-primary dark:text-blue-400" />
                 <CardTitle>Kullanışlı Bilgi Bilgileri</CardTitle>
               </div>
             </CardHeader>
@@ -183,7 +183,7 @@ export default function UsefulInformationEdit() {
                             />
                             <div className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-border rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors cursor-pointer group">
                               <div className="flex flex-col items-center justify-center pt-6 pb-6">
-                                <Upload className="w-10 h-10 mb-3 text-muted-foreground group-hover:text-primary transition-colors" />
+                                <Upload className="w-10 h-10 mb-3 text-primary/70 group-hover:text-primary transition-colors" />
                                 <p className="mb-2 text-sm font-semibold text-foreground">
                                   Dosya seçmek için tıklayın
                                 </p>
@@ -199,7 +199,7 @@ export default function UsefulInformationEdit() {
                               <div className="flex items-center justify-center w-full h-32 rounded-lg border-2 border-border bg-muted/30 p-6">
                                 <div className="flex flex-col items-center gap-3">
                                   <div className="w-16 h-16 rounded-lg bg-primary/10 flex items-center justify-center">
-                                    <File className="w-8 h-8 text-primary" />
+                                    <File className="w-8 h-8 text-primary dark:text-blue-400" />
                                   </div>
                                   <div className="text-center">
                                     <p className="text-sm font-medium text-foreground">
@@ -216,7 +216,7 @@ export default function UsefulInformationEdit() {
                                           href={currentFileUrl}
                                           target="_blank"
                                           rel="noopener noreferrer"
-                                          className="text-xs text-primary hover:underline flex items-center gap-1"
+                                          className="text-xs text-primary dark:text-blue-400 hover:underline flex items-center gap-1"
                                         >
                                           <ExternalLink className="h-3 w-3" />
                                           Mevcut dosyayı görüntüle
@@ -285,11 +285,11 @@ export default function UsefulInformationEdit() {
                 name="excerpt"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Özet</FormLabel>
+                    <FormLabel>Alt Açıklama</FormLabel>
                     <FormControl>
                       <div className="space-y-1">
                         <Textarea
-                          placeholder="Kısa özet giriniz"
+                          placeholder="Alt açıklama giriniz"
                           rows={3}
                           maxLength={1000}
                           {...field}
@@ -334,7 +334,7 @@ export default function UsefulInformationEdit() {
               İptal
             </Button>
             <Button type="submit" disabled={updateMutation.isPending} className="w-full sm:w-auto">
-              <Save className="h-4 w-4 mr-2" />
+              <Save className="h-4 w-4 mr-2 text-white" />
               {updateMutation.isPending ? "Güncelleniyor..." : "Güncelle"}
             </Button>
           </div>

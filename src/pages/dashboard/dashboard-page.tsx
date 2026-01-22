@@ -124,7 +124,7 @@ export default function DashboardPage() {
           onClick={() => refetch()}
           className="inline-flex items-center justify-center gap-2 rounded-lg border border-input bg-background px-4 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-colors"
         >
-          <RefreshCw className="h-4 w-4" />
+          <RefreshCw className="h-4 w-4 text-primary" />
           Yenile
         </button>
       </div>
@@ -199,17 +199,17 @@ export default function DashboardPage() {
               {dashboardData.todayPageViews.toLocaleString()}
             </div>
             <div className="flex items-center gap-1 text-xs text-muted-foreground">
-              <Layers className="h-3 w-3" />
+              <Layers className="h-3 w-3 text-purple-500" />
               <span>Dün: {dashboardData.yesterdayPageViews.toLocaleString()}</span>
             </div>
           </CardContent>
         </Card>
 
-        {/* Dönüşüm Oranı */}
+        {/* İletişim Formu */}
         <Card className="relative overflow-hidden transition-all duration-300 hover:shadow-lg hover:scale-[1.02]">
           <div className="absolute top-0 right-0 w-32 h-32 bg-green-500/5 rounded-full -mr-16 -mt-16"></div>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Dönüşüm Oranı</CardTitle>
+            <CardTitle className="text-sm font-medium">İletişim Formu</CardTitle>
             <div className="p-2 rounded-lg bg-green-500/10">
               <Target className="h-4 w-4 text-green-500" />
             </div>
@@ -222,7 +222,7 @@ export default function DashboardPage() {
             </div>
             <div className="flex flex-col gap-1 text-xs">
               <div className="flex items-center gap-1 text-muted-foreground">
-                <MousePointerClick className="h-3 w-3" />
+                <MousePointerClick className="h-3 w-3 text-green-500" />
                 <span>
                   {dashboardData.conversionStats?.totalContactForms || 0} form gönderimi
                 </span>
@@ -244,8 +244,8 @@ export default function DashboardPage() {
           <CardHeader>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-primary/10">
-                  <BarChart3 className="h-5 w-5 text-primary" />
+                <div className="p-2 rounded-lg bg-blue-500/10">
+                  <BarChart3 className="h-5 w-5 text-blue-500" />
                 </div>
                 <div>
                   <CardTitle>7 Günlük İstatistikler</CardTitle>
@@ -255,7 +255,7 @@ export default function DashboardPage() {
                 </div>
               </div>
               <Badge variant="outline" className="gap-2">
-                <Calendar className="h-3 w-3" />
+                <Calendar className="h-3 w-3 text-blue-500" />
                 Son 7 Gün
               </Badge>
             </div>
@@ -327,7 +327,7 @@ export default function DashboardPage() {
               </div>
             ) : (
               <div className="flex flex-col items-center justify-center h-[400px] text-center">
-                <BarChart3 className="h-12 w-12 text-muted-foreground mb-4 opacity-50" />
+                <BarChart3 className="h-12 w-12 text-blue-500 mb-4 opacity-50" />
                 <p className="text-sm text-muted-foreground dark:text-foreground/50">
                   Henüz günlük istatistik verisi bulunmamaktadır
                 </p>
@@ -340,8 +340,8 @@ export default function DashboardPage() {
         <Card>
           <CardHeader>
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-primary/10">
-                <Globe className="h-5 w-5 text-primary" />
+              <div className="p-2 rounded-lg bg-orange-500/10">
+                <Globe className="h-5 w-5 text-orange-500" />
               </div>
               <div>
                 <CardTitle>En Çok Ziyaret Edilen Sayfalar</CardTitle>
@@ -374,7 +374,7 @@ export default function DashboardPage() {
                         </TableCell>
                         <TableCell className="font-medium dark:text-foreground">
                           <div className="flex items-center gap-2 max-w-[250px]">
-                            <FileText className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                            <FileText className="h-4 w-4 text-blue-500 flex-shrink-0" />
                             <span className="truncate">{page.pagePath || "/"}</span>
                           </div>
                         </TableCell>
@@ -391,7 +391,7 @@ export default function DashboardPage() {
               </div>
             ) : (
               <div className="flex flex-col items-center justify-center py-12 text-center">
-                <Globe className="h-12 w-12 text-muted-foreground mb-4 opacity-50" />
+                <Globe className="h-12 w-12 text-orange-500 mb-4 opacity-50" />
                 <p className="text-sm text-muted-foreground dark:text-foreground/50">
                   Henüz sayfa verisi bulunmamaktadır
                 </p>
@@ -408,7 +408,7 @@ export default function DashboardPage() {
                 <MousePointerClick className="h-5 w-5 text-green-500" />
               </div>
               <div>
-                <CardTitle>Dönüşüm İstatistikleri</CardTitle>
+                <CardTitle>İletişim Formu</CardTitle>
                 <CardDescription className="mt-1">Form gönderim performansı</CardDescription>
               </div>
             </div>
@@ -495,7 +495,7 @@ export default function DashboardPage() {
               </div>
             ) : (
               <div className="flex flex-col items-center justify-center py-12 text-center">
-                <Target className="h-12 w-12 text-muted-foreground mb-4 opacity-50" />
+                <Target className="h-12 w-12 text-green-500 mb-4 opacity-50" />
                 <p className="text-sm text-muted-foreground dark:text-foreground/50">
                   Dönüşüm verisi bulunmamaktadır
                 </p>

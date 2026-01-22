@@ -34,10 +34,10 @@ export const getUserById = (id:number): Promise<UserResponse> => {
     });
 }
 
-export const changePassword = (id:number, password:string): Promise<void> => {
-    return fetchClient<{ password: string }, void>(`/admin/users/${id}/change-password`, {
+export const changePassword = (id:number, oldPassword:string, newPassword:string): Promise<void> => {
+    return fetchClient<{ oldPassword: string; newPassword: string }, void>(`/admin/users/${id}/change-password`, {
         method: "PUT",
-        body: { password },
+        body: { oldPassword, newPassword },
     });
 }
 

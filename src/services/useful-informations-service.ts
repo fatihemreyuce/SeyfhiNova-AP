@@ -18,8 +18,8 @@ export const createUsefulInformation = (request: UsefulInformationRequest): Prom
     });
 };
 
-export const updateUsefulInformation = (request: UsefulInformationRequest): Promise<UsefulInformationResponse> => {
-    return fetchClient<UsefulInformationRequest, UsefulInformationResponse>("/admin/useful-information", {
+export const updateUsefulInformation = (id: number, request: UsefulInformationRequest): Promise<UsefulInformationResponse> => {
+    return fetchClient<UsefulInformationRequest, UsefulInformationResponse>(`/admin/useful-information/${id}`, {
         method: "PUT",
         body: request,
         headers: {

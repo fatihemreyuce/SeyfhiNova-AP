@@ -87,7 +87,7 @@ export default function FaqEdit() {
       <div className="flex flex-col items-center justify-center py-12">
         <p className="text-muted-foreground mb-4">Soru bulunamadı.</p>
         <Button variant="outline" onClick={() => navigate("/faq")}>
-          <ArrowLeft className="h-4 w-4 mr-2" />
+          <ArrowLeft className="h-4 w-4 mr-2 text-primary dark:text-blue-400" />
           Geri Dön
         </Button>
       </div>
@@ -103,7 +103,7 @@ export default function FaqEdit() {
           onClick={() => navigate("/faq")}
           className="self-start sm:self-auto"
         >
-          <ArrowLeft className="h-4 w-4" />
+          <ArrowLeft className="h-4 w-4 text-primary dark:text-blue-400" />
         </Button>
         <div className="flex-1">
           <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Soru Düzenle</h1>
@@ -118,7 +118,7 @@ export default function FaqEdit() {
           <Card>
             <CardHeader>
               <div className="flex items-center gap-2">
-                <HelpCircle className="h-5 w-5 text-primary" />
+                <HelpCircle className="h-5 w-5 text-primary dark:text-blue-400" />
                 <CardTitle>Soru Bilgileri</CardTitle>
               </div>
             </CardHeader>
@@ -206,7 +206,7 @@ export default function FaqEdit() {
               İptal
             </Button>
             <Button type="submit" disabled={updateMutation.isPending} className="w-full sm:w-auto">
-              <Save className="h-4 w-4 mr-2" />
+              <Save className="h-4 w-4 mr-2 text-white" />
               {updateMutation.isPending ? "Güncelleniyor..." : "Güncelle"}
             </Button>
           </div>
