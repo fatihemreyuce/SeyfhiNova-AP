@@ -25,16 +25,20 @@ export const useCreateReferance = () => {
     });
 };
 
-export const useUpdateReferance = () => {
+export const useUpdateReferance = (options?: { suppressToast?: boolean }) => {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: ({ id, request }: { id: number; request: ReferanceRequest }) => updateReferance(id, request),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["referance"] });
-            toast.success("Referans başarıyla güncellendi");
+            if (!options?.suppressToast) {
+                toast.success("Referans başarıyla güncellendi");
+            }
         },
         onError: () => {
-            toast.error("Referans güncellenirken hata oluştu");
+            if (!options?.suppressToast) {
+                toast.error("Referans güncellenirken hata oluştu");
+            }
         },
     });
 };

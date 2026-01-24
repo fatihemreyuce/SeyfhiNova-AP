@@ -542,7 +542,7 @@ export default function NotificationList() {
             <Button
               onClick={confirmSend}
               disabled={!passwordToSend.trim() || sendMutation.isPending || isVerifyingPassword}
-              className="bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary"
+              className="bg-primary hover:bg-primary/90 text-white"
             >
               <Send className="h-4 w-4 mr-2" />
               {isVerifyingPassword

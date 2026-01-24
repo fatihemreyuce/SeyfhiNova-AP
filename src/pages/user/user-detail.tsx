@@ -157,7 +157,7 @@ export default function UserDetail() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-muted/20 to-background">
+    <div className="min-h-screen bg-background">
       {/* Sticky Navigation Bar */}
       <div className="sticky top-0 z-10 backdrop-blur-xl bg-background/80 border-b border-border/50 shadow-sm">
         <div className="container mx-auto px-6 py-4">
@@ -189,12 +189,12 @@ export default function UserDetail() {
                     Şifre Değiştir
                   </Button>
                 </DialogTrigger>
-            <DialogContent className="sm:max-w-[580px] rounded-3xl p-0 gap-0 overflow-hidden shadow-2xl border-0 bg-gradient-to-br from-background via-background to-muted/30">
-              {/* Header Section with Gradient */}
-              <DialogHeader className="px-8 pt-8 pb-6 bg-gradient-to-r from-primary/8 via-primary/5 to-transparent border-b border-border/40">
+            <DialogContent className="sm:max-w-[580px] rounded-3xl p-0 gap-0 overflow-hidden shadow-2xl border-0 bg-background">
+              {/* Header Section */}
+              <DialogHeader className="px-8 pt-8 pb-6 bg-background border-b border-border/40">
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex items-center gap-4 flex-1">
-                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/20 via-primary/15 to-primary/10 flex items-center justify-center shadow-xl ring-2 ring-primary/10">
+                    <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center shadow-xl ring-2 ring-primary/10">
                       <Key className="h-8 w-8 text-primary dark:text-blue-400" />
                     </div>
                     <div className="flex-1">
@@ -432,7 +432,7 @@ export default function UserDetail() {
                     <Button
                       type="submit"
                       disabled={changePasswordMutation.isPending || !passwordForm.formState.isValid}
-                      className="h-12 px-8 rounded-xl font-semibold bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary text-white shadow-lg hover:shadow-xl transition-all duration-200 flex-1 sm:flex-none disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="h-12 px-8 rounded-xl font-semibold bg-primary hover:bg-primary/90 text-white shadow-lg hover:shadow-xl transition-all duration-200 flex-1 sm:flex-none disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {changePasswordMutation.isPending ? (
                         <span className="flex items-center gap-2">
@@ -456,7 +456,7 @@ export default function UserDetail() {
           </Dialog>
               <Button 
                 onClick={() => navigate(`/user/${id}/edit`)}
-                className="h-10 px-4 rounded-xl font-medium bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary shadow-lg hover:shadow-xl transition-all duration-300"
+                className="h-10 px-4 rounded-xl font-medium bg-primary hover:bg-primary/90 text-white shadow-lg hover:shadow-xl transition-all duration-300"
               >
                 <Edit className="h-4 w-4 mr-2 text-white dark:text-white" />
                 Düzenle
@@ -469,7 +469,7 @@ export default function UserDetail() {
       <div className="container mx-auto px-6 py-8">
         {/* Hero Section - Profile Header */}
         <div className="mb-8">
-          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary/10 via-primary/5 to-muted/20 border-2 border-border/50 shadow-2xl p-8 md:p-10">
+          <div className="relative overflow-hidden rounded-3xl bg-muted/20 border-2 border-border/50 shadow-2xl p-8 md:p-10">
             <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
             <div className="relative flex flex-col md:flex-row items-start md:items-center gap-6">
               {/* Avatar */}
@@ -488,13 +488,13 @@ export default function UserDetail() {
                   <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground mb-2">
                     {data.firstName} {data.lastName}
                   </h1>
-                  <p className="text-lg text-muted-foreground flex items-center gap-2">
+                  <div className="text-lg text-muted-foreground flex items-center gap-2">
                     <span className="font-mono">@{data.username}</span>
                     <span className="text-muted-foreground/50">•</span>
                     <Badge variant="outline" className="font-mono bg-blue-50 text-blue-600 dark:bg-blue-950/30 dark:text-blue-400">
                       ID: #{data.id}
                     </Badge>
-                  </p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -503,7 +503,7 @@ export default function UserDetail() {
 
         {/* Quick Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-          <Card className="border-2 shadow-lg rounded-2xl overflow-hidden bg-gradient-to-br from-card to-muted/30 hover:shadow-xl transition-all duration-300 group">
+          <Card className="border-2 shadow-lg rounded-2xl overflow-hidden bg-card hover:shadow-xl transition-all duration-300 group">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -517,7 +517,7 @@ export default function UserDetail() {
             </CardContent>
           </Card>
 
-          <Card className="border-2 shadow-lg rounded-2xl overflow-hidden bg-gradient-to-br from-card to-muted/30 hover:shadow-xl transition-all duration-300 group">
+          <Card className="border-2 shadow-lg rounded-2xl overflow-hidden bg-card hover:shadow-xl transition-all duration-300 group">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -531,7 +531,7 @@ export default function UserDetail() {
             </CardContent>
           </Card>
 
-          <Card className="border-2 shadow-lg rounded-2xl overflow-hidden bg-gradient-to-br from-card to-muted/30 hover:shadow-xl transition-all duration-300 group">
+          <Card className="border-2 shadow-lg rounded-2xl overflow-hidden bg-card hover:shadow-xl transition-all duration-300 group">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -549,10 +549,10 @@ export default function UserDetail() {
         {/* Main Content Grid */}
         <div className="grid gap-6 grid-cols-1 lg:grid-cols-2">
           {/* Hesap Bilgileri */}
-          <Card className="border-2 shadow-xl rounded-3xl overflow-hidden bg-gradient-to-br from-card to-muted/30 dark:from-card dark:to-muted/50 backdrop-blur-sm hover:shadow-2xl transition-all duration-300 group">
-            <CardHeader className="pb-4 border-b border-border/50 bg-gradient-to-r from-blue-500/5 via-blue-500/3 to-transparent">
+          <Card className="border-2 shadow-xl rounded-3xl overflow-hidden bg-card backdrop-blur-sm hover:shadow-2xl transition-all duration-300 group">
+            <CardHeader className="pb-4 border-b border-border/50 bg-background">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500/20 to-blue-600/10 dark:from-blue-500/30 dark:to-blue-600/20 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
                   <User className="h-5 w-5 text-blue-600 dark:text-blue-300" />
                 </div>
                 <CardTitle className="text-xl font-bold text-foreground dark:text-white">
@@ -598,9 +598,9 @@ export default function UserDetail() {
 
           {/* Kişisel Bilgiler */}
           <Card className="border-2 shadow-xl rounded-3xl overflow-hidden bg-gradient-to-br from-card to-muted/30 dark:from-card dark:to-muted/50 backdrop-blur-sm hover:shadow-2xl transition-all duration-300 group">
-            <CardHeader className="pb-4 border-b border-border/50 bg-gradient-to-r from-purple-500/5 via-purple-500/3 to-transparent">
+            <CardHeader className="pb-4 border-b border-border/50 bg-background">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500/20 to-purple-600/10 dark:from-purple-500/30 dark:to-purple-600/20 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                <div className="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
                   <UserCircle className="h-5 w-5 text-purple-600 dark:text-purple-300" />
                 </div>
                 <CardTitle className="text-xl font-bold text-foreground dark:text-white">

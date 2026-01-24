@@ -267,7 +267,7 @@ export default function PartnerList() {
 
   const { data, isLoading } = usePartner(search, page, size, sort);
   const deleteMutation = useDeletePartner();
-  const updateMutation = useUpdatePartner();
+  const updateMutation = useUpdatePartner({ suppressToast: true });
 
   // Local state for drag & drop reordering
   const [items, setItems] = useState<PartnerResponse[]>([]);

@@ -25,16 +25,20 @@ export const useCreateServiceCategory = () => {
     });
 }
 
-export const useUpdateServiceCategory = () => {
+export const useUpdateServiceCategory = (options?: { suppressToast?: boolean }) => {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: ({ id, request }: { id: number; request: ServiceCategoryRequest }) => updateServiceCategory(id, request),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["service-category"] });
-            toast.success("Servis kategori başarıyla güncellendi");
+            if (!options?.suppressToast) {
+                toast.success("Servis kategori başarıyla güncellendi");
+            }
         },
         onError: () => {
-            toast.error("Servis kategori güncellenirken hata oluştu");
+            if (!options?.suppressToast) {
+                toast.error("Servis kategori güncellenirken hata oluştu");
+            }
         },
     });
 }

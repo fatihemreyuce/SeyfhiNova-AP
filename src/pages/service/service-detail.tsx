@@ -57,7 +57,7 @@ export default function ServiceDetail() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-muted/20 to-background">
+    <div className="min-h-screen bg-background">
       {/* Sticky Navigation Bar */}
       <div className="sticky top-0 z-10 backdrop-blur-xl bg-background/80 border-b border-border/50 shadow-sm">
         <div className="container mx-auto px-4 sm:px-6 py-4">
@@ -73,7 +73,7 @@ export default function ServiceDetail() {
             <div className="flex items-center gap-3">
               <Button 
                 onClick={() => navigate(`/service/${id}/edit`)}
-                className="h-10 px-4 rounded-xl font-medium bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary shadow-lg hover:shadow-xl transition-all duration-300 w-full sm:w-auto"
+                className="h-10 px-4 rounded-xl font-medium bg-primary hover:bg-primary/90 text-white shadow-lg hover:shadow-xl transition-all duration-300 w-full sm:w-auto"
               >
                 <Edit className="h-4 w-4 mr-2 text-white dark:text-white" />
                 Düzenle
@@ -135,7 +135,7 @@ export default function ServiceDetail() {
                         Kategori
                       </p>
                     </div>
-                    <Badge className="text-base px-4 py-2 font-semibold bg-gradient-to-r from-primary to-primary/90 text-white border-0 shadow-lg">
+                    <Badge className="text-base px-4 py-2 font-semibold bg-primary text-white border-0 shadow-lg">
                       {getCategoryName(data.categoryId)}
                     </Badge>
                   </div>

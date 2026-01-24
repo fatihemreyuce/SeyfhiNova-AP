@@ -25,16 +25,20 @@ export const useCreateFaq = () => {
     });
 };
 
-export const useUpdateFaq = () => {
+export const useUpdateFaq = (options?: { suppressToast?: boolean }) => {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: ({ id, request }: { id: number; request: FaqRequest }) => updateFaq(id, request),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["faqs"] });
-            toast.success("Sıkça Sorulan Soru başarıyla güncellendi");
+            if (!options?.suppressToast) {
+                toast.success("Sıkça Sorulan Soru başarıyla güncellendi");
+            }
         },
         onError: () => {
-            toast.error("Sıkça Sorulan Soru güncellenirken hata oluştu");
+            if (!options?.suppressToast) {
+                toast.error("Sıkça Sorulan Soru güncellenirken hata oluştu");
+            }
         },
     });
 };

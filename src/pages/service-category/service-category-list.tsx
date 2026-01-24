@@ -245,7 +245,7 @@ export default function ServiceCategoryList() {
 
   const { data, isLoading } = useServiceCategory(search, page, size, sort);
   const deleteMutation = useDeleteServiceCategory();
-  const updateMutation = useUpdateServiceCategory();
+  const updateMutation = useUpdateServiceCategory({ suppressToast: true });
 
   // Local state for drag & drop reordering
   const [items, setItems] = useState<ServiceCategoryResponse[]>([]);

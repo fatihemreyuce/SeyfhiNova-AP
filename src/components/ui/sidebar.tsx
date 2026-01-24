@@ -177,7 +177,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
 	return (
 		<aside
 			className={cn(
-				"fixed left-0 top-0 z-40 h-screen border-r border-seyfhi-accent bg-seyfhi-primary gradient-sidebar transition-all duration-300 ease-in-out flex flex-col",
+				"fixed left-0 top-0 z-40 h-screen border-r border-sidebar-border bg-sidebar gradient-sidebar transition-all duration-300 ease-in-out flex flex-col",
 				isOpen ? "w-[280px] sm:w-64 max-w-[85vw]" : "w-0 lg:w-16",
 				isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0",
 				!isOpen && "overflow-hidden lg:overflow-visible"
@@ -185,18 +185,18 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
 		>
 			{/* Header */}
 			<div className={cn(
-				"flex h-16 sm:h-20 items-center border-b border-seyfhi-accent/20 transition-all duration-300 shrink-0",
+				"flex h-16 sm:h-20 items-center border-b border-sidebar-border/60 transition-all duration-300 shrink-0",
 				isOpen ? "justify-between px-4 sm:px-6" : "justify-center px-0 lg:px-0",
 				!isOpen && "opacity-0 lg:opacity-100"
 			)}>
 				<div className="flex items-center gap-2 sm:gap-3">
-					<div className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-lg bg-white/10 backdrop-blur-sm shadow-lg shrink-0">
-						<Sparkles className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
+					<div className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground shadow-md shrink-0">
+						<Sparkles className="h-4 w-4 sm:h-5 sm:w-5" />
 					</div>
 					{isOpen && (
 						<div className="flex flex-col">
-							<span className="text-sm sm:text-base font-bold tracking-tight text-white">Seyfhi</span>
-							<span className="text-[10px] sm:text-xs text-white/70 font-medium">Yatırım</span>
+							<span className="text-sm sm:text-base font-bold tracking-tight text-sidebar-foreground">Seyfhi</span>
+							<span className="text-[10px] sm:text-xs text-sidebar-foreground/70 font-medium">Yatırım</span>
 						</div>
 					)}
 				</div>
@@ -212,13 +212,13 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
 				"flex flex-col gap-3 sm:gap-4 flex-1 overflow-y-auto overflow-x-hidden transition-all duration-300",
 				isOpen ? "p-3 sm:p-4" : "p-0 lg:p-2",
 				!isOpen && "lg:overflow-visible opacity-0 lg:opacity-100 pointer-events-none lg:pointer-events-auto",
-				"scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent hover:scrollbar-thumb-white/30"
+				"scrollbar-thin scrollbar-thumb-sidebar-border scrollbar-track-transparent hover:scrollbar-thumb-sidebar-primary/50"
 			)}>
 				<TooltipProvider delayDuration={200}>
 					{navigationCategories.map((category) => (
 						<div key={category.title} className="space-y-1.5">
 							{isOpen && (
-								<h3 className="px-3 sm:px-3.5 text-[10px] sm:text-xs font-semibold text-white/50 uppercase tracking-wider mb-2">
+								<h3 className="px-3 sm:px-3.5 text-[10px] sm:text-xs font-semibold text-sidebar-foreground/60 uppercase tracking-wider mb-2">
 									{category.title}
 								</h3>
 							)}
@@ -239,15 +239,15 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
 												"group flex items-center gap-2 sm:gap-3 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200",
 												isOpen ? "px-3 sm:px-3.5 py-2 sm:py-2.5" : "px-2 py-2.5 justify-center lg:justify-center",
 												isActive
-													? "bg-white/15 text-white shadow-lg shadow-primary/20 scale-[1.02] border-l-4 border-white/40"
-													: "text-white/80 hover:bg-white/10 hover:text-white hover:translate-x-1",
-												!isOpen && "lg:text-white"
+													? "bg-sidebar-accent text-sidebar-foreground shadow-md shadow-sidebar-foreground/10 scale-[1.02] border-l-4 border-sidebar-primary font-semibold"
+													: "text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground hover:translate-x-1",
+												!isOpen && "lg:text-sidebar-foreground"
 											)
 										}
 									>
 										<Icon className={cn(
 											"h-4 w-4 transition-transform duration-200 group-hover:scale-110 shrink-0",
-											isOpen ? "text-current" : "lg:text-white"
+											isOpen ? "text-current" : "lg:text-sidebar-foreground"
 										)} />
 										{isOpen && <span className="truncate">{item.label}</span>}
 									</NavLink>
@@ -279,7 +279,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
 
 			{/* Footer with user profile and logout */}
 			<div className={cn(
-				"border-t border-seyfhi-accent/20 transition-all duration-300 bg-seyfhi-primary shrink-0",
+				"border-t border-sidebar-border/60 transition-all duration-300 bg-sidebar shrink-0",
 				isOpen ? "p-3 sm:p-4" : "p-0 lg:p-2",
 				!isOpen && "opacity-0 lg:opacity-100 pointer-events-none lg:pointer-events-auto"
 			)}>
@@ -292,32 +292,30 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
 									<button
 										className={cn(
 											"w-full flex items-center gap-2 sm:gap-3 rounded-xl sm:rounded-2xl px-3 sm:px-4 py-2.5 sm:py-3.5 text-xs sm:text-sm font-medium transition-all duration-300 group",
-											"bg-slate-800/60 hover:bg-slate-800/80 text-white",
-											"border border-slate-700/50 hover:border-slate-600/70",
-											"backdrop-blur-md shadow-lg hover:shadow-xl",
-											"hover:scale-[1.02] active:scale-[0.98]"
+											"bg-sidebar-accent hover:bg-sidebar-accent/90 text-sidebar-foreground",
+											"border border-sidebar-border hover:border-sidebar-primary/30",
+											"shadow-sm hover:shadow-md",
+											"hover:scale-[1.01] active:scale-[0.99]"
 										)}
 									>
 										{/* Avatar - Enhanced */}
-										<div className="relative w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-slate-600 via-slate-500 to-slate-600 flex items-center justify-center shrink-0 border-2 border-slate-500/50 shadow-inner group-hover:border-slate-400/70 transition-all duration-300 group-hover:scale-105">
-											<User className="h-5 w-5 sm:h-6 sm:w-6 text-white/90 drop-shadow-sm" strokeWidth={2} />
-											{/* Subtle inner glow */}
-											<div className="absolute inset-0 rounded-full bg-white/5 group-hover:bg-white/10 transition-colors duration-300" />
+										<div className="relative w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-sidebar-primary text-sidebar-primary-foreground flex items-center justify-center shrink-0 border-2 border-sidebar-border/50 shadow-sm group-hover:border-sidebar-primary transition-all duration-300 group-hover:scale-105">
+											<User className="h-5 w-5 sm:h-6 sm:w-6 drop-shadow-sm" strokeWidth={2} />
 										</div>
 										
 										{/* User Info - Enhanced */}
 										<div className="flex-1 text-left min-w-0">
-											<div className="text-xs sm:text-sm font-bold text-white truncate leading-tight mb-1 sm:mb-1.5 drop-shadow-sm">
+											<div className="text-xs sm:text-sm font-bold text-sidebar-foreground truncate leading-tight mb-1 sm:mb-1.5">
 												{userMe.firstName} {userMe.lastName}
 											</div>
-											<div className="text-[10px] sm:text-xs text-slate-300 truncate flex items-center gap-1 sm:gap-1.5 font-medium">
-												<Mail className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-slate-400 shrink-0" strokeWidth={2} />
+											<div className="text-[10px] sm:text-xs text-sidebar-foreground/60 truncate flex items-center gap-1 sm:gap-1.5 font-medium">
+												<Mail className="h-3 w-3 sm:h-3.5 sm:w-3.5 shrink-0" strokeWidth={2} />
 												<span className="truncate">{userMe.email}</span>
 											</div>
 										</div>
 										
 										{/* Chevron Icon - Enhanced */}
-										<ChevronsUpDown className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-slate-400 shrink-0 group-hover:text-slate-300 transition-all duration-300 group-hover:scale-110" strokeWidth={2} />
+										<ChevronsUpDown className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-sidebar-foreground/50 shrink-0 group-hover:text-sidebar-foreground transition-all duration-300 group-hover:scale-110" strokeWidth={2} />
 									</button>
 								</DropdownMenuTrigger>
 								<DropdownMenuContent 
@@ -363,11 +361,11 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
 							</DropdownMenu>
 						)}
 						{userMeLoading && (
-							<div className="w-full flex items-center gap-2 sm:gap-3 rounded-xl px-3 sm:px-3.5 py-2.5 sm:py-3 bg-white/5 border border-white/10">
-								<div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white/10 animate-pulse border border-white/20 shrink-0" />
+							<div className="w-full flex items-center gap-2 sm:gap-3 rounded-xl px-3 sm:px-3.5 py-2.5 sm:py-3 bg-sidebar-accent border border-sidebar-border">
+								<div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-sidebar-accent animate-pulse border border-sidebar-border shrink-0" />
 								<div className="flex-1 space-y-1.5 sm:space-y-2">
-									<div className="h-3 sm:h-3.5 w-24 sm:w-28 bg-white/10 rounded animate-pulse" />
-									<div className="h-2 sm:h-2.5 w-32 sm:w-36 bg-white/10 rounded animate-pulse" />
+									<div className="h-3 sm:h-3.5 w-24 sm:w-28 bg-sidebar-accent rounded animate-pulse" />
+									<div className="h-2 sm:h-2.5 w-32 sm:w-36 bg-sidebar-accent rounded animate-pulse" />
 								</div>
 							</div>
 						)}
@@ -376,15 +374,15 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
 					<DropdownMenu>
 						<DropdownMenuTrigger asChild>
 							<button
-								className="w-full h-11 flex items-center justify-center rounded-xl bg-white/5 hover:bg-white/10 text-white hover:text-white transition-all duration-200 border border-white/10 hover:border-white/25 hover:shadow-lg hover:shadow-white/5 backdrop-blur-sm group"
+								className="w-full h-11 flex items-center justify-center rounded-xl bg-sidebar-accent hover:bg-sidebar-accent/90 text-sidebar-foreground transition-all duration-200 border border-sidebar-border hover:border-sidebar-primary/30 shadow-sm hover:shadow-md group"
 								title={userMe ? `${userMe.firstName} ${userMe.lastName}` : "Kullanıcı"}
 							>
 								{userMe ? (
-									<div className="w-9 h-9 rounded-full bg-gradient-to-br from-white/25 via-white/15 to-white/5 flex items-center justify-center border border-white/25 shadow-md group-hover:shadow-lg group-hover:scale-105 transition-all duration-200">
-										<User className="h-4.5 w-4.5 text-white drop-shadow-sm" />
+									<div className="w-9 h-9 rounded-full bg-sidebar-primary text-sidebar-primary-foreground flex items-center justify-center border border-sidebar-border/50 shadow-sm group-hover:border-sidebar-primary group-hover:scale-105 transition-all duration-200">
+										<User className="h-4.5 w-4.5 drop-shadow-sm" />
 									</div>
 								) : (
-									<User className="h-4 w-4" />
+									<User className="h-4 w-4 text-sidebar-foreground" />
 								)}
 							</button>
 						</DropdownMenuTrigger>

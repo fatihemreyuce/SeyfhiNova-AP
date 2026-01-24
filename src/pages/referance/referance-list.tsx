@@ -284,7 +284,7 @@ export default function ReferanceList() {
 
   const { data, isLoading } = useReferance(search, page, size, sort);
   const deleteMutation = useDeleteReferance();
-  const updateMutation = useUpdateReferance();
+  const updateMutation = useUpdateReferance({ suppressToast: true });
 
   // Local state for drag & drop reordering
   const [items, setItems] = useState<ReferanceResponse[]>([]);

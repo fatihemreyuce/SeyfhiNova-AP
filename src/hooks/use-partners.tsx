@@ -25,16 +25,20 @@ export const useCreatePartner = () => {
     });
 };
 
-export const useUpdatePartner = () => {
+export const useUpdatePartner = (options?: { suppressToast?: boolean }) => {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: ({ id, request }: { id: number; request: PartnerRequest }) => updatePartner(id, request),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["partners"] });
-            toast.success("Partner başarıyla güncellendi");
+            if (!options?.suppressToast) {
+                toast.success("Partner başarıyla güncellendi");
+            }
         },
         onError: () => {
-            toast.error("Partner güncellenirken hata oluştu");
+            if (!options?.suppressToast) {
+                toast.error("Partner güncellenirken hata oluştu");
+            }
         },
     });
 };

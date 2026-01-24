@@ -59,9 +59,10 @@ interface SortableRowProps {
   onEdit: (id: number) => void;
   onDelete: (id: number, name: string) => void;
   truncateText: (text: string, maxLength?: number) => string;
+  stripHtml: (html: string) => string;
 }
 
-function SortableRow({ item, onView, onEdit, onDelete, truncateText }: SortableRowProps) {
+function SortableRow({ item, onView, onEdit, onDelete, truncateText, stripHtml }: SortableRowProps) {
   const {
     attributes,
     listeners,
@@ -125,7 +126,7 @@ function SortableRow({ item, onView, onEdit, onDelete, truncateText }: SortableR
       </TableCell>
       <TableCell className="max-w-md">
         <p className="text-sm text-muted-foreground dark:text-foreground/70 truncate">
-          {truncateText(item.description)}
+          {truncateText(stripHtml(item.description))}
         </p>
       </TableCell>
       <TableCell className="text-center">
@@ -265,7 +266,7 @@ export default function SliderList() {
 
   const { data, isLoading } = useSlider(search, page, size, sort);
   const deleteMutation = useDeleteSlider();
-  const updateMutation = useUpdateSlider();
+  const updateMutation = useUpdateSlider({ suppressToast: true });
 
   // Local state for drag & drop reordering
   const [items, setItems] = useState<SliderResponse[]>([]);
@@ -397,6 +398,12 @@ export default function SliderList() {
     ) : (
       <ArrowDown className="h-3.5 w-3.5 text-primary dark:text-blue-400" />
     );
+  };
+
+  const stripHtml = (html: string) => {
+    const tmp = document.createElement("DIV");
+    tmp.innerHTML = html;
+    return tmp.textContent || tmp.innerText || "";
   };
 
   const truncateText = (text: string, maxLength: number = 60) => {
@@ -553,6 +560,7 @@ export default function SliderList() {
                           onEdit={(id) => navigate(`/slider/${id}/edit`)}
                           onDelete={handleDelete}
                           truncateText={truncateText}
+                          stripHtml={stripHtml}
                         />
                       ))}
                     </SortableContext>

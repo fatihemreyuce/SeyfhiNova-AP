@@ -25,16 +25,20 @@ export const useCreateService = () => {
     });
 }
 
-export const useUpdateService = () => {
+export const useUpdateService = (options?: { suppressToast?: boolean }) => {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: ({ id, request }: { id: number; request: ServiceRequest }) => updateService(id, request),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["service"] });
-            toast.success("Servis başarıyla güncellendi");
+            if (!options?.suppressToast) {
+                toast.success("Servis başarıyla güncellendi");
+            }
         },
         onError: () => {
-            toast.error("Servis güncellenirken hata oluştu");
+            if (!options?.suppressToast) {
+                toast.error("Servis güncellenirken hata oluştu");
+            }
         },
     });
 }

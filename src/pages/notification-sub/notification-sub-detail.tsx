@@ -50,7 +50,7 @@ export default function NotificationSubDetail() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-muted/20 to-background">
+    <div className="min-h-screen bg-background">
       {/* Sticky Navigation Bar */}
       <div className="sticky top-0 z-10 backdrop-blur-xl bg-background/80 border-b border-border/50 shadow-sm">
         <div className="container mx-auto px-4 sm:px-6 py-4">

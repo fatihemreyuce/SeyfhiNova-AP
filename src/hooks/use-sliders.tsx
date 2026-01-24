@@ -25,16 +25,20 @@ export const useCreateSlider = () => {
     });
 };
 
-export const useUpdateSlider = () => {
+export const useUpdateSlider = (options?: { suppressToast?: boolean }) => {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: ({ id, request }: { id: number; request: SliderRequest }) => updateSlider(id, request),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["sliders"] });
-            toast.success("Slider başarıyla güncellendi");
+            if (!options?.suppressToast) {
+                toast.success("Slider başarıyla güncellendi");
+            }
         },
         onError: () => {
-            toast.error("Slider güncellenirken hata oluştu");
+            if (!options?.suppressToast) {
+                toast.error("Slider güncellenirken hata oluştu");
+            }
         },
     });
 };

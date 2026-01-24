@@ -255,7 +255,7 @@ export default function FaqList() {
 
   const { data, isLoading } = useFaq(search, page, size, sort);
   const deleteMutation = useDeleteFaq();
-  const updateMutation = useUpdateFaq();
+  const updateMutation = useUpdateFaq({ suppressToast: true });
 
   // Local state for drag & drop reordering
   const [items, setItems] = useState<FaqResponse[]>([]);

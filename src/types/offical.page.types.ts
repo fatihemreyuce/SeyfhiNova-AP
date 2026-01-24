@@ -1,22 +1,34 @@
-export interface Documents{
-    asset:string;
-    name:string;
+export interface Documents {
+    id?: number;
+    asset: File | string;
+    name: string;
 }
 
-export interface qualityPolicy{
-   text:string;
-   orderNumber:string;
+export interface qualityPolicy {
+    text: string;
+    orderNumber: string;
 }
 
-export interface OfficialPageRequest{
-    description:string;
-    documents:Documents[];
-    qualityPolitics:qualityPolicy[];
+/** PUT /official-page: sadece description + quality politics (Swagger) */
+export interface UpdateOfficialPageRequest {
+    description: string;
+    qualityPolitics: qualityPolicy[];
 }
 
-export interface OfficialPageResponse{
-    id:number;
-    description:string;
-    documents:Documents[];
-    qualityPolitics:qualityPolicy[]; 
+/** POST /documents: tek belge ekle – asset (binary) + name (Swagger) */
+export interface AddDocumentRequest {
+    asset: File;
+    name: string;
+}
+
+/** Form ve diğer yerlerde kullanım için (updateOfficialPage artık documents almıyor) */
+export interface OfficialPageRequest extends UpdateOfficialPageRequest {
+    documents: Documents[];
+}
+
+export interface OfficialPageResponse {
+    id: number;
+    description: string;
+    documents: Documents[];
+    qualityPolitics: qualityPolicy[];
 }
