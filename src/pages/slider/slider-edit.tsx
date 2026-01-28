@@ -173,94 +173,102 @@ export default function SliderEdit() {
               <FormField
                 control={form.control}
                 name="image"
-                render={({ field: { onChange, ...field } }) => (
-                  <FormItem>
-                    <FormLabel>Görsel</FormLabel>
-                    <FormControl>
-                      <div className="space-y-4">
-                        {!preview && !data.imageUrl ? (
-                          <div className="relative">
-                            <Input
-                              type="file"
-                              accept="image/*"
-                              onChange={(e) => handleFileChange(e, onChange)}
-                              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                              {...field}
-                            />
-                            <div className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-border rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors cursor-pointer group">
-                              <div className="flex flex-col items-center justify-center pt-8 pb-8">
-                                <Upload className="w-12 h-12 mb-4 text-primary/70 group-hover:text-primary transition-colors" />
-                                <p className="mb-2 text-sm font-semibold text-foreground">
-                                  Dosya seçmek için tıklayın
-                                </p>
-                                <p className="text-xs text-muted-foreground">
-                                  PNG, JPG, SVG veya GIF (Max. 10MB)
-                                </p>
+                render={({ field }) => {
+                  const { onChange, value: _value, ref, name, onBlur } = field;
+
+                  return (
+                    <FormItem>
+                      <FormLabel>Görsel</FormLabel>
+                      <FormControl>
+                        <div className="space-y-4">
+                          {!preview && !data.imageUrl ? (
+                            <div className="relative">
+                              <Input
+                                type="file"
+                                accept="image/*"
+                                onChange={(e) => handleFileChange(e, onChange)}
+                                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                                name={name}
+                                ref={ref}
+                                onBlur={onBlur}
+                              />
+                              <div className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-border rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors cursor-pointer group">
+                                <div className="flex flex-col items-center justify-center pt-8 pb-8">
+                                  <Upload className="w-12 h-12 mb-4 text-primary/70 group-hover:text-primary transition-colors" />
+                                  <p className="mb-2 text-sm font-semibold text-foreground">
+                                    Dosya seçmek için tıklayın
+                                  </p>
+                                  <p className="text-xs text-muted-foreground">
+                                    PNG, JPG, SVG veya GIF (Max. 10MB)
+                                  </p>
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        ) : (
-                          <div className="space-y-3">
-                            <div className="relative group">
-                              <div className="flex items-center justify-center w-full h-64 rounded-lg border-2 border-border bg-muted/30 overflow-hidden">
-                                <img
-                                  src={preview || (data.imageUrl ? data.imageUrl.replace(/^https:/, 'http:') : '')}
-                                  alt={data.title}
-                                  className="w-full h-full object-contain"
-                                />
+                          ) : (
+                            <div className="space-y-3">
+                              <div className="relative group">
+                                <div className="flex items-center justify-center w-full h-64 rounded-lg border-2 border-border bg-muted/30 overflow-hidden">
+                                  <img
+                                    src={preview || (data.imageUrl ? data.imageUrl.replace(/^https:/, "http:") : "")}
+                                    alt={data.title}
+                                    className="w-full h-full object-contain"
+                                  />
+                                </div>
+                                <div className="absolute top-4 right-4">
+                                  <Button
+                                    type="button"
+                                    variant="destructive"
+                                    size="icon"
+                                    onClick={() => handleClearFile(onChange)}
+                                    className="opacity-90 hover:opacity-100"
+                                  >
+                                    <X className="h-4 w-4" />
+                                  </Button>
+                                </div>
                               </div>
-                              <div className="absolute top-4 right-4">
-                                <Button
-                                  type="button"
-                                  variant="destructive"
-                                  size="icon"
-                                  onClick={() => handleClearFile(onChange)}
-                                  className="opacity-90 hover:opacity-100"
-                                >
-                                  <X className="h-4 w-4" />
-                                </Button>
+                              <div className="flex items-center gap-4 p-4 rounded-lg border border-border bg-muted/30">
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-sm font-medium text-foreground truncate">
+                                    {fileName || data.imageUrl?.split("/").pop() || "Mevcut görsel"}
+                                  </p>
+                                  <p className="text-xs text-muted-foreground mt-1">
+                                    {imageFile ? "Yeni görsel seçildi" : "Mevcut görsel kullanılıyor"}
+                                  </p>
+                                </div>
+                                <label className="cursor-pointer">
+                                  <Button
+                                    type="button"
+                                    variant="outline"
+                                    size="sm"
+                                    asChild
+                                  >
+                                    <span>
+                                      <Upload className="h-3 w-3 mr-1" />
+                                      Değiştir
+                                    </span>
+                                  </Button>
+                                  <Input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={(e) => handleFileChange(e, onChange)}
+                                    className="hidden"
+                                    name={name}
+                                    ref={ref}
+                                    onBlur={onBlur}
+                                  />
+                                </label>
                               </div>
                             </div>
-                            <div className="flex items-center gap-4 p-4 rounded-lg border border-border bg-muted/30">
-                              <div className="flex-1 min-w-0">
-                                <p className="text-sm font-medium text-foreground truncate">
-                                  {fileName || data.imageUrl?.split('/').pop() || "Mevcut görsel"}
-                                </p>
-                                <p className="text-xs text-muted-foreground mt-1">
-                                  {imageFile ? "Yeni görsel seçildi" : "Mevcut görsel kullanılıyor"}
-                                </p>
-                              </div>
-                              <label className="cursor-pointer">
-                                <Button
-                                  type="button"
-                                  variant="outline"
-                                  size="sm"
-                                  asChild
-                                >
-                                  <span>
-                                    <Upload className="h-3 w-3 mr-1" />
-                                    Değiştir
-                                  </span>
-                                </Button>
-                                <Input
-                                  type="file"
-                                  accept="image/*"
-                                  onChange={(e) => handleFileChange(e, onChange)}
-                                  className="hidden"
-                                  {...field}
-                                />
-                              </label>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                    <p className="text-xs text-muted-foreground">
-                      Yeni görsel yüklemezseniz mevcut görsel kullanılır
-                    </p>
-                  </FormItem>
-                )}
+                          )}
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                      <p className="text-xs text-muted-foreground">
+                        Yeni görsel yüklemezseniz mevcut görsel kullanılır
+                      </p>
+                    </FormItem>
+                  );
+                }}
               />
 
               <FormField

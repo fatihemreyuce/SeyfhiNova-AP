@@ -12,7 +12,6 @@ export const getOfficialPages = (): Promise<OfficialPageResponse> => {
     });
 };
 
-/** PUT /official-page – "Update official page description and quality politics" (Swagger) */
 export const updateOfficialPage = (
     request: UpdateOfficialPageRequest
 ): Promise<OfficialPageResponse> => {
@@ -25,14 +24,12 @@ export const updateOfficialPage = (
     });
 };
 
-/** DELETE /documents/{id} – "Delete a document from official page" (Swagger) */
 export const deleteOfficialPageDocument = (id: number): Promise<void> => {
     return fetchClient<void, void>(`/admin/official-page/documents/${id}`, {
         method: "DELETE",
     });
 };
 
-/** POST /documents – "Add a new document to official page" (Swagger: asset + name, flat) */
 export const addOfficialPageDocument = (
     request: AddDocumentRequest
 ): Promise<OfficialPageResponse> => {
@@ -48,7 +45,6 @@ export const addOfficialPageDocument = (
     );
 };
 
-// UPDATE - Belge güncelle
 export const updateOfficialPageDocument = (id: number, request: Documents): Promise<Documents> => {
     return fetchClient<Documents, Documents>(`/admin/official-page/documents/${id}`, {
         method: "PUT",
