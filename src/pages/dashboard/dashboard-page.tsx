@@ -83,18 +83,35 @@ export default function DashboardPage() {
   const percentageChange = dashboardData.percentageChange || 0;
   const isPositive = percentageChange >= 0;
 
-  // Format daily stats for charts
-  const dailyStatsData = (dashboardData.dailyStats && Array.isArray(dashboardData.dailyStats) && dashboardData.dailyStats.length > 0)
-    ? dashboardData.dailyStats.slice(-7).map((stat) => ({
-        date: new Date(stat.date).toLocaleDateString("tr-TR", {
-          day: "numeric",
-          month: "short",
-        }),
-        ziyaretçiler: stat.uniqueVisitors,
-        görüntülenme: stat.totalPageViews,
-        ortalama: parseFloat(stat.avgPagesPerVisitor.toFixed(1)),
-      }))
-    : [];
+  // Son 7 günü her zaman doldur; API'den gelen veriyi tarihe göre eşleştir, yoksa 0
+  const last7Days = Array.from({ length: 7 }, (_, i) => {
+    const d = new Date();
+    d.setDate(d.getDate() - (6 - i));
+    return d.toISOString().slice(0, 10);
+  });
+  const statsByDate =
+    dashboardData.dailyStats && Array.isArray(dashboardData.dailyStats)
+      ? Object.fromEntries(
+          dashboardData.dailyStats.map((s) => [
+            new Date(s.date).toISOString().slice(0, 10),
+            { uniqueVisitors: s.uniqueVisitors, totalPageViews: s.totalPageViews, avgPagesPerVisitor: s.avgPagesPerVisitor },
+          ])
+        )
+      : {};
+  const dailyStatsData = last7Days.map((dateStr) => {
+    const stat = statsByDate[dateStr];
+    const dateLabel = new Date(dateStr).toLocaleDateString("tr-TR", {
+      day: "numeric",
+      month: "short",
+    });
+    return {
+      date: dateLabel,
+      dateStr,
+      ziyaretçiler: stat?.uniqueVisitors ?? 0,
+      görüntülenme: stat?.totalPageViews ?? 0,
+      ortalama: stat ? parseFloat(stat.avgPagesPerVisitor.toFixed(1)) : 0,
+    };
+  });
 
   // Chart configurations
   const areaChartConfig = {
@@ -261,78 +278,80 @@ export default function DashboardPage() {
             </div>
           </CardHeader>
           <CardContent>
-            {dailyStatsData && dailyStatsData.length > 0 ? (
-              <div className="w-full h-[400px] min-w-0 min-h-0" style={{ position: "relative" }}>
-                <ChartContainer config={areaChartConfig} className="w-full h-full">
-                  <AreaChart data={dailyStatsData}>
-                    <defs>
-                      <linearGradient id="fillZiyaretçiler" x1="0" y1="0" x2="0" y2="1">
-                        <stop
-                          offset="5%"
-                          stopColor="var(--color-ziyaretçiler)"
-                          stopOpacity={0.8}
-                        />
-                        <stop
-                          offset="95%"
-                          stopColor="var(--color-ziyaretçiler)"
-                          stopOpacity={0.1}
-                        />
-                      </linearGradient>
-                      <linearGradient id="fillGörüntülenme" x1="0" y1="0" x2="0" y2="1">
-                        <stop
-                          offset="5%"
-                          stopColor="var(--color-görüntülenme)"
-                          stopOpacity={0.8}
-                        />
-                        <stop
-                          offset="95%"
-                          stopColor="var(--color-görüntülenme)"
-                          stopOpacity={0.1}
-                        />
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" className="stroke-muted/50" />
-                    <XAxis
-                      dataKey="date"
-                      tickLine={false}
-                      axisLine={false}
-                      tickMargin={8}
-                      className="text-xs"
-                    />
-                    <YAxis
-                      tickLine={false}
-                      axisLine={false}
-                      tickMargin={8}
-                      tickFormatter={(value) => value.toLocaleString()}
-                      className="text-xs"
-                    />
-                    <ChartTooltip content={<ChartTooltipContent />} />
-                    <ChartLegend content={(props: any) => <ChartLegendContent payload={props.payload} verticalAlign={props.verticalAlign} />} />
-                    <Area
-                      type="monotone"
-                      dataKey="ziyaretçiler"
-                      stroke="var(--color-ziyaretçiler)"
-                      fill="url(#fillZiyaretçiler)"
-                      strokeWidth={2}
-                    />
-                    <Area
-                      type="monotone"
-                      dataKey="görüntülenme"
-                      stroke="var(--color-görüntülenme)"
-                      fill="url(#fillGörüntülenme)"
-                      strokeWidth={2}
-                    />
-                  </AreaChart>
-                </ChartContainer>
-              </div>
-            ) : (
-              <div className="flex flex-col items-center justify-center h-[400px] text-center">
-                <BarChart3 className="h-12 w-12 text-blue-500 mb-4 opacity-50" />
-                <p className="text-sm text-muted-foreground dark:text-foreground/50">
-                  Henüz günlük istatistik verisi bulunmamaktadır
-                </p>
-              </div>
-            )}
+            <div className="w-full h-[400px] min-w-0 min-h-0" style={{ position: "relative" }}>
+              <ChartContainer config={areaChartConfig} className="w-full h-full">
+                <AreaChart
+                  data={dailyStatsData}
+                  margin={{ top: 12, right: 12, bottom: 8, left: 8 }}
+                >
+                  <defs>
+                    <linearGradient id="fillZiyaretçiler" x1="0" y1="0" x2="0" y2="1">
+                      <stop
+                        offset="0%"
+                        stopColor="var(--color-ziyaretçiler)"
+                        stopOpacity={0.4}
+                      />
+                      <stop
+                        offset="100%"
+                        stopColor="var(--color-ziyaretçiler)"
+                        stopOpacity={0.05}
+                      />
+                    </linearGradient>
+                    <linearGradient id="fillGörüntülenme" x1="0" y1="0" x2="0" y2="1">
+                      <stop
+                        offset="0%"
+                        stopColor="var(--color-görüntülenme)"
+                        stopOpacity={0.4}
+                      />
+                      <stop
+                        offset="100%"
+                        stopColor="var(--color-görüntülenme)"
+                        stopOpacity={0.05}
+                      />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" className="stroke-muted/40" vertical={false} />
+                  <XAxis
+                    dataKey="date"
+                    tickLine={false}
+                    axisLine={false}
+                    tickMargin={10}
+                    className="text-xs font-medium"
+                  />
+                  <YAxis
+                    tickLine={false}
+                    axisLine={false}
+                    tickMargin={10}
+                    tickFormatter={(value) => value.toLocaleString()}
+                    className="text-xs"
+                    domain={[0, "auto"]}
+                    allowDecimals={false}
+                  />
+                  <ChartTooltip content={<ChartTooltipContent />} />
+                  <ChartLegend content={(props: any) => <ChartLegendContent payload={props.payload} verticalAlign={props.verticalAlign} />} />
+                  <Area
+                    type="monotone"
+                    dataKey="ziyaretçiler"
+                    stroke="var(--color-ziyaretçiler)"
+                    fill="url(#fillZiyaretçiler)"
+                    strokeWidth={2.5}
+                    dot={{ r: 4, fill: "var(--color-ziyaretçiler)", strokeWidth: 2, stroke: "hsl(var(--background))" }}
+                    activeDot={{ r: 6, strokeWidth: 2, stroke: "hsl(var(--background))" }}
+                    connectNulls
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="görüntülenme"
+                    stroke="var(--color-görüntülenme)"
+                    fill="url(#fillGörüntülenme)"
+                    strokeWidth={2.5}
+                    dot={{ r: 4, fill: "var(--color-görüntülenme)", strokeWidth: 2, stroke: "hsl(var(--background))" }}
+                    activeDot={{ r: 6, strokeWidth: 2, stroke: "hsl(var(--background))" }}
+                    connectNulls
+                  />
+                </AreaChart>
+              </ChartContainer>
+            </div>
           </CardContent>
         </Card>
 

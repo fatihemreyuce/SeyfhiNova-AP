@@ -48,7 +48,6 @@ import NotificationCreate from "./pages/notification/notification-create";
 import NotificationEdit from "./pages/notification/notification-edit";
 import NotificationSubList from "./pages/notification-sub/notification-sub-list";
 import NotificationSubDetail from "./pages/notification-sub/notification-sub-detail";
-import NotificationSubCreate from "./pages/notification-sub/notification-sub-create";
 import OfficialPageDetail from "./pages/official-page/official-page-detail";
 import OfficialPageEdit from "./pages/official-page/official-page-edit";
 import UsefulInformationList from "./pages/useful-information/useful-information-list";
@@ -119,7 +118,6 @@ function App() {
 							<Route path="/notification/:id" element={<NotificationDetail />} />
 							<Route path="/notification/:id/edit" element={<NotificationEdit />} />
 							<Route path="/notification-sub" element={<NotificationSubList />} />
-							<Route path="/notification-sub/create" element={<NotificationSubCreate />} />
 							<Route path="/notification-sub/:id" element={<NotificationSubDetail />} />
 							<Route path="/official-page" element={<OfficialPageDetail />} />
 							<Route path="/official-page/edit" element={<OfficialPageEdit />} />

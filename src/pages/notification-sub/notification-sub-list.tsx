@@ -22,14 +22,11 @@ import {
 } from "@/components/ui/select";
 import { DeleteModal } from "@/components/ui/delete-modal";
 import {
-  Plus,
   Eye,
   Trash2,
   ChevronLeft,
   ChevronRight,
-  UserPlus,
   Mail,
-  User,
   ArrowUpDown,
   ArrowUp,
   ArrowDown,
@@ -160,19 +157,13 @@ export default function NotificationSubList() {
   return (
     <div className="space-y-4 md:space-y-6 pb-4 md:pb-6 px-4 md:px-0">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-bold tracking-tight dark:text-foreground">
-            Bildirim Abonelikleri
-          </h1>
-          <p className="text-sm md:text-base text-muted-foreground dark:text-foreground/70 mt-1">
-            Bildirim aboneliklerini görüntüleyin ve yönetin
-          </p>
-        </div>
-        <Button onClick={() => navigate("/notification-sub/create")} className="w-full sm:w-auto">
-          <Plus className="h-4 w-4 mr-2" />
-          Yeni Abonelik
-        </Button>
+      <div>
+        <h1 className="text-2xl md:text-3xl font-bold tracking-tight dark:text-foreground">
+          Bildirim Abonelikleri
+        </h1>
+        <p className="text-sm md:text-base text-muted-foreground dark:text-foreground/70 mt-1">
+          Sitedeki bülten formu üzerinden gelen abonelikleri görüntüleyin ve yönetin
+        </p>
       </div>
 
       {/* Search and Filters - Removed search as API doesn't support it */}
@@ -190,18 +181,14 @@ export default function NotificationSubList() {
       ) : !data || data.content.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16 rounded-lg border border-dashed">
           <div className="w-16 h-16 rounded-full bg-muted/50 flex items-center justify-center mb-4">
-            <UserPlus className="h-8 w-8 text-muted-foreground dark:text-foreground/60 opacity-50" />
+            <Mail className="h-8 w-8 text-muted-foreground dark:text-foreground/60 opacity-50" />
           </div>
           <h3 className="text-lg font-semibold dark:text-foreground mb-2">
             Henüz abonelik yok
           </h3>
-          <p className="text-sm text-muted-foreground dark:text-foreground/70 mb-4 text-center max-w-md">
-            Bildirim aboneliklerini yönetmeye başlamak için ilk aboneliği oluşturun.
+          <p className="text-sm text-muted-foreground dark:text-foreground/70 text-center max-w-md">
+            Abonelikler sitedeki bülten formu üzerinden oluşturulur. Henüz kayıt bulunmuyor.
           </p>
-          <Button onClick={() => navigate("/notification-sub/create")}>
-            <Plus className="h-4 w-4 mr-2" />
-            İlk Aboneliği Oluştur
-          </Button>
         </div>
       ) : (
         <>
