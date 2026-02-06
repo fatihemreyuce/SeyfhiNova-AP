@@ -22,13 +22,12 @@ const formSchema = z.object({
   file: z.any().refine((file) => {
     if (!file) return false;
     if (typeof file === "string") return true;
-    // Check if it's a File-like object by checking for File properties
     if (file && typeof file === "object") {
       return "name" in file && "size" in file;
     }
     return false;
   }, {
-    message: "Dosya gereklidir",
+    message: "Görsel gereklidir",
   }),
   title: z.string()
     .min(1, "Başlık gereklidir")
@@ -114,14 +113,14 @@ export default function CircularCreate() {
                 name="file"
                 render={({ field: { onChange, value, ...field } }) => (
                   <FormItem>
-                    <FormLabel>Dosya</FormLabel>
+                    <FormLabel>Görsel</FormLabel>
                     <FormControl>
                       <div className="space-y-4">
                         {!fileName ? (
                           <div className="relative">
                             <Input
                               type="file"
-                              accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx"
+                              accept="image/*"
                               onChange={(e) => handleFileChange(e, onChange)}
                               className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                               {...field}
@@ -130,10 +129,10 @@ export default function CircularCreate() {
                               <div className="flex flex-col items-center justify-center pt-6 pb-6">
                                 <Upload className="w-10 h-10 mb-3 text-primary/70 group-hover:text-primary transition-colors" />
                                 <p className="mb-2 text-sm font-semibold text-foreground">
-                                  Dosya seçmek için tıklayın
+                                  Resim seçmek için tıklayın
                                 </p>
                                 <p className="text-xs text-muted-foreground">
-                                  PDF, DOC, DOCX, XLS, XLSX, PPT, PPTX (Max. 50MB)
+                                  JPG, PNG, GIF, WebP (Max. 50MB)
                                 </p>
                               </div>
                             </div>
@@ -174,7 +173,7 @@ export default function CircularCreate() {
                                   {fileName}
                                 </p>
                                 <p className="text-xs text-muted-foreground mt-1">
-                                  Dosya başarıyla seçildi
+                                  Görsel başarıyla seçildi
                                 </p>
                               </div>
                             </div>

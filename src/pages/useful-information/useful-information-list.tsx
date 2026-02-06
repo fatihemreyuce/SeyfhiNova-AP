@@ -311,7 +311,7 @@ export default function UsefulInformationList() {
                         {getSortIcon("id")}
                       </button>
                     </TableHead>
-                    <TableHead className="w-[180px]">Dosya</TableHead>
+                    <TableHead className="w-[180px]">Görsel</TableHead>
                     <TableHead className="min-w-[150px]">
                       <button
                         onClick={() => handleSortChange("title")}
@@ -346,7 +346,7 @@ export default function UsefulInformationList() {
                             className="text-primary dark:text-blue-400 hover:underline flex items-center gap-1.5 text-sm font-medium group"
                           >
                             <FileText className="h-4 w-4 group-hover:text-primary/80" />
-                            <span>Dosyayı Görüntüle</span>
+                            <span>Görseli Görüntüle</span>
                             <ExternalLink className="h-3.5 w-3.5 opacity-70 dark:text-foreground/80" />
                           </a>
                         ) : (

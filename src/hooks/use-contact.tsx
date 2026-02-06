@@ -1,6 +1,5 @@
 import { useAuthQuery } from "@/hooks/use-auth-query";
-import { getContacts, createContact, deleteContact, getContactById } from "@/services/contact-service";
-import type { ContactRequest } from "@/types/contact.types";
+import { getContacts, deleteContact, getContactById } from "@/services/contact-service";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
@@ -8,20 +7,6 @@ export const useContact = (page: number, size: number, sort: string) => {
     return useAuthQuery({
         queryKey: ["contact", page, size, sort],
         queryFn: () => getContacts(page, size, sort),
-    });
-};
-
-export const useCreateContact = () => {
-    const queryClient = useQueryClient();
-    return useMutation({
-        mutationFn: (request: ContactRequest) => createContact(request),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["contact"] });
-            toast.success("İletişim başarıyla oluşturuldu");
-        },
-        onError: () => {
-            toast.error("İletişim oluşturulurken hata oluştu");
-        },
     });
 };
 

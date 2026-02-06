@@ -56,7 +56,6 @@ import UsefulInformationCreate from "./pages/useful-information/useful-informati
 import UsefulInformationEdit from "./pages/useful-information/useful-information-edit";
 import ContactList from "./pages/contact/contact-list";
 import ContactDetail from "./pages/contact/contact-detail";
-import ContactCreate from "./pages/contact/contact-create";
 import UserList from "./pages/user/user-list";
 import UserDetail from "./pages/user/user-detail";
 import UserCreate from "./pages/user/user-create";
@@ -126,7 +125,6 @@ function App() {
 							<Route path="/useful-information/:id" element={<UsefulInformationDetail />} />
 							<Route path="/useful-information/:id/edit" element={<UsefulInformationEdit />} />
 							<Route path="/contact" element={<ContactList />} />
-							<Route path="/contact/create" element={<ContactCreate />} />
 							<Route path="/contact/:id" element={<ContactDetail />} />
 							<Route path="/user" element={<UserList />} />
 							<Route path="/user/create" element={<UserCreate />} />

@@ -21,36 +21,29 @@ export default function AdminLayout() {
         />
       )}
 
-      {/* Sidebar */}
+      {/* Sadece mobil + sidebar kapalıyken: menüyü açmak için tek buton (ayrı üst bar yok) */}
+      {!sidebarOpen && (
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={toggleSidebar}
+          className="fixed left-3 top-3 z-20 lg:hidden h-9 w-9"
+          aria-label="Menüyü aç"
+        >
+          <Menu className="h-5 w-5" />
+        </Button>
+      )}
+
+      {/* Sidebar (içinde burger/toggle var) */}
       <Sidebar isOpen={sidebarOpen} onToggle={toggleSidebar} />
 
-      {/* Main Content */}
+      {/* Main Content — ayrı container yok, doğrudan sayfa içeriği */}
       <div
         className={`min-h-screen gradient-bg transition-all duration-300 ${
-          sidebarOpen ? "lg:pl-64" : "lg:pl-16"
+          sidebarOpen ? "lg:pl-64" : "lg:pl-20"
         }`}
       >
-        {/* Top Bar with Toggle Button */}
-        <div className="sticky top-0 z-20 flex h-14 sm:h-16 items-center gap-3 sm:gap-4 border-b border-border/30 gradient-bg px-4 sm:px-6">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={toggleSidebar}
-            className="lg:hidden"
-          >
-            <Menu className="h-5 w-5 dark:text-foreground/80" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={toggleSidebar}
-            className="hidden lg:flex"
-          >
-            <Menu className="h-5 w-5 dark:text-foreground/80" />
-          </Button>
-        </div>
-
-        <main className="min-h-[calc(100vh-3.5rem)] sm:min-h-[calc(100vh-4rem)] p-4 sm:p-6">
+        <main className="min-h-screen p-4 sm:p-6">
           <Outlet />
         </main>
       </div>

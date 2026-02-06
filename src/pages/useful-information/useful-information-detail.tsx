@@ -231,36 +231,33 @@ export default function UsefulInformationDetail() {
                   <File className="h-5 w-5 text-purple-600 dark:text-purple-300" />
                 </div>
                 <CardTitle className="text-xl font-bold text-foreground dark:text-white">
-                  Dosya ve İşlemler
+                  Görsel ve İşlemler
                 </CardTitle>
               </div>
             </CardHeader>
             <CardContent className="pt-6 space-y-6">
-              {/* Dosya Önizleme */}
+              {/* Görsel Önizleme */}
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
                   <div className="w-8 h-8 rounded-lg bg-primary/10 dark:bg-primary/20 flex items-center justify-center">
                     <File className="h-4 w-4 text-primary" />
                   </div>
                   <label className="text-sm font-semibold text-muted-foreground dark:text-muted-foreground/80 uppercase tracking-wide">
-                    Dosya Önizleme
+                    Görsel Önizleme
                   </label>
                 </div>
                 {fileUrl ? (
-                  <div className="w-full h-80 rounded-2xl border-2 border-border/50 dark:border-border/70 bg-gradient-to-br from-muted/40 to-muted/20 dark:from-muted/60 dark:to-muted/40 flex items-center justify-center group-hover:border-primary/50 dark:group-hover:border-primary/60 transition-all duration-300 shadow-lg">
-                    <div className="flex flex-col items-center justify-center gap-6 p-8">
-                      <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/10 dark:from-primary/30 dark:to-primary/20 flex items-center justify-center border-2 border-primary/30 shadow-xl">
-                        <File className="w-12 h-12 text-primary" />
-                      </div>
-                      <div className="text-center">
-                        <p className="text-base font-bold text-foreground dark:text-white mb-2 truncate max-w-[250px]">
-                          {fileName}
-                        </p>
-                        <Badge className="bg-green-500/90 text-white border-0">
-                          <CheckCircle2 className="h-3 w-3 mr-1" />
-                          Dosya Mevcut
-                        </Badge>
-                      </div>
+                  <div className="relative w-full h-80 rounded-2xl border-2 border-border/50 dark:border-border/70 bg-muted/30 dark:bg-muted/40 overflow-hidden flex items-center justify-center group-hover:border-primary/50 dark:group-hover:border-primary/60 transition-all duration-300 shadow-lg">
+                    <img
+                      src={fileUrl}
+                      alt={fileName || "Görsel"}
+                      className="max-w-full max-h-full w-auto h-auto object-contain"
+                    />
+                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2">
+                      <Badge className="bg-green-500/90 text-white border-0">
+                        <CheckCircle2 className="h-3 w-3 mr-1" />
+                        Görsel Mevcut
+                      </Badge>
                     </div>
                   </div>
                 ) : (
@@ -271,10 +268,10 @@ export default function UsefulInformationDetail() {
                       </div>
                       <div>
                         <p className="text-sm font-medium text-muted-foreground dark:text-muted-foreground/80 mb-1">
-                          Dosya bulunmamaktadır
+                          Görsel bulunmamaktadır
                         </p>
                         <p className="text-xs text-muted-foreground dark:text-muted-foreground/60">
-                          Dosya yüklemek için düzenle butonunu kullanın
+                          Görsel yüklemek için düzenle butonunu kullanın
                         </p>
                       </div>
                     </div>
@@ -365,7 +362,7 @@ export default function UsefulInformationDetail() {
                         download
                       >
                         <Download className="h-4 w-4 mr-2 text-foreground dark:text-white" />
-                        İndir
+                        Görseli İndir
                       </a>
                     </Button>
                   </div>
@@ -380,9 +377,9 @@ export default function UsefulInformationDetail() {
       <Dialog open={isFileModalOpen} onOpenChange={setIsFileModalOpen}>
         <DialogContent className="max-w-2xl rounded-3xl border-2 shadow-2xl">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-bold">Dosya: {fileName}</DialogTitle>
+            <DialogTitle className="text-2xl font-bold">Görsel: {fileName}</DialogTitle>
             <DialogDescription className="text-sm text-muted-foreground">
-              Dosya önizlemesi güvenlik nedeniyle burada gösterilemiyor. Dosyayı görüntülemek için yeni sekmede açın veya indirin.
+              Görsel önizlemesi güvenlik nedeniyle burada gösterilemiyor. Görseli görüntülemek için yeni sekmede açın veya indirin.
             </DialogDescription>
           </DialogHeader>
           {fileUrl && (
@@ -423,7 +420,7 @@ export default function UsefulInformationDetail() {
                       download
                     >
                       <Download className="h-4 w-4 mr-2 text-foreground dark:text-white" />
-                      İndir
+                      Görseli İndir
                     </a>
                   </Button>
                 </div>

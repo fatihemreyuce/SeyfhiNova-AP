@@ -78,7 +78,7 @@ function SortableRow({ item, onView, onEdit, onDelete, truncateDescription, stri
             className="text-primary dark:text-blue-400 hover:underline flex items-center gap-1.5 group text-sm font-medium"
           >
             <FileText className="h-4 w-4 group-hover:text-primary/80" />
-            <span>Dosyayı İndir</span>
+            <span>Görseli İndir</span>
             <ExternalLink className="h-3.5 w-3.5 opacity-70" />
           </a>
         ) : (

@@ -4,7 +4,6 @@ import { useGetUsefulInformationById, useUpdateUsefulInformation } from "@/hooks
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { TinyMCEEditor } from "@/components/ui/tinymce-editor";
 import { ArrowLeft, Save, FileText, Upload, X, File, ExternalLink } from "lucide-react";
 import {
@@ -25,9 +24,7 @@ const formSchema = z.object({
     .min(1, "Başlık gereklidir")
     .max(255, "Başlık en fazla 255 karakter olabilir"),
   description: z.string().min(1, "Açıklama gereklidir"),
-  excerpt: z.string()
-    .min(1, "Alt açıklama gereklidir")
-    .max(1000, "Alt açıklama en fazla 1000 karakter olabilir"),
+  excerpt: z.string().min(1, "Alt açıklama gereklidir"),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -169,14 +166,14 @@ export default function UsefulInformationEdit() {
                 name="file"
                 render={({ field: { onChange, value, ...field } }) => (
                   <FormItem>
-                    <FormLabel>Dosya</FormLabel>
+                    <FormLabel>Görsel</FormLabel>
                     <FormControl>
                       <div className="space-y-4">
                         {!file && !fileName ? (
                           <div className="relative">
                             <Input
                               type="file"
-                              accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,image/*"
+                              accept="image/*"
                               onChange={(e) => handleFileChange(e, onChange)}
                               className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                               {...field}
@@ -185,10 +182,10 @@ export default function UsefulInformationEdit() {
                               <div className="flex flex-col items-center justify-center pt-6 pb-6">
                                 <Upload className="w-10 h-10 mb-3 text-primary/70 group-hover:text-primary transition-colors" />
                                 <p className="mb-2 text-sm font-semibold text-foreground">
-                                  Dosya seçmek için tıklayın
+                                  Resim seçmek için tıklayın
                                 </p>
                                 <p className="text-xs text-muted-foreground">
-                                  PDF, DOC, DOCX, XLS, XLSX, PPT, PPTX, Görseller (Max. 50MB)
+                                  JPG, PNG, GIF, WebP (Max. 50MB)
                                 </p>
                               </div>
                             </div>
@@ -219,7 +216,7 @@ export default function UsefulInformationEdit() {
                                           className="text-xs text-primary dark:text-blue-400 hover:underline flex items-center gap-1"
                                         >
                                           <ExternalLink className="h-3 w-3" />
-                                          Mevcut dosyayı görüntüle
+                                          Mevcut görseli görüntüle
                                         </a>
                                       </div>
                                     )}
@@ -244,7 +241,7 @@ export default function UsefulInformationEdit() {
                                   {fileName}
                                 </p>
                                 <p className="text-xs text-muted-foreground mt-1">
-                                  {file ? "Yeni dosya seçildi" : "Mevcut dosya korunuyor"}
+                                  {file ? "Yeni görsel seçildi" : "Mevcut görsel korunuyor"}
                                 </p>
                               </div>
                             </div>
@@ -287,17 +284,12 @@ export default function UsefulInformationEdit() {
                   <FormItem>
                     <FormLabel>Alt Açıklama</FormLabel>
                     <FormControl>
-                      <div className="space-y-1">
-                        <Textarea
-                          placeholder="Alt açıklama giriniz"
-                          rows={3}
-                          maxLength={1000}
-                          {...field}
-                        />
-                        <p className="text-xs text-muted-foreground text-right">
-                          {field.value?.length || 0} / 1000 karakter
-                        </p>
-                      </div>
+                      <TinyMCEEditor
+                        value={field.value}
+                        onChange={field.onChange}
+                        height={280}
+                        maxWords={500}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

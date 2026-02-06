@@ -165,14 +165,14 @@ export default function CircularEdit() {
                 name="file"
                 render={({ field: { onChange, ...field } }) => (
                   <FormItem>
-                    <FormLabel>Dosya</FormLabel>
+                    <FormLabel>Görsel</FormLabel>
                     <FormControl>
                       <div className="space-y-4">
                         {!file && !data.fileUrl ? (
                           <div className="relative">
                             <Input
                               type="file"
-                              accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx"
+                              accept="image/*"
                               onChange={(e) => handleFileChange(e, onChange)}
                               className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                               {...field}
@@ -181,10 +181,10 @@ export default function CircularEdit() {
                               <div className="flex flex-col items-center justify-center pt-6 pb-6">
                                 <Upload className="w-10 h-10 mb-3 text-primary/70 group-hover:text-primary transition-colors" />
                                 <p className="mb-2 text-sm font-semibold text-foreground">
-                                  Dosya seçmek için tıklayın
+                                  Resim seçmek için tıklayın
                                 </p>
                                 <p className="text-xs text-muted-foreground">
-                                  PDF, DOC, DOCX, XLS, XLSX, PPT, PPTX (Max. 50MB)
+                                  JPG, PNG, GIF, WebP (Max. 50MB)
                                 </p>
                               </div>
                             </div>
@@ -199,7 +199,7 @@ export default function CircularEdit() {
                                   </div>
                                   <div className="text-center">
                                     <p className="text-sm font-medium text-foreground">
-                                      {fileName || "Dosya"}
+                                      {fileName || "Görsel"}
                                     </p>
                                     {fileSize && (
                                       <p className="text-xs text-muted-foreground mt-1">
@@ -234,10 +234,10 @@ export default function CircularEdit() {
                             <div className="flex items-center gap-4 p-4 rounded-lg border border-border bg-muted/30">
                               <div className="flex-1 min-w-0">
                                 <p className="text-sm font-medium text-foreground truncate">
-                                  {fileName || "Mevcut dosya"}
+                                  {fileName || "Mevcut görsel"}
                                 </p>
                                 <p className="text-xs text-muted-foreground mt-1">
-                                  {file ? "Yeni dosya seçildi" : "Mevcut dosya kullanılıyor"}
+                                  {file ? "Yeni görsel seçildi" : "Mevcut görsel kullanılıyor"}
                                   {data.fileUrl && !file && (
                                     <>
                                       {" • "}
@@ -247,7 +247,7 @@ export default function CircularEdit() {
                                         rel="noopener noreferrer"
                                         className="text-primary hover:underline inline-flex items-center gap-1"
                                       >
-                                        <span>Mevcut dosyayı görüntüle</span>
+                                        <span>Mevcut görseli görüntüle</span>
                                         <ExternalLink className="h-3 w-3" />
                                       </a>
                                     </>
@@ -268,7 +268,7 @@ export default function CircularEdit() {
                                 </Button>
                                 <Input
                                   type="file"
-                                  accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx"
+                                  accept="image/*"
                                   onChange={(e) => handleFileChange(e, onChange)}
                                   className="hidden"
                                   {...field}

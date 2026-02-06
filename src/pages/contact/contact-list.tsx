@@ -15,7 +15,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { DeleteModal } from "@/components/ui/delete-modal";
 import {
-  Plus,
   Eye,
   Trash2,
   ChevronLeft,
@@ -104,19 +103,13 @@ export default function ContactList() {
   return (
     <div className="space-y-4 md:space-y-6 pb-4 md:pb-6 px-4 md:px-0">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-bold tracking-tight dark:text-foreground">
-            İletişimler
-          </h1>
-          <p className="text-sm md:text-base text-muted-foreground dark:text-foreground/70 mt-1">
-            İletişim kayıtlarını görüntüleyin ve yönetin
-          </p>
-        </div>
-        <Button onClick={() => navigate("/contact/create")} className="w-full sm:w-auto">
-          <Plus className="h-4 w-4 mr-2" />
-          Yeni İletişim
-        </Button>
+      <div>
+        <h1 className="text-2xl md:text-3xl font-bold tracking-tight dark:text-foreground">
+          İletişimler
+        </h1>
+        <p className="text-sm md:text-base text-muted-foreground dark:text-foreground/70 mt-1">
+          Sitedeki iletişim formu üzerinden gelen mesajları görüntüleyin ve yönetin
+        </p>
       </div>
 
 
@@ -138,13 +131,9 @@ export default function ContactList() {
           <h3 className="text-lg font-semibold dark:text-foreground mb-2">
             Henüz iletişim kaydı yok
           </h3>
-          <p className="text-sm text-muted-foreground dark:text-foreground/70 mb-4 text-center max-w-md">
-            İletişim kayıtlarını yönetmeye başlamak için ilk iletişimi oluşturun.
+          <p className="text-sm text-muted-foreground dark:text-foreground/70 text-center max-w-md">
+            Mesajlar sitedeki iletişim formu üzerinden gelir. Henüz kayıt bulunmuyor.
           </p>
-          <Button onClick={() => navigate("/contact/create")}>
-            <Plus className="h-4 w-4 mr-2" />
-            İlk İletişimi Oluştur
-          </Button>
         </div>
       ) : (
         <>

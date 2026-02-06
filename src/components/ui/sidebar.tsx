@@ -10,7 +10,7 @@ import {
 import DarkModeToggle from "@/components/dark-mode-toggle";
 import { useLoginState } from "@/hooks/use-login-state";
 import { useGetUserMe } from "@/hooks/use-user";
-import { LayoutDashboard, LogOut, Sparkles, FileText, Layers, Briefcase, BarChart3, Images, Handshake, Award, HelpCircle, Bell, UserPlus, BookOpen, Phone, Info, Users, User, ChevronsUpDown, Mail, Settings } from "lucide-react";
+import { LayoutDashboard, LogOut, Sparkles, FileText, Layers, Briefcase, BarChart3, Images, Handshake, Award, HelpCircle, Bell, UserPlus, BookOpen, Phone, Info, Users, User, ChevronsUpDown, Mail, Settings, Menu } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface NavItem {
@@ -183,26 +183,42 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
 				!isOpen && "overflow-hidden lg:overflow-visible"
 			)}
 		>
-			{/* Header */}
+			{/* Header: logo + toggle (burger) sidebar içinde, ayrı üst bar yok */}
 			<div className={cn(
 				"flex h-16 sm:h-20 items-center border-b border-sidebar-border/60 transition-all duration-300 shrink-0",
 				isOpen ? "justify-between px-4 sm:px-6" : "justify-center px-0 lg:px-0",
 				!isOpen && "opacity-0 lg:opacity-100"
 			)}>
-				<div className="flex items-center gap-2 sm:gap-3">
+				<button
+					type="button"
+					onClick={onToggle}
+					className={cn(
+						"flex items-center gap-2 sm:gap-3 rounded-lg transition-opacity hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-primary/50",
+						!isOpen && "lg:cursor-pointer"
+					)}
+					aria-label={isOpen ? "Kenar çubuğunu kapat" : "Kenar çubuğunu aç"}
+				>
 					<div className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground shadow-md shrink-0">
 						<Sparkles className="h-4 w-4 sm:h-5 sm:w-5" />
 					</div>
 					{isOpen && (
-						<div className="flex flex-col">
+						<div className="flex flex-col text-left">
 							<span className="text-sm sm:text-base font-bold tracking-tight text-sidebar-foreground">Seyfhi</span>
 							<span className="text-[10px] sm:text-xs text-sidebar-foreground/70 font-medium">Yatırım</span>
 						</div>
 					)}
-				</div>
+				</button>
 				{isOpen && (
-					<div className="flex items-center">
+					<div className="flex items-center gap-1">
 						<DarkModeToggle />
+						<button
+							type="button"
+							onClick={onToggle}
+							className="flex h-9 w-9 items-center justify-center rounded-lg text-sidebar-foreground hover:bg-sidebar-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-primary/50"
+							aria-label="Menüyü kapat"
+						>
+							<Menu className="h-5 w-5" />
+						</button>
 					</div>
 				)}
 			</div>
@@ -240,7 +256,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
 												isOpen ? "px-3 sm:px-3.5 py-2 sm:py-2.5" : "px-2 py-2.5 justify-center lg:justify-center",
 												isActive
 													? "bg-sidebar-accent text-sidebar-foreground shadow-md shadow-sidebar-foreground/10 scale-[1.02] border-l-4 border-sidebar-primary font-semibold"
-													: "text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground hover:translate-x-1",
+													: "text-sidebar-foreground hover:bg-sidebar-accent/50 hover:translate-x-1",
 												!isOpen && "lg:text-sidebar-foreground"
 											)
 										}
@@ -249,7 +265,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
 											"h-4 w-4 transition-transform duration-200 group-hover:scale-110 shrink-0",
 											isOpen ? "text-current" : "lg:text-sidebar-foreground"
 										)} />
-										{isOpen && <span className="truncate">{item.label}</span>}
+										{isOpen && <span className="truncate min-w-0 text-sidebar-foreground">{item.label}</span>}
 									</NavLink>
 								);
 

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSettings, useUpdateSettings } from "@/hooks/use-settings";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -52,6 +52,7 @@ export default function SettingsEdit() {
   const [preview, setPreview] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [fileName, setFileName] = useState<string>("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -110,7 +111,7 @@ export default function SettingsEdit() {
     setPreview(null);
     setFileName("");
     onChange(undefined);
-    const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
+    const fileInput = fileInputRef.current || document.querySelector('input[type="file"]') as HTMLInputElement;
     if (fileInput) {
       fileInput.value = "";
     }
@@ -257,6 +258,13 @@ export default function SettingsEdit() {
                           </div>
                         ) : (
                           <div className="space-y-3">
+                            <input
+                              ref={fileInputRef}
+                              type="file"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={(e) => handleFileChange(e, onChange)}
+                            />
                             <div className="relative group">
                               <div className="flex items-center justify-center w-full h-48 rounded-lg border-2 border-border bg-muted/30 overflow-hidden">
                                 <img
@@ -265,7 +273,17 @@ export default function SettingsEdit() {
                                   className="w-full h-full object-contain"
                                 />
                               </div>
-                              <div className="absolute top-4 right-4">
+                              <div className="absolute top-4 right-4 flex gap-2">
+                                <Button
+                                  type="button"
+                                  variant="secondary"
+                                  size="sm"
+                                  onClick={() => fileInputRef.current?.click()}
+                                  className="opacity-90 hover:opacity-100"
+                                >
+                                  <Upload className="h-4 w-4 mr-1" />
+                                  Logo değiştir
+                                </Button>
                                 <Button
                                   type="button"
                                   variant="destructive"
