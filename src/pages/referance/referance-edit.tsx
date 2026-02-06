@@ -348,11 +348,17 @@ export default function ReferanceEdit() {
                     <FormLabel>Sıra Numarası</FormLabel>
                     <FormControl>
                       <Input
-                        type="number"
+                        type="text"
+                        inputMode="numeric"
                         placeholder="0"
-                        {...field}
-                        onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
-                        value={field.value}
+                        className="max-w-[150px]"
+                        value={field.value === undefined || field.value === null ? "" : String(field.value)}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (value === "" || /^\d+$/.test(value)) {
+                            field.onChange(value);
+                          }
+                        }}
                       />
                     </FormControl>
                     <FormMessage />

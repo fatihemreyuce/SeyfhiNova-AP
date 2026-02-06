@@ -24,7 +24,8 @@ import {
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { useEffect } from "react";
+import type { ServiceResponse } from "@/types/services.types";
+import type { ServiceCategoryResponse } from "@/types/service.category.types";
 
 const formSchema = z.object({
   categoryId: z.number().min(1, "Kategori seçimi gereklidir"),
@@ -40,53 +41,176 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-export default function ServiceEdit() {
-  const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
-  const { data, isLoading } = useGetServiceById(Number(id));
-  const { data: categoriesData, isLoading: categoriesLoading } = useServiceCategory("", 0, 100, "id,asc");
-  const updateMutation = useUpdateService();
-
+/** Form sadece data + kategoriler hazırken mount edilir; defaultValues ile kategori seçili gelir */
+function ServiceEditForm({
+  data,
+  categories,
+  serviceId,
+  onSuccess,
+  updateMutation,
+}: {
+  data: ServiceResponse;
+  categories: ServiceCategoryResponse[];
+  serviceId: number;
+  onSuccess: () => void;
+  updateMutation: ReturnType<typeof useUpdateService>;
+}) {
+  const categoryId = data.categoryId ?? data.category?.id ?? 0;
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      categoryId: 0,
-      title: "",
-      description: "",
-      orderIndex: 0,
+      categoryId: categoryId > 0 ? categoryId : 0,
+      title: data.title,
+      description: data.description,
+      orderIndex: data.orderIndex,
     },
   });
 
-  useEffect(() => {
-    if (data) {
-      form.reset({
-        categoryId: data.categoryId,
-        title: data.title,
-        description: data.description,
-        orderIndex: data.orderIndex,
-      });
-    }
-  }, [data, form]);
-
   const onSubmit = (values: FormValues) => {
-    if (id) {
-      // orderIndex'i number'a çevir
-      const orderIndex = typeof values.orderIndex === "string" 
-        ? (values.orderIndex === "" ? 0 : parseInt(values.orderIndex, 10) || 0)
-        : values.orderIndex;
-      
-      updateMutation.mutate(
-        { id: Number(id), request: { ...values, orderIndex } },
-        {
-          onSuccess: () => {
-            navigate("/service");
-          },
-        }
-      );
-    }
+    const orderIndex = typeof values.orderIndex === "string"
+      ? (values.orderIndex === "" ? 0 : parseInt(values.orderIndex, 10) || 0)
+      : values.orderIndex;
+    updateMutation.mutate(
+      { id: serviceId, request: { ...values, orderIndex } },
+      { onSuccess }
+    );
   };
 
-  if (isLoading) {
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <Card>
+          <CardHeader>
+            <div className="flex items-center gap-2">
+              <Briefcase className="h-5 w-5 text-primary dark:text-blue-400" />
+              <CardTitle>Servis Bilgileri</CardTitle>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <FormField
+              control={form.control}
+              name="categoryId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Kategori</FormLabel>
+                  <Select
+                    onValueChange={(value) => field.onChange(parseInt(value))}
+                    value={field.value && field.value > 0 ? String(field.value) : ""}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Kategori seçiniz" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {categories.map((category) => (
+                        <SelectItem key={category.id} value={String(category.id)}>
+                          {category.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="title"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Başlık</FormLabel>
+                  <FormControl>
+                    <div className="space-y-1">
+                      <Input
+                        placeholder="Servis başlığını giriniz"
+                        maxLength={255}
+                        {...field}
+                      />
+                      <p className="text-xs text-muted-foreground text-right">
+                        {field.value?.length || 0} / 255 karakter
+                      </p>
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Açıklama</FormLabel>
+                  <FormControl>
+                    <TinyMCEEditor
+                      value={field.value}
+                      onChange={field.onChange}
+                      maxWords={100000}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="orderIndex"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Sıra Numarası</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="text"
+                      placeholder="0"
+                      className="max-w-[150px]"
+                      {...field}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        if (value === "" || /^\d+$/.test(value)) field.onChange(value);
+                      }}
+                      value={field.value === undefined || field.value === null ? "" : String(field.value)}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                  <p className="text-xs text-muted-foreground">
+                    Servislerin görüntülenme sırasını belirler
+                  </p>
+                </FormItem>
+              )}
+            />
+          </CardContent>
+        </Card>
+        <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-end gap-3 sm:gap-4">
+          <Button type="button" variant="outline" onClick={onSuccess} className="w-full sm:w-auto">
+            İptal
+          </Button>
+          <Button type="submit" disabled={updateMutation.isPending} className="w-full sm:w-auto">
+            <Save className="h-4 w-4 mr-2 text-white" />
+            {updateMutation.isPending ? "Güncelleniyor..." : "Güncelle"}
+          </Button>
+        </div>
+      </form>
+    </Form>
+  );
+}
+
+export default function ServiceEdit() {
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const serviceId = Number(id);
+  const { data, isLoading } = useGetServiceById(serviceId);
+  const { data: categoriesData, isLoading: categoriesLoading } = useServiceCategory("", 0, 100, "id,asc");
+  const updateMutation = useUpdateService();
+
+  // API'den gelen kategori: categoryId veya category.id (servis/hooks aynı kalır)
+  const categoryIdFromData = data?.categoryId ?? data?.category?.id;
+  const dataWithCategoryId =
+    categoryIdFromData != null && categoryIdFromData > 0
+      ? { ...data!, categoryId: categoryIdFromData }
+      : data!;
+
+  if (isLoading || categoriesLoading) {
     return (
       <div className="flex items-center justify-center py-12">
         <p className="text-muted-foreground">Yükleniyor...</p>
@@ -106,6 +230,8 @@ export default function ServiceEdit() {
     );
   }
 
+  const categories = categoriesData?.content ?? [];
+
   return (
     <div className="space-y-4 md:space-y-6 px-4 md:px-0">
       <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
@@ -124,135 +250,13 @@ export default function ServiceEdit() {
           </p>
         </div>
       </div>
-
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <Card>
-            <CardHeader>
-              <div className="flex items-center gap-2">
-                <Briefcase className="h-5 w-5 text-primary dark:text-blue-400" />
-                <CardTitle>Servis Bilgileri</CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <FormField
-                control={form.control}
-                name="categoryId"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Kategori</FormLabel>
-                    <Select
-                      onValueChange={(value) => field.onChange(parseInt(value))}
-                      value={field.value ? String(field.value) : ""}
-                      disabled={categoriesLoading}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Kategori seçiniz" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {categoriesData?.content.map((category) => (
-                          <SelectItem key={category.id} value={String(category.id)}>
-                            {category.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="title"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Başlık</FormLabel>
-                    <FormControl>
-                      <div className="space-y-1">
-                        <Input 
-                          placeholder="Servis başlığını giriniz" 
-                          maxLength={255}
-                          {...field} 
-                        />
-                        <p className="text-xs text-muted-foreground text-right">
-                          {field.value?.length || 0} / 255 karakter
-                        </p>
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Açıklama</FormLabel>
-                    <FormControl>
-                      <TinyMCEEditor
-                        value={field.value}
-                        onChange={field.onChange}
-                        maxWords={100000}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="orderIndex"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Sıra Numarası</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="text"
-                        placeholder="0"
-                        className="max-w-[150px]"
-                        {...field}
-                        onChange={(e) => {
-                          const value = e.target.value;
-                          // Sadece rakam ve boş string'e izin ver
-                          if (value === "" || /^\d+$/.test(value)) {
-                            field.onChange(value);
-                          }
-                        }}
-                        value={field.value === undefined || field.value === null ? "" : String(field.value)}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                    <p className="text-xs text-muted-foreground">
-                      Servislerin görüntülenme sırasını belirler
-                    </p>
-                  </FormItem>
-                )}
-              />
-            </CardContent>
-          </Card>
-
-          <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-end gap-3 sm:gap-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => navigate("/service")}
-              className="w-full sm:w-auto"
-            >
-              İptal
-            </Button>
-            <Button type="submit" disabled={updateMutation.isPending} className="w-full sm:w-auto">
-              <Save className="h-4 w-4 mr-2 text-white" />
-              {updateMutation.isPending ? "Güncelleniyor..." : "Güncelle"}
-            </Button>
-          </div>
-        </form>
-      </Form>
+      <ServiceEditForm
+        data={dataWithCategoryId}
+        categories={categories}
+        serviceId={serviceId}
+        onSuccess={() => navigate("/service")}
+        updateMutation={updateMutation}
+      />
     </div>
   );
 }

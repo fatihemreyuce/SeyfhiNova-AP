@@ -189,10 +189,18 @@ export default function ServiceStatsCreate() {
                     <FormLabel>Değer</FormLabel>
                     <FormControl>
                       <Input
-                        type="number"
+                        type="text"
+                        inputMode="numeric"
                         placeholder="0"
-                        {...field}
-                        onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
+                        value={field.value === undefined || field.value === null ? "" : String(field.value)}
+                        onChange={(e) => {
+                          const v = e.target.value;
+                          if (v === "") {
+                            field.onChange(0);
+                          } else if (/^\d+$/.test(v)) {
+                            field.onChange(parseInt(v, 10));
+                          }
+                        }}
                       />
                     </FormControl>
                     <FormMessage />
