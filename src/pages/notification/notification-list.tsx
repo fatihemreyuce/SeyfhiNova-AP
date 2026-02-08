@@ -308,8 +308,8 @@ export default function NotificationList() {
             <div className="overflow-x-auto scrollbar-hide">
               <Table>
                 <TableHeader>
-                  <TableRow className="bg-[#F8F9FA] dark:bg-muted/30 border-b border-gray-200 dark:border-seyfhi-accent/30">
-                    <TableHead className="w-[80px]">
+                  <TableRow className="bg-[#F8F9FA] dark:bg-muted/30 border-b border-gray-200 dark:border-border">
+                    <TableHead className="w-[80px] h-9 py-2 text-xs font-medium">
                       <button
                         onClick={() => handleSortChange("id")}
                         className="flex items-center gap-2 hover:bg-muted/50 px-2 py-1 rounded transition-colors"
@@ -318,7 +318,7 @@ export default function NotificationList() {
                         {getSortIcon("id")}
                       </button>
                     </TableHead>
-                    <TableHead className="min-w-[200px]">
+                    <TableHead className="min-w-[200px] h-9 py-2 text-xs font-medium">
                       <button
                         onClick={() => handleSortChange("title")}
                         className="flex items-center gap-2 hover:bg-muted/50 px-2 py-1 rounded transition-colors"
@@ -327,68 +327,68 @@ export default function NotificationList() {
                         {getSortIcon("title")}
                       </button>
                     </TableHead>
-                    <TableHead className="min-w-[200px] max-w-md">İçerik</TableHead>
-                    <TableHead className="w-[200px] text-right">İşlemler</TableHead>
+                    <TableHead className="min-w-[200px] max-w-md h-9 py-2 text-xs font-medium">İçerik</TableHead>
+                    <TableHead className="w-[200px] text-right h-9 py-2 text-xs font-medium">İşlemler</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {data.content.map((item) => (
                     <TableRow
                       key={item.id}
-                      className="bg-white dark:bg-card border-b border-gray-100 dark:border-seyfhi-accent/20 hover:bg-gray-50 dark:hover:bg-muted/30 transition-colors"
+                      className="bg-white dark:bg-card border-b border-gray-100 dark:border-border hover:bg-gray-50 dark:hover:bg-muted/30 transition-colors"
                     >
-                      <TableCell className="whitespace-nowrap">
-                        <Badge variant="outline" className="font-mono bg-blue-50 text-blue-600 dark:bg-blue-950/30 dark:text-blue-400">
+                      <TableCell className="whitespace-nowrap py-1.5">
+                        <Badge variant="outline" className="font-mono text-xs bg-blue-50 text-blue-600 dark:bg-blue-950/30 dark:text-blue-400">
                           #{item.id}
                         </Badge>
                       </TableCell>
-                      <TableCell className="min-w-[200px]">
-                        <span className="font-medium dark:text-foreground break-words">
+                      <TableCell className="min-w-[200px] py-1.5">
+                        <span className="font-medium text-sm dark:text-foreground break-words">
                           {item.title}
                         </span>
                       </TableCell>
-                      <TableCell className="min-w-[200px] max-w-md">
-                        <p className="text-sm text-muted-foreground dark:text-foreground/70 break-words line-clamp-2">
+                      <TableCell className="min-w-[200px] max-w-md py-1.5">
+                        <p className="text-xs text-muted-foreground dark:text-foreground/70 break-words line-clamp-2">
                           {truncateText(stripHtml(item.content))}
                         </p>
                       </TableCell>
-                      <TableCell className="text-right whitespace-nowrap">
-                        <div className="flex items-center justify-end gap-1">
+                      <TableCell className="text-right whitespace-nowrap py-1.5">
+                        <div className="flex items-center justify-end gap-0.5">
                           <Button
                             variant="ghost"
                             size="icon"
                             onClick={() => navigate(`/notification/${item.id}`)}
-                            className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:text-blue-400 dark:hover:text-blue-300 dark:hover:bg-blue-950/30"
+                            className="h-7 w-7 text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:text-blue-400 dark:hover:text-blue-300 dark:hover:bg-blue-950/30"
                             title="Detay Görüntüle"
                           >
-                            <Eye className="h-4 w-4" />
+                            <Eye className="h-3.5 w-3.5" />
                           </Button>
                           <Button
                             variant="ghost"
                             size="icon"
                             onClick={() => navigate(`/notification/${item.id}/edit`)}
-                            className="h-8 w-8 text-green-600 hover:text-green-700 hover:bg-green-50 dark:text-green-400 dark:hover:text-green-300 dark:hover:bg-green-950/30"
+                            className="h-7 w-7 text-green-600 hover:text-green-700 hover:bg-green-50 dark:text-green-400 dark:hover:text-green-300 dark:hover:bg-green-950/30"
                             title="Düzenle"
                           >
-                            <Edit className="h-4 w-4" />
+                            <Edit className="h-3.5 w-3.5" />
                           </Button>
                           <Button
                             variant="ghost"
                             size="icon"
                             onClick={() => handleSend(item.id)}
-                            className="h-8 w-8 text-purple-600 hover:text-purple-700 hover:bg-purple-50 dark:text-purple-400 dark:hover:text-purple-300 dark:hover:bg-purple-950/30"
+                            className="h-7 w-7 text-purple-600 hover:text-purple-700 hover:bg-purple-50 dark:text-purple-400 dark:hover:text-purple-300 dark:hover:bg-purple-950/30"
                             title="Gönder"
                           >
-                            <Send className="h-4 w-4" />
+                            <Send className="h-3.5 w-3.5" />
                           </Button>
                           <Button
                             variant="ghost"
                             size="icon"
                             onClick={() => handleDelete(item.id, item.title)}
-                            className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:text-red-300 dark:hover:bg-red-950/30"
+                            className="h-7 w-7 text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:text-red-300 dark:hover:bg-red-950/30"
                             title="Sil"
                           >
-                            <Trash2 className="h-4 w-4" />
+                            <Trash2 className="h-3.5 w-3.5" />
                           </Button>
                         </div>
                       </TableCell>

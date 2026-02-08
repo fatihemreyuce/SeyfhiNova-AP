@@ -289,7 +289,7 @@ export default function ServiceStatsList() {
             <div className="overflow-x-auto scrollbar-hide">
               <Table>
                 <TableHeader>
-                  <TableRow className="bg-[#F8F9FA] dark:bg-muted/30 border-b border-gray-200 dark:border-seyfhi-accent/30">
+                  <TableRow className="bg-[#F8F9FA] dark:bg-muted/30 border-b border-gray-200 dark:border-border">
                     <TableHead className="w-[70px]">
                       <button
                         onClick={() => handleSortChange("id")}

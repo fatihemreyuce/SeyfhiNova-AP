@@ -93,73 +93,73 @@ function SortableRow({ item, onView, onEdit, onDelete, getCategoryName, truncate
     <TableRow
       ref={setNodeRef}
       style={style}
-      className={`bg-white dark:bg-card border-b border-gray-100 dark:border-seyfhi-accent/20 hover:bg-gray-50 dark:hover:bg-muted/30 transition-colors ${
+      className={`bg-white dark:bg-card border-b border-gray-100 dark:border-border hover:bg-gray-50 dark:hover:bg-muted/30 transition-colors ${
         isDragging ? "shadow-lg z-10 opacity-50" : ""
       }`}
     >
-      <TableCell className="w-[50px]">
+      <TableCell className="w-[50px] py-1.5">
         <div
           {...attributes}
           {...listeners}
-          className="cursor-grab active:cursor-grabbing p-2 -ml-2 hover:bg-muted/50 rounded transition-colors"
+          className="cursor-grab active:cursor-grabbing p-1.5 -ml-1.5 hover:bg-muted/50 rounded transition-colors"
         >
-          <GripVertical className="h-4 w-4 text-muted-foreground" />
+          <GripVertical className="h-3.5 w-3.5 text-muted-foreground" />
         </div>
       </TableCell>
-      <TableCell className="whitespace-nowrap">
-        <Badge variant="outline" className="font-mono bg-blue-50 text-blue-600 dark:bg-blue-950/30 dark:text-blue-400">
+      <TableCell className="whitespace-nowrap py-1.5">
+        <Badge variant="outline" className="font-mono text-xs bg-blue-50 text-blue-600 dark:bg-blue-950/30 dark:text-blue-400">
           #{item.id}
         </Badge>
       </TableCell>
-      <TableCell className="min-w-[200px]">
-        <span className="font-medium dark:text-foreground break-words">
+      <TableCell className="min-w-[200px] py-1.5">
+        <span className="font-medium text-sm dark:text-foreground break-words">
           {item.title}
         </span>
       </TableCell>
-      <TableCell className="min-w-[150px]">
-        <Badge variant="secondary" className="gap-1">
-          <Layers className="h-3 w-3 dark:text-foreground/80" />
+      <TableCell className="min-w-[150px] py-1.5">
+        <Badge variant="secondary" className="gap-1 text-xs">
+          <Layers className="h-2.5 w-2.5 dark:text-foreground/80" />
           {getCategoryName(item.categoryId)}
         </Badge>
       </TableCell>
-      <TableCell className="min-w-[200px] max-w-md">
-        <p className="text-sm text-muted-foreground dark:text-foreground/70 break-words line-clamp-2">
+      <TableCell className="min-w-[200px] max-w-md py-1.5">
+        <p className="text-xs text-muted-foreground dark:text-foreground/70 break-words line-clamp-2">
           {truncateText(stripHtml(item.description))}
         </p>
       </TableCell>
-      <TableCell className="text-center whitespace-nowrap">
-        <Badge variant="secondary" className="font-semibold">
+      <TableCell className="text-center whitespace-nowrap py-1.5">
+        <Badge variant="secondary" className="font-semibold text-xs">
           {item.orderIndex}
         </Badge>
       </TableCell>
-      <TableCell className="text-right whitespace-nowrap">
-        <div className="flex items-center justify-end gap-1">
+      <TableCell className="text-right whitespace-nowrap py-1.5">
+        <div className="flex items-center justify-end gap-0.5">
           <Button
             variant="ghost"
             size="icon"
             onClick={() => onView(item.id)}
-            className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:text-blue-400 dark:hover:text-blue-300 dark:hover:bg-blue-950/30"
+            className="h-7 w-7 text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:text-blue-400 dark:hover:text-blue-300 dark:hover:bg-blue-950/30"
             title="Detay Görüntüle"
           >
-            <Eye className="h-4 w-4" />
+            <Eye className="h-3.5 w-3.5" />
           </Button>
           <Button
             variant="ghost"
             size="icon"
             onClick={() => onEdit(item.id)}
-            className="h-8 w-8 text-green-600 hover:text-green-700 hover:bg-green-50 dark:text-green-400 dark:hover:text-green-300 dark:hover:bg-green-950/30"
+            className="h-7 w-7 text-green-600 hover:text-green-700 hover:bg-green-50 dark:text-green-400 dark:hover:text-green-300 dark:hover:bg-green-950/30"
             title="Düzenle"
           >
-            <Edit className="h-4 w-4" />
+            <Edit className="h-3.5 w-3.5" />
           </Button>
           <Button
             variant="ghost"
             size="icon"
             onClick={() => onDelete(item.id, item.title)}
-            className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:text-red-300 dark:hover:bg-red-950/30"
+            className="h-7 w-7 text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:text-red-300 dark:hover:bg-red-950/30"
             title="Sil"
           >
-            <Trash2 className="h-4 w-4" />
+            <Trash2 className="h-3.5 w-3.5" />
           </Button>
         </div>
       </TableCell>
@@ -526,9 +526,9 @@ export default function ServiceList() {
               <div className="overflow-x-auto scrollbar-hide">
                 <Table>
                   <TableHeader>
-                    <TableRow className="bg-[#F8F9FA] dark:bg-muted/30 border-b border-gray-200 dark:border-seyfhi-accent/30">
-                      <TableHead className="w-[50px]"></TableHead>
-                      <TableHead className="w-[80px]">
+                    <TableRow className="bg-[#F8F9FA] dark:bg-muted/30 border-b border-gray-200 dark:border-border">
+                      <TableHead className="w-[50px] h-9 py-2 text-xs font-medium"></TableHead>
+                      <TableHead className="w-[80px] h-9 py-2 text-xs font-medium">
                         <button
                           onClick={() => handleSortChange("id")}
                           className="flex items-center gap-2 hover:bg-muted/50 px-2 py-1 rounded transition-colors"
@@ -537,7 +537,7 @@ export default function ServiceList() {
                           {getSortIcon("id")}
                         </button>
                       </TableHead>
-                      <TableHead className="min-w-[200px]">
+                      <TableHead className="min-w-[200px] h-9 py-2 text-xs font-medium">
                         <button
                           onClick={() => handleSortChange("title")}
                           className="flex items-center gap-2 hover:bg-muted/50 px-2 py-1 rounded transition-colors"
@@ -546,9 +546,9 @@ export default function ServiceList() {
                           {getSortIcon("title")}
                         </button>
                       </TableHead>
-                      <TableHead className="min-w-[150px]">Kategori</TableHead>
-                      <TableHead className="min-w-[200px] max-w-md">Açıklama</TableHead>
-                      <TableHead className="w-[100px] text-center">
+                      <TableHead className="min-w-[150px] h-9 py-2 text-xs font-medium">Kategori</TableHead>
+                      <TableHead className="min-w-[200px] max-w-md h-9 py-2 text-xs font-medium">Açıklama</TableHead>
+                      <TableHead className="w-[100px] text-center h-9 py-2 text-xs font-medium">
                         <button
                           onClick={() => handleSortChange("orderIndex")}
                           className="flex items-center gap-2 hover:bg-muted/50 px-2 py-1 rounded transition-colors mx-auto"
@@ -557,7 +557,7 @@ export default function ServiceList() {
                           {getSortIcon("orderIndex")}
                         </button>
                       </TableHead>
-                      <TableHead className="w-[200px] text-right">İşlemler</TableHead>
+                      <TableHead className="w-[200px] text-right h-9 py-2 text-xs font-medium">İşlemler</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>

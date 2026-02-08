@@ -152,7 +152,7 @@ export default function ContactList() {
             <div className="overflow-x-auto scrollbar-hide">
               <Table>
                 <TableHeader>
-                  <TableRow className="bg-[#F8F9FA] dark:bg-muted/30 border-b border-gray-200 dark:border-seyfhi-accent/30">
+                  <TableRow className="bg-[#F8F9FA] dark:bg-muted/30 border-b border-gray-200 dark:border-border">
                     <TableHead className="w-[80px]">
                       <button
                         onClick={() => handleSortChange("id")}
@@ -206,7 +206,7 @@ export default function ContactList() {
                   {data.content.map((item) => (
                     <TableRow
                       key={item.id}
-                      className="bg-white dark:bg-card border-b border-gray-100 dark:border-seyfhi-accent/20 hover:bg-gray-50 dark:hover:bg-muted/30 transition-colors"
+                      className="bg-white dark:bg-card border-b border-gray-100 dark:border-border hover:bg-gray-50 dark:hover:bg-muted/30 transition-colors"
                     >
                       <TableCell className="whitespace-nowrap">
                         <Badge variant="outline" className="font-mono bg-blue-50 text-blue-600 dark:bg-blue-950/30 dark:text-blue-400">
@@ -245,10 +245,10 @@ export default function ContactList() {
                             variant="ghost"
                             size="icon"
                             onClick={() => navigate(`/contact/${item.id}`)}
-                            className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:text-blue-400 dark:hover:text-blue-300 dark:hover:bg-blue-950/30"
+                            className="h-7 w-7 text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:text-blue-400 dark:hover:text-blue-300 dark:hover:bg-blue-950/30"
                             title="Detay Görüntüle"
                           >
-                            <Eye className="h-4 w-4" />
+                            <Eye className="h-3.5 w-3.5" />
                           </Button>
                           <Button
                             variant="ghost"

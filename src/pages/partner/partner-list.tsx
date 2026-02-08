@@ -88,31 +88,31 @@ function SortableRow({ item, onView, onEdit, onDelete }: SortableRowProps) {
     <TableRow
       ref={setNodeRef}
       style={style}
-      className={`bg-white dark:bg-card border-b border-gray-100 dark:border-seyfhi-accent/20 hover:bg-gray-50 dark:hover:bg-muted/30 transition-colors ${
+      className={`bg-white dark:bg-card border-b border-gray-100 dark:border-border hover:bg-gray-50 dark:hover:bg-muted/30 transition-colors ${
         isDragging ? "shadow-lg z-10 opacity-50" : ""
       }`}
     >
-      <TableCell className="w-[50px]">
+      <TableCell className="w-[50px] py-1.5">
         <div
           {...attributes}
           {...listeners}
-          className="cursor-grab active:cursor-grabbing p-2 -ml-2 hover:bg-muted/50 rounded transition-colors"
+          className="cursor-grab active:cursor-grabbing p-1.5 -ml-1.5 hover:bg-muted/50 rounded transition-colors"
         >
-          <GripVertical className="h-4 w-4 text-muted-foreground" />
+          <GripVertical className="h-3.5 w-3.5 text-muted-foreground" />
         </div>
       </TableCell>
-      <TableCell className="whitespace-nowrap">
-        <Badge variant="outline" className="font-mono bg-blue-50 text-blue-600 dark:bg-blue-950/30 dark:text-blue-400">
+      <TableCell className="whitespace-nowrap py-1.5">
+        <Badge variant="outline" className="font-mono text-xs bg-blue-50 text-blue-600 dark:bg-blue-950/30 dark:text-blue-400">
           #{item.id}
         </Badge>
       </TableCell>
-      <TableCell>
+      <TableCell className="py-1.5">
         {item.logoUrl ? (
-          <div className="flex items-center justify-center w-20 h-20 rounded-lg overflow-hidden bg-muted border border-border">
+          <div className="flex items-center justify-center w-12 h-12 rounded-md overflow-hidden bg-muted border border-border">
             <img
               src={item.logoUrl.replace(/^https:/, 'http:')}
               alt={item.name}
-              className="w-full h-full object-contain p-2"
+              className="w-full h-full object-contain p-1"
               onError={(e) => {
                 const target = e.target as HTMLImageElement;
                 target.style.display = 'none';
@@ -120,49 +120,49 @@ function SortableRow({ item, onView, onEdit, onDelete }: SortableRowProps) {
             />
           </div>
         ) : (
-          <div className="w-20 h-20 rounded-lg bg-muted/50 border border-border flex items-center justify-center">
-            <Handshake className="h-5 w-5 text-muted-foreground dark:text-foreground/60 opacity-50" />
+          <div className="w-12 h-12 rounded-md bg-muted/50 border border-border flex items-center justify-center">
+            <Handshake className="h-4 w-4 text-muted-foreground dark:text-foreground/60 opacity-50" />
           </div>
         )}
       </TableCell>
-      <TableCell className="min-w-[200px]">
-        <span className="font-medium dark:text-foreground break-words">
+      <TableCell className="min-w-[200px] py-1.5">
+        <span className="font-medium text-sm dark:text-foreground break-words">
           {item.name}
         </span>
       </TableCell>
-      <TableCell className="text-center whitespace-nowrap">
-        <Badge variant="secondary" className="font-semibold">
+      <TableCell className="text-center whitespace-nowrap py-1.5">
+        <Badge variant="secondary" className="font-semibold text-xs">
           {item.orderIndex}
         </Badge>
       </TableCell>
-      <TableCell className="text-right whitespace-nowrap">
-        <div className="flex items-center justify-end gap-1">
+      <TableCell className="text-right whitespace-nowrap py-1.5">
+        <div className="flex items-center justify-end gap-0.5">
           <Button
             variant="ghost"
             size="icon"
             onClick={() => onView(item.id)}
-            className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:text-blue-400 dark:hover:text-blue-300 dark:hover:bg-blue-950/30"
+            className="h-7 w-7 text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:text-blue-400 dark:hover:text-blue-300 dark:hover:bg-blue-950/30"
             title="Detay Görüntüle"
           >
-            <Eye className="h-4 w-4" />
+            <Eye className="h-3.5 w-3.5" />
           </Button>
           <Button
             variant="ghost"
             size="icon"
             onClick={() => onEdit(item.id)}
-            className="h-8 w-8 text-green-600 hover:text-green-700 hover:bg-green-50 dark:text-green-400 dark:hover:text-green-300 dark:hover:bg-green-950/30"
+            className="h-7 w-7 text-green-600 hover:text-green-700 hover:bg-green-50 dark:text-green-400 dark:hover:text-green-300 dark:hover:bg-green-950/30"
             title="Düzenle"
           >
-            <Edit className="h-4 w-4" />
+            <Edit className="h-3.5 w-3.5" />
           </Button>
           <Button
             variant="ghost"
             size="icon"
             onClick={() => onDelete(item.id, item.name)}
-            className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:text-red-300 dark:hover:bg-red-950/30"
+            className="h-7 w-7 text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:text-red-300 dark:hover:bg-red-950/30"
             title="Sil"
           >
-            <Trash2 className="h-4 w-4" />
+            <Trash2 className="h-3.5 w-3.5" />
           </Button>
         </div>
       </TableCell>
@@ -505,9 +505,9 @@ export default function PartnerList() {
               <div className="overflow-x-auto scrollbar-hide">
                 <Table>
                   <TableHeader>
-                    <TableRow className="bg-[#F8F9FA] dark:bg-muted/30 border-b border-gray-200 dark:border-seyfhi-accent/30">
-                      <TableHead className="w-[50px]"></TableHead>
-                      <TableHead className="w-[80px]">
+                    <TableRow className="bg-[#F8F9FA] dark:bg-muted/30 border-b border-gray-200 dark:border-border">
+                      <TableHead className="w-[50px] h-9 py-2 text-xs font-medium"></TableHead>
+                      <TableHead className="w-[80px] h-9 py-2 text-xs font-medium">
                         <button
                           onClick={() => handleSortChange("id")}
                           className="flex items-center gap-2 hover:bg-muted/50 px-2 py-1 rounded transition-colors"
@@ -516,8 +516,8 @@ export default function PartnerList() {
                           {getSortIcon("id")}
                         </button>
                       </TableHead>
-                      <TableHead className="w-[120px]">Logo</TableHead>
-                      <TableHead className="min-w-[200px]">
+                      <TableHead className="w-[80px] h-9 py-2 text-xs font-medium">Logo</TableHead>
+                      <TableHead className="min-w-[200px] h-9 py-2 text-xs font-medium">
                         <button
                           onClick={() => handleSortChange("name")}
                           className="flex items-center gap-2 hover:bg-muted/50 px-2 py-1 rounded transition-colors"
@@ -526,7 +526,7 @@ export default function PartnerList() {
                           {getSortIcon("name")}
                         </button>
                       </TableHead>
-                      <TableHead className="w-[100px] text-center">
+                      <TableHead className="w-[100px] text-center h-9 py-2 text-xs font-medium">
                         <button
                           onClick={() => handleSortChange("orderIndex")}
                           className="flex items-center gap-2 hover:bg-muted/50 px-2 py-1 rounded transition-colors mx-auto"
@@ -535,7 +535,7 @@ export default function PartnerList() {
                           {getSortIcon("orderIndex")}
                         </button>
                       </TableHead>
-                      <TableHead className="w-[200px] text-right">İşlemler</TableHead>
+                      <TableHead className="w-[200px] text-right h-9 py-2 text-xs font-medium">İşlemler</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
