@@ -113,15 +113,19 @@ export default function DashboardPage() {
     };
   });
 
-  // Chart configurations
+  // Renkli grafik konfigürasyonu
+  const CHART_COLORS = {
+    ziyaretçiler: "#0ea5e9",   // Sky blue - Benzersiz ziyaretçiler
+    görüntülenme: "#8b5cf6",   // Violet - Sayfa görüntülemeleri
+  };
   const areaChartConfig = {
     ziyaretçiler: {
       label: "Benzersiz Ziyaretçiler",
-      color: "hsl(var(--chart-1))",
+      color: CHART_COLORS.ziyaretçiler,
     },
     görüntülenme: {
       label: "Sayfa Görüntülemeleri",
-      color: "hsl(var(--chart-2))",
+      color: CHART_COLORS.görüntülenme,
     },
   };
 
@@ -282,48 +286,34 @@ export default function DashboardPage() {
               <ChartContainer config={areaChartConfig} className="w-full h-full">
                 <AreaChart
                   data={dailyStatsData}
-                  margin={{ top: 12, right: 12, bottom: 8, left: 8 }}
+                  margin={{ top: 16, right: 16, bottom: 12, left: 12 }}
                 >
                   <defs>
                     <linearGradient id="fillZiyaretçiler" x1="0" y1="0" x2="0" y2="1">
-                      <stop
-                        offset="0%"
-                        stopColor="var(--color-ziyaretçiler)"
-                        stopOpacity={0.4}
-                      />
-                      <stop
-                        offset="100%"
-                        stopColor="var(--color-ziyaretçiler)"
-                        stopOpacity={0.05}
-                      />
+                      <stop offset="0%" stopColor={CHART_COLORS.ziyaretçiler} stopOpacity={0.5} />
+                      <stop offset="70%" stopColor={CHART_COLORS.ziyaretçiler} stopOpacity={0.15} />
+                      <stop offset="100%" stopColor={CHART_COLORS.ziyaretçiler} stopOpacity={0.02} />
                     </linearGradient>
                     <linearGradient id="fillGörüntülenme" x1="0" y1="0" x2="0" y2="1">
-                      <stop
-                        offset="0%"
-                        stopColor="var(--color-görüntülenme)"
-                        stopOpacity={0.4}
-                      />
-                      <stop
-                        offset="100%"
-                        stopColor="var(--color-görüntülenme)"
-                        stopOpacity={0.05}
-                      />
+                      <stop offset="0%" stopColor={CHART_COLORS.görüntülenme} stopOpacity={0.55} />
+                      <stop offset="70%" stopColor={CHART_COLORS.görüntülenme} stopOpacity={0.2} />
+                      <stop offset="100%" stopColor={CHART_COLORS.görüntülenme} stopOpacity={0.03} />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" className="stroke-muted/40" vertical={false} />
+                  <CartesianGrid strokeDasharray="3 3" className="stroke-muted/50 dark:stroke-muted-foreground/20" vertical={false} />
                   <XAxis
                     dataKey="date"
                     tickLine={false}
                     axisLine={false}
                     tickMargin={10}
-                    className="text-xs font-medium"
+                    className="text-xs font-medium text-muted-foreground"
                   />
                   <YAxis
                     tickLine={false}
                     axisLine={false}
                     tickMargin={10}
                     tickFormatter={(value) => value.toLocaleString()}
-                    className="text-xs"
+                    className="text-xs text-muted-foreground"
                     domain={[0, "auto"]}
                     allowDecimals={false}
                   />
@@ -332,21 +322,25 @@ export default function DashboardPage() {
                   <Area
                     type="monotone"
                     dataKey="ziyaretçiler"
-                    stroke="var(--color-ziyaretçiler)"
+                    stroke={CHART_COLORS.ziyaretçiler}
                     fill="url(#fillZiyaretçiler)"
                     strokeWidth={2.5}
-                    dot={{ r: 4, fill: "var(--color-ziyaretçiler)", strokeWidth: 2, stroke: "hsl(var(--background))" }}
-                    activeDot={{ r: 6, strokeWidth: 2, stroke: "hsl(var(--background))" }}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    dot={{ r: 5, fill: CHART_COLORS.ziyaretçiler, strokeWidth: 2, stroke: "var(--card)" }}
+                    activeDot={{ r: 7, fill: CHART_COLORS.ziyaretçiler, strokeWidth: 2, stroke: "var(--card)" }}
                     connectNulls
                   />
                   <Area
                     type="monotone"
                     dataKey="görüntülenme"
-                    stroke="var(--color-görüntülenme)"
+                    stroke={CHART_COLORS.görüntülenme}
                     fill="url(#fillGörüntülenme)"
                     strokeWidth={2.5}
-                    dot={{ r: 4, fill: "var(--color-görüntülenme)", strokeWidth: 2, stroke: "hsl(var(--background))" }}
-                    activeDot={{ r: 6, strokeWidth: 2, stroke: "hsl(var(--background))" }}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    dot={{ r: 5, fill: CHART_COLORS.görüntülenme, strokeWidth: 2, stroke: "var(--card)" }}
+                    activeDot={{ r: 7, fill: CHART_COLORS.görüntülenme, strokeWidth: 2, stroke: "var(--card)" }}
                     connectNulls
                   />
                 </AreaChart>
